@@ -26,9 +26,8 @@ public class Aligner extends WorkerScript {
     private final String forward, reverse, genome, dbsnp, mills, phase1, output, temp;
     private final boolean illumina, reduceReads;
 
-    public Aligner(String temp, String forward, String reverse, String genome,
-            String dbsnp, String mills, String phase1, String output,
-            boolean illumina, boolean reduceReads) {
+    public Aligner(String temp, String forward, String reverse, String genome, String dbsnp,
+            String mills, String phase1, String output, boolean illumina, boolean reduceReads) {
         this.temp = temp;
         this.forward = forward;
         this.reverse = reverse;
