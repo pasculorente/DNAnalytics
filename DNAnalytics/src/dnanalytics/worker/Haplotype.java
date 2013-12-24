@@ -6,17 +6,15 @@ import java.util.Date;
 import java.util.ResourceBundle;
 
 /**
- * Script for calling variants using HaplotypeCaller from
- * GATK. If 'recalibrate', output file will pass a Variant
- * Quality Score Recalibration (VQSR). See Worker to know
- * how to launch it.
+ * Script for calling variants using HaplotypeCaller from GATK. If 'recalibrate', output file will
+ * pass a Variant Quality Score Recalibration (VQSR). See Worker to know how to launch it.
  * <p/>
  * @author Pascual Lorente Arencibia
  */
 public class Haplotype extends WorkerScript {
 
-    private String genome, dbsnp, omni, hapmap, mills, output, temp, input;
-    private boolean recalibrate;
+    private final String genome, dbsnp, omni, hapmap, mills, output, temp, input;
+    private final boolean recalibrate;
 
     /**
      *
@@ -30,11 +28,8 @@ public class Haplotype extends WorkerScript {
      * @param recalibrate true for recalibration
      * @param temp temp folder
      */
-    public Haplotype(String genome, String dbsnp,
-            String omni, String hapmap,
-            String mills, String output, String input,
-            boolean recalibrate,
-            String temp) {
+    public Haplotype(String genome, String dbsnp, String omni, String hapmap, String mills,
+            String output, String input, boolean recalibrate, String temp) {
         this.genome = genome;
         this.dbsnp = dbsnp;
         this.omni = omni;
@@ -52,28 +47,24 @@ public class Haplotype extends WorkerScript {
         int noFileErr = -1;
         // Check if all parameters are OK.
         if (!new File(genome).exists()) {
-            System.err.println(controller.getString(
-                    "no.genome"));
+            System.err.println(controller.getString("no.genome"));
             return noFileErr;
         }
         if (!new File(dbsnp).exists()) {
-            System.err.println(controller.getString(
-                    "no.dbsnp"));
+            System.err.println(controller.getString("no.dbsnp"));
             return noFileErr;
         }
         /*if (!new File(temp).exists()) {
-            System.err.println(controller.getString(
-                    "no.temp"));
-            return noFileErr;
-        }*/
+         System.err.println(controller.getString(
+         "no.temp"));
+         return noFileErr;
+         }*/
         if (output.isEmpty()) {
-            System.err.println(controller.getString(
-                    "no.output"));
+            System.err.println(controller.getString("no.output"));
             return noFileErr;
         }
         if (!new File(input).exists()) {
-            System.err.println(controller.getString(
-                    "no.input"));
+            System.err.println(controller.getString("no.input"));
             return noFileErr;
         }
         updateTitle("Calling " + new File(output).getName());
@@ -99,18 +90,15 @@ public class Haplotype extends WorkerScript {
         if (recalibrate) {
             // Check for database
             if (!new File(mills).exists()) {
-                System.err.println(controller.getString(
-                        "no.mills"));
+                System.err.println(controller.getString("no.mills"));
                 return noFileErr;
             }
             if (!new File(hapmap).exists()) {
-                System.err.println(controller.getString(
-                        "no.hapmap"));
+                System.err.println(controller.getString("no.hapmap"));
                 return noFileErr;
             }
             if (!new File(omni).exists()) {
-                System.err.println(controller.getString(
-                        "no.omni"));
+                System.err.println(controller.getString("no.omni"));
                 return noFileErr;
             }
             File tranches = new File(temp, timestamp + "tranches");
@@ -118,8 +106,7 @@ public class Haplotype extends WorkerScript {
             File outputRecalibrated = new File(output.
                     replace(".vcf", "_recalibrated.vcf"));
             updateProgress(1.5, 3);
-            updateMessage(controller.getString(
-                    "call.prerecal"));
+            updateMessage(controller.getString("call.prerecal"));
             executeCommand(gatk
                     + " -T VariantRecalibrator"
                     + " -R " + genome
@@ -148,11 +135,10 @@ public class Haplotype extends WorkerScript {
                     + " -o " + outputRecalibrated
                     + " --ts_filter_level 97.0"
                     + " -mode BOTH");
-            
+
             tranches.delete();
             recal.delete();
-            updateMessage(controller.getString(
-                    "call.completed"));
+            updateMessage(controller.getString("call.completed"));
             updateProgress(1, 1);
         }
 

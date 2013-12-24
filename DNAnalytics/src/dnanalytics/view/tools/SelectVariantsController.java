@@ -1,4 +1,3 @@
-
 package dnanalytics.view.tools;
 
 import dnanalytics.utils.FileManager;

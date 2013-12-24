@@ -1,4 +1,3 @@
-
 package dnanalytics.view.tools;
 
 import dnanalytics.utils.FileManager;
@@ -22,6 +21,7 @@ import javafx.scene.control.TextField;
  * @author Pascual
  */
 public class FilterFrequenciesController {
+
     @FXML
     private TextField frequencyFile;
     @FXML
@@ -49,19 +49,16 @@ public class FilterFrequenciesController {
                     }
                 } catch (NumberFormatException ex) {
                 } catch (FileNotFoundException ex) {
-                    Logger.getLogger(DNAMain.class.getName()).log(
-                            Level.SEVERE, null, ex);
+                    Logger.getLogger(DNAMain.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
-                    Logger.getLogger(DNAMain.class.getName()).log(
-                            Level.SEVERE, null, ex);
+                    Logger.getLogger(DNAMain.class.getName()).log(Level.SEVERE, null, ex);
                 } finally {
                     try {
                         if (br != null) {
                             br.close();
                         }
                     } catch (IOException ex) {
-                        Logger.getLogger(DNAMain.class.getName()).log(
-                                Level.SEVERE, null, ex);
+                        Logger.getLogger(DNAMain.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             }
@@ -82,10 +79,9 @@ public class FilterFrequenciesController {
     public String getFrequencyFile() {
         return frequencyFile.getText();
     }
-    
-    public Double getMaxFrequency(){
+
+    public Double getMaxFrequency() {
         return Double.valueOf(maxFrequency.getText());
     }
-    
-    
+
 }

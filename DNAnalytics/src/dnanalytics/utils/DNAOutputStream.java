@@ -14,8 +14,8 @@ import javafx.scene.control.TextArea;
 public class DNAOutputStream extends OutputStream {
 
     private boolean newline = false;
-    private TextArea area;
-    private String lineStart;
+    private final TextArea area;
+    private final String lineStart;
 
     /**
      * Creates a new DNAOutputStream.
@@ -33,12 +33,8 @@ public class DNAOutputStream extends OutputStream {
         final String character = String.valueOf((char) b);
         newline = character.equals(System.lineSeparator());
 //        System.out.println("c="+ character + "lb" + System.lineSeparator());
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                area.appendText(character);
-//                area.appendText(newline ? lineStart + character : character);
-            }
+        Platform.runLater(() -> {
+            area.appendText(character);
         });
     }
 

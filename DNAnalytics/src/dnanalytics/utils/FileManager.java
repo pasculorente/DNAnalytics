@@ -31,8 +31,7 @@ public class FileManager {
     /**
      * FASTQ Description (FASTQ file)
      */
-    public static final String FASTQ_DESCRIPTION = resources.getString(
-            "file.fastq");
+    public static final String FASTQ_DESCRIPTION = resources.getString("file.fastq");
     /**
      * Standard extension for VCF Files (.vcf).
      */
@@ -68,8 +67,7 @@ public class FileManager {
     /**
      * SAM/BAM Description (Binary/Sequence Alignment/Map File)
      */
-    public static final String SAM_BAM_DESCRIPTION = resources.getString(
-            "file.sambam");
+    public static final String SAM_BAM_DESCRIPTION = resources.getString("file.sambam");
     /**
      * Filters for Tabular Separated Format (.tsv)
      */
@@ -143,8 +141,7 @@ public class FileManager {
                 out.write(buf, 0, len);
             }
         } catch (IOException ex) {
-            Logger.getLogger(DNAMain.class.getName()).
-                    log(Level.SEVERE, null, ex);
+            Logger.getLogger(DNAMain.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 if (gZIPInputStream != null) {
@@ -154,9 +151,7 @@ public class FileManager {
                     out.close();
                 }
             } catch (IOException ex) {
-                Logger.getLogger(DNAMain.class.getName()).
-                        log(Level.SEVERE, null,
-                                ex);
+                Logger.getLogger(DNAMain.class.getName()).log(Level.SEVERE, null, ex);
             }
 
         }
@@ -182,8 +177,7 @@ public class FileManager {
                 gZIPOutputStream.write(buf, 0, len);
             }
         } catch (IOException ex) {
-            Logger.getLogger(DNAMain.class.getName()).
-                    log(Level.SEVERE, null, ex);
+            Logger.getLogger(DNAMain.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 if (inputStream != null) {
@@ -193,9 +187,7 @@ public class FileManager {
                     gZIPOutputStream.close();
                 }
             } catch (IOException ex) {
-                Logger.getLogger(DNAMain.class.getName()).
-                        log(Level.SEVERE, null,
-                                ex);
+                Logger.getLogger(DNAMain.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return output;
@@ -255,13 +247,11 @@ public class FileManager {
      * @return The file selected or null if user canceled.
      */
     public static File openVCF(TextField textField) {
-        return setOpenFile(VCF_DESCRIPTION, VCF_DESCRIPTION, VCF_FILTERS,
-                textField);
+        return setOpenFile(VCF_DESCRIPTION, VCF_DESCRIPTION, VCF_FILTERS, textField);
     }
 
     public static File openBAM(TextField textField) {
-        return setOpenFile(SAM_BAM_DESCRIPTION, BAM_EXTENSION,
-                SAM_BAM_FILTERS, textField);
+        return setOpenFile(SAM_BAM_DESCRIPTION, BAM_EXTENSION, SAM_BAM_FILTERS, textField);
     }
 
     /**
@@ -272,6 +262,7 @@ public class FileManager {
      * @param title Dialog title
      * @param filterDesc Description of file type
      * @param filters Regular expressions to filter file types (*.extension)
+     * @param extension defalut extension
      * @return A File with the user selected file, or null if not file selected
      */
     public static File createFile(String title, String filterDesc,
@@ -303,7 +294,8 @@ public class FileManager {
      * @param title Dialog title
      * @param filterDesc Description of file type
      * @param filters Regular expressions to filter file types (*.extension)
-     * @return A String with the user selected file pathname, or null if not file selected
+     * @param extension Default extension
+     * @param textField textField associated to the file
      */
     public static void setSaveFile(String title, String filterDesc,
             List<String> filters, String extension, TextField textField) {
@@ -320,8 +312,7 @@ public class FileManager {
      * @param textField
      */
     public static void saveVCF(TextField textField) {
-        setSaveFile(VCF_DESCRIPTION, VCF_DESCRIPTION, VCF_FILTERS, ".vcf",
-                textField);
+        setSaveFile(VCF_DESCRIPTION, VCF_DESCRIPTION, VCF_FILTERS, ".vcf", textField);
     }
 
     /**

@@ -1,15 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package dnanalytics.view.tools;
 
 import dnanalytics.utils.FileManager;
 import dnanalytics.utils.Settings;
 import java.io.File;
-import java.net.URL;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

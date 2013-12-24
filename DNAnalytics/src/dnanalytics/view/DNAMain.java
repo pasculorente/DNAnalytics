@@ -92,8 +92,7 @@ public class DNAMain implements Initializable {
         value = Settings.getProperty("tempDir");
         tempDir.setText(value != null ? value : "");
         if (isIndexed()) {
-            alreadyIndexed.setText(getResources().getString(
-                    "label.indexed"));
+            alreadyIndexed.setText(getResources().getString("label.indexed"));
         }
         // Add Tools
         addTool(new IndexFastaTool());
@@ -188,27 +187,22 @@ public class DNAMain implements Initializable {
                         new PrintStream(new DNAOutputStream(area, ">")),
                         new PrintStream(new DNAOutputStream(area, "err>")));
                 // Create the button to cancel the Worker
-                Button button = new Button(resources.
-                        getString("button.cancel"));
+                Button button = new Button(resources.getString("button.cancel"));
                 button.setMaxWidth(Float.MAX_VALUE);
                 // And a label with the Worker's message.
-                Label message = new Label(worker.
-                        getMessage());
-                message.textProperty().bind(worker.
-                        messageProperty());
+                Label message = new Label(worker.getMessage());
+                message.textProperty().bind(worker.messageProperty());
                 // Put it all together, in a VBox.
                 VBox box = new VBox();
                 box.setAlignment(Pos.TOP_CENTER);
                 box.setFillWidth(true);
                 VBox.setVgrow(area, Priority.SOMETIMES);
-                box.getChildren().addAll(message, button,
-                        area);
+                box.getChildren().addAll(message, button, area);
 
                 // Creates a Progress Bar binded with 
                 // Worker's progress
                 ProgressBar bar = new ProgressBar();
-                bar.progressProperty().bind(worker.
-                        progressProperty());
+                bar.progressProperty().bind(worker.progressProperty());
                 // And a label binded with Worker's title
                 Label label = new Label(worker.getTitle(), bar);
                 label.textProperty().bind(worker.titleProperty());
@@ -255,7 +249,8 @@ public class DNAMain implements Initializable {
     }
 
     /* *****************************************************
-     * TAB: Settings ************************************************** */
+     * TAB: Settings
+     ************************************************** */
     @FXML
     void selectGenome(ActionEvent event) {
         // Get the file.
@@ -265,13 +260,11 @@ public class DNAMain implements Initializable {
                 FileManager.FASTA_FILTERS, genome);
         // Save it on settings.
         if (f != null) {
-            Settings.setProperty("genome", f.
-                    getAbsolutePath());
+            Settings.setProperty("genome", f.getAbsolutePath());
         }
         // Check if indexed.
         alreadyIndexed.setText(
-                isIndexed() ? getResources().getString(
-                        "label.indexed") : "");
+                isIndexed() ? getResources().getString("label.indexed") : "");
     }
 
     /**
@@ -292,12 +285,10 @@ public class DNAMain implements Initializable {
 
     @FXML
     void selectTempDir(ActionEvent event) {
-        File file = FileManager.selectFolder(
-                "Temporary directory");
+        File file = FileManager.selectFolder("Temporary directory");
         if (file != null) {
             tempDir.setText(file.getAbsolutePath());
-            Settings.setProperty("tempDir", file.
-                    getAbsolutePath());
+            Settings.setProperty("tempDir", file. getAbsolutePath());
         }
     }
 

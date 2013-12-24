@@ -1,15 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package dnanalytics.view.tools;
 
 import dnanalytics.utils.FileManager;
 import dnanalytics.utils.Settings;
-import dnanalytics.view.DNAMain;
 import java.io.File;
-import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -41,12 +34,8 @@ public class AlignViewController {
     @FXML
     private CheckBox reduce;
 
-    @FXML
-    private static ResourceBundle resources = DNAMain.getResources();
-
-    @FXML
+        @FXML
     void initialize() {
-        resources = DNAMain.getResources();
         // Recover settings
         String value = Settings.getProperty("align.dbsnp");
         dbsnp.setText(value != null ? value : "");

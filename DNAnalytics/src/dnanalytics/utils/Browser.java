@@ -9,7 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * It contains the method to open the system default web browser.
+ * Contains the method to open the system default web browser.
  * 
  * @author Pascual Lorente Arencibia
  */

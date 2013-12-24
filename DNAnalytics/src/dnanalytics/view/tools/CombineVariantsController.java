@@ -35,8 +35,7 @@ public class CombineVariantsController {
     @FXML
     private void deleteVCF() {
         try {
-            vcfList.getItems().
-                    remove(vcfList.getSelectionModel().getSelectedIndex());
+            vcfList.getItems().remove(vcfList.getSelectionModel().getSelectedIndex());
         } catch (ArrayIndexOutOfBoundsException ex) {
             System.err.println("Select a file in the list");
         }
@@ -55,8 +54,8 @@ public class CombineVariantsController {
         return vcfList;
     }
 
-    public String getOperation(){
-        return ((ToggleButton)combineGroup.getSelectedToggle()).getId();
+    public String getOperation() {
+        return ((ToggleButton) combineGroup.getSelectedToggle()).getId();
     }
 
 }

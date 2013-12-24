@@ -37,10 +37,8 @@ public class Settings {
                 f.createNewFile();
                 properties.storeToXML(new FileOutputStream(f), null);
             }
-
             properties.loadFromXML(new FileInputStream(settingsFile));
             return properties.getProperty(key);
-
 
         } catch (IOException ex) {
             System.err.println(
