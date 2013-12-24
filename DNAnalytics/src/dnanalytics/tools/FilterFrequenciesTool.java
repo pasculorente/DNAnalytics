@@ -22,8 +22,8 @@ import javafx.scene.Node;
 public class FilterFrequenciesTool implements Tool {
 
     private static final ResourceBundle resources = DNAMain.getResources();
-    
-     private Node view;
+
+    private Node view;
 
     private FXMLLoader loader;
 
@@ -57,7 +57,7 @@ public class FilterFrequenciesTool implements Tool {
             return null;
         }
         final double freq = controller.getMaxFrequency();
-        
+
         return new WorkerScript() {
             @Override
             protected int start() {
@@ -66,8 +66,7 @@ public class FilterFrequenciesTool implements Tool {
                 BufferedWriter bw = null;
                 String[] columns;
 
-                updateTitle("Filtering "
-                        + new File(controller.getFrequencyFile()).getName());
+                updateTitle("Filtering " + new File(controller.getFrequencyFile()).getName());
                 try {
                     Thread.sleep(3000);
                 } catch (InterruptedException ex) {
