@@ -13,6 +13,7 @@ import dnanalytics.tools.FilterFrequenciesTool;
 import dnanalytics.tools.IndexFastaTool;
 import dnanalytics.tools.SelectVariantsTool;
 import dnanalytics.tools.AnnotationTool;
+import dnanalytics.tools.LowFrequencyTool;
 import java.io.File;
 import java.io.PrintStream;
 import java.net.URL;
@@ -103,6 +104,7 @@ public class DNAMain implements Initializable {
         addTool(new FilterFrequenciesTool());
         addTool(new AnnotationTool());
         addTool(new DindelTool());
+        addTool(new LowFrequencyTool());
 
         // Prepare tools pane
         currentTool.setCollapsible(false);

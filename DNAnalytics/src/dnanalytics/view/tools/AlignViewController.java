@@ -34,7 +34,7 @@ public class AlignViewController {
     @FXML
     private CheckBox reduce;
 
-        @FXML
+    @FXML
     void initialize() {
         // Recover settings
         String value = Settings.getProperty("align.dbsnp");

@@ -54,3 +54,7 @@ root {
 #dindel{
     -fx-graphic: url("img/ico/index.png");
 }
+
+#lowFrequency{
+    -fx-graphic: url("img/ico/filter.png");
+}
