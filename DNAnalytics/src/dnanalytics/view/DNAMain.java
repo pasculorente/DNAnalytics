@@ -1,22 +1,27 @@
 package dnanalytics.view;
 
+import dnanalytics.tools.AlignViewTool;
 import dnanalytics.utils.FileManager;
 import dnanalytics.utils.Settings;
 import dnanalytics.worker.Worker;
 import dnanalytics.utils.DNAOutputStream;
-import dnanalytics.view.tools.Tool;
-import dnanalytics.view.tools.IndexFasta;
+import dnanalytics.tools.Tool;
+import dnanalytics.tools.CallVariantsTool;
+import dnanalytics.tools.CombineVariantsTool;
+import dnanalytics.tools.DindelTool;
+import dnanalytics.tools.FilterFrequenciesTool;
+import dnanalytics.tools.IndexFastaTool;
+import dnanalytics.tools.SelectVariantsTool;
+import dnanalytics.tools.AnnotationTool;
 import java.io.File;
 import java.io.PrintStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -72,7 +77,7 @@ public class DNAMain implements Initializable {
     @FXML
     private TitledPane currentTool;
     // Local variables
-    private ToggleGroup toolButtons = new ToggleGroup();
+    private final ToggleGroup toolButtons = new ToggleGroup();
     private final ArrayList<Tool> tools = new ArrayList<>();
 
     @Override
@@ -91,25 +96,25 @@ public class DNAMain implements Initializable {
                     "label.indexed"));
         }
         // Add Tools
-        addTool(new IndexFasta());
-/*        addTool(new AlignView());
-        addTool(new CallVariants());
-        addTool(new CombineVariants());
-        addTool(new SelectVariants());
-        addTool(new FilterFrequencies());
-        addTool(new SIFTAnnotation());
-        addTool(new Dindel());*/
+        addTool(new IndexFastaTool());
+        addTool(new AlignViewTool());
+        addTool(new CallVariantsTool());
+        addTool(new CombineVariantsTool());
+        addTool(new SelectVariantsTool());
+        addTool(new FilterFrequenciesTool());
+        addTool(new AnnotationTool());
+        addTool(new DindelTool());
 
         // Prepare tools pane
         currentTool.setCollapsible(false);
-        currentTool.setText(resources.getString(
-                "label.selecttool"));
+        currentTool.setText(resources.getString("label.selecttool"));
         /* Do the magic, when the user selects a tool, make it visible in the currentTool pane */
         toolButtons.selectedToggleProperty().addListener(
                 (ObservableValue<? extends Toggle> ov, Toggle t, Toggle t1) -> {
                     ToggleButton button = (ToggleButton) t1;
                     if (t1 != null) {
-                        Tool tool = tools.get(toolButtons.getToggles().indexOf(t1));
+                        Tool tool = tools.get(toolButtons.
+                                getToggles().indexOf(t1));
                         currentTool.setContent(tool.getView());
                         ImageView a = (ImageView) button.getGraphic();
                         currentTool.setGraphic(new ImageView(a.getImage()));
@@ -135,19 +140,13 @@ public class DNAMain implements Initializable {
         // Give the languagesBox the ability to change 
         // system language.
         languagesBox.getSelectionModel().selectedItemProperty().addListener(
-                new ChangeListener<String>() {
-                    @Override
-                    public void changed(
-                            ObservableValue<? extends String> ov,
-                            String old,
-                            String current) {
-                                for (Locale locale : Settings.getLocales()) {
-                                    if (current.equals(locale.getDisplayName(Settings.getLocale()))) {
-                                        Settings.setLocale(locale);
-                                        return;
-                                    }
-                                }
-                            }
+                (ObservableValue<? extends String> ov, String old, String current) -> {
+                    for (Locale locale : Settings.getLocales()) {
+                        if (current.equals(locale.getDisplayName(Settings.getLocale()))) {
+                            Settings.setLocale(locale);
+                            return;
+                        }
+                    }
                 });
     }
 
@@ -159,8 +158,7 @@ public class DNAMain implements Initializable {
      */
     private void addTool(Tool tool) {
         tools.add(tool);
-        ToggleButton button = new ToggleButton(tool.
-                getTitle());
+        ToggleButton button = new ToggleButton(tool.getTitle());
         button.setMaxWidth(Double.MAX_VALUE);
         button.setToggleGroup(toolButtons);
         button.setId(tool.getStyleID());
@@ -177,10 +175,8 @@ public class DNAMain implements Initializable {
         // First of all, check if there is a tool selected
         if (toolButtons.getSelectedToggle() != null) {
             // And if the tool has a worker
-            final Worker worker = tools.get(toolButtons.
-                    getToggles().indexOf(
-                            toolButtons.getSelectedToggle())).
-                    getWorker();
+            final Worker worker = tools.get(toolButtons.getToggles().indexOf(toolButtons.
+                    getSelectedToggle())).getWorker();
             if (worker != null) {
                 // Create an sets the console
                 // a TextArea which gets Worker output
@@ -225,27 +221,20 @@ public class DNAMain implements Initializable {
                 tab.setGraphic(label);
                 tab.setClosable(false);
                 consoleTabPane.getTabs().add(tab);
-                consoleTabPane.getSelectionModel().select(
-                        tab);
+                consoleTabPane.getSelectionModel().select(tab);
                 // Add the worker the ability to set the tab
                 // closing policy.
                 worker.setOnSucceeded(
-                        new EventHandler<WorkerStateEvent>() {
-                            @Override
-                            public void handle(WorkerStateEvent t) {
-                                tab.setClosable(true);
-                            }
+                        (WorkerStateEvent t) -> {
+                            tab.setClosable(true);
                         });
 
                 // Add the button the ability to cancel 
                 // the Worker.
                 button.setOnAction(
-                        new EventHandler<ActionEvent>() {
-                            @Override
-                            public void handle(ActionEvent t) {
-                                worker.cancel(true);
-                                tab.setClosable(true);
-                            }
+                        (ActionEvent t) -> {
+                            worker.cancel(true);
+                            tab.setClosable(true);
                         });
 
                 // Everything is ready, let's go.
@@ -258,6 +247,7 @@ public class DNAMain implements Initializable {
      * Properly stops all running Workers before closing the app. Nop, do nothing.
      * <p/>
      * @param event
+     * @return
      */
     @FXML
     public boolean closeApp(ActionEvent event) {
@@ -292,8 +282,8 @@ public class DNAMain implements Initializable {
     private boolean isIndexed() {
         String g = genome.getText();
         String[] ends = {".sa", ".bwt", ".amb", ".ann", ".pac"};
-        for (int i = 0; i < ends.length; i++) {
-            if (!new File(g + ends[i]).exists()) {
+        for (String end : ends) {
+            if (!new File(g + end).exists()) {
                 return false;
             }
         }

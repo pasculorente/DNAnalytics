@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 <?scenebuilder-preview-i18n-resource ../../DNAMain.properties?>
 
-<VBox id="VBox" alignment="CENTER" spacing="5.0" xmlns:fx="http://javafx.com/fxml" fx:controller="dnanalytics.view.tools.IndexFasta">
+<VBox id="VBox" alignment="CENTER" spacing="5.0" xmlns:fx="http://javafx.com/fxml" fx:controller="dnanalytics.view.tools.IndexFastaController">
   <children>
     <HBox alignment="CENTER">
       <children>

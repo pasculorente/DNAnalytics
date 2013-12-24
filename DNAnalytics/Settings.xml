@@ -1,3 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
-<properties/>
+<properties>
+<entry key="genome">D:\hola.fasta</entry>
+<entry key="align.dbsnp">D:\niv_19_32_hc_20130415_common.vcf</entry>
+<entry key="tempDir">D:\bwa</entry>
+<entry key="country">US</entry>
+<entry key="language">en</entry>
+</properties>

@@ -110,10 +110,13 @@ public class FileManager {
     public static final String BAM_EXTENSION = ".bam";
 
     public FileManager() {
-        if (System.getProperty("os.name").equals("Windows 7")) {
-            lastPath = new File(System.getProperty("user.dir"));
-        } else {
-            lastPath = new File(System.getProperty("PWD"));
+        switch (System.getProperty("os.name")) {
+        case "Windows 7":
+            lastPath = new File(System.getenv("user.dir"));
+            break;
+        case "Linux":
+        default:
+            lastPath = new File(System.getenv("PWD"));
         }
     }
 

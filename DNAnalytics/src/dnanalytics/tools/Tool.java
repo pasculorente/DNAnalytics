@@ -1,4 +1,4 @@
-package dnanalytics.view.tools;
+package dnanalytics.tools;
 
 import dnanalytics.worker.Worker;
 import javafx.scene.Node;

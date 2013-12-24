@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox id="VBox" alignment="TOP_CENTER" fillWidth="true" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0" styleClass="tabPanel" xmlns:fx="http://javafx.com/fxml" fx:controller="dnanalytics.view.tools.AlignViewController">
+  <children>
+    <HBox alignment="CENTER">
+      <children>
+        <Separator prefWidth="-1.0" HBox.hgrow="SOMETIMES" />
+        <Label text="%label.sequences" underline="false">
+        </Label>
+        <Separator prefWidth="-1.0" HBox.hgrow="SOMETIMES" />
+      </children>
+    </HBox>
+    <HBox prefHeight="-1.0" prefWidth="-1.0" spacing="3.0">
+      <children>
+        <TextField fx:id="forward" editable="false" prefWidth="-1.0" promptText="%file.forward" HBox.hgrow="ALWAYS" />  
+        <Button defaultButton="true" mnemonicParsing="false" onAction="#selectForward" text="%button.browse" />
+      </children>
+    </HBox>
+    <HBox prefHeight="-1.0" prefWidth="-1.0" spacing="3.0">
+      <children>
+        <TextField id="" fx:id="reverse" editable="false" prefWidth="-1.0" promptText="%file.reverse" HBox.hgrow="ALWAYS" />
+        <Button defaultButton="true" mnemonicParsing="false" onAction="#selectReverse" text="%button.browse" />
+      </children>
+    </HBox>
+    <HBox alignment="CENTER">
+      <children>
+        <Separator prefWidth="-1.0" HBox.hgrow="SOMETIMES" />
+        <Label text="%label.training" />
+        <Separator prefWidth="-1.0" HBox.hgrow="SOMETIMES" />
+      </children>
+    </HBox>
+    <HBox id="HBox" alignment="CENTER" spacing="5.0">
+      <children>
+        <TextField id="" fx:id="dbsnp" editable="false" prefWidth="-1.0" promptText="%file.dbsnp" HBox.hgrow="ALWAYS" />
+        <Button defaultButton="true" maxWidth="-1.0" mnemonicParsing="false" onAction="#selectDbsnp" text="%button.browse" />
+      </children>
+    </HBox>
+    <HBox id="HBox" alignment="CENTER" spacing="5.0">
+      <children>
+        <TextField id="mills2Align" fx:id="mills" editable="false" prefWidth="-1.0" promptText="%file.mills" HBox.hgrow="ALWAYS" />
+        <Button defaultButton="true" maxWidth="-1.0" mnemonicParsing="false" onAction="#selectMills" text="%button.browse" />
+      </children>
+    </HBox>
+    <HBox id="HBox" alignment="CENTER" spacing="5.0">
+      <children>
+        <TextField id="phase12Align" fx:id="phase1" editable="false" prefWidth="-1.0" promptText="%file.phase1" HBox.hgrow="ALWAYS" />
+        <Button defaultButton="true" maxWidth="-1.0" mnemonicParsing="false" onAction="#selectPhase1" text="%button.browse" />
+      </children>
+    </HBox>
+    <HBox alignment="CENTER">
+      <children>
+        <Separator prefWidth="-1.0" HBox.hgrow="SOMETIMES" />
+        <Label text="%label.output" />
+        <Separator prefWidth="-1.0" HBox.hgrow="SOMETIMES" />
+      </children>
+    </HBox>
+    <HBox prefHeight="-1.0" prefWidth="-1.0" spacing="3.0">
+      <children>
+        <TextField id="forwardFile" fx:id="output" editable="false" prefWidth="-1.0" promptText="Output file (.bam)" HBox.hgrow="ALWAYS" />
+        <Button id="selectFirstAlleleButton" defaultButton="true" maxWidth="-1.0" mnemonicParsing="false" onAction="#selectOutput" text="%button.browse" />
+      </children>
+    </HBox>
+    <HBox alignment="CENTER">
+      <children>
+        <Separator prefWidth="-1.0" HBox.hgrow="SOMETIMES" />
+        <Label text="%label.options" />
+        <Separator prefWidth="-1.0" HBox.hgrow="SOMETIMES" />
+      </children>
+    </HBox>
+    <VBox id="VBox" alignment="TOP_LEFT" spacing="5.0">
+      <children>
+        <HBox id="HBox" alignment="TOP_LEFT" spacing="5.0">
+          <children>
+            <Label text="%label.encoding" wrapText="true" />
+            <RadioButton id="isIllumina" mnemonicParsing="false" selected="true" text="Illumina 1.3+">
+              <toggleGroup>
+                <ToggleGroup fx:id="x1" />
+              </toggleGroup>
+            </RadioButton>
+            <RadioButton id="isSanger" mnemonicParsing="false" selected="false" text="Sanger" toggleGroup="$x1" />
+          </children>
+        </HBox>
+        <CheckBox id="reduceReads" fx:id="reduce" disable="false" mnemonicParsing="false" text="%checkbox.reducereads" />
+      </children>
+    </VBox>
+  </children>
+  <padding>
+    <Insets bottom="15.0" left="10.0" right="10.0" top="15.0" />
+  </padding>
+</VBox>
