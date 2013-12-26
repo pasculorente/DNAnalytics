@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="TOP_CENTER" spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dnanalytics.view.ConsoleController">
+    <children>
+        <Label fx:id="message" text="message" />
+        <HBox alignment="TOP_LEFT" spacing="5.0">
+            <children>
+                <Label text="Started at:" />
+                <Label fx:id="started" text="not implemented yet" />
+            </children>
+        </HBox>
+        <HBox spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+            <children>
+                <Label text="Total time:" />
+                <Label fx:id="totalTime" text="not implemented yet" />
+            </children>
+        </HBox>
+        <HBox spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+            <children>
+                <Label text="Progress" />
+                <ProgressBar fx:id="progress" maxWidth="1.7976931348623157E308" progress="0.0" HBox.hgrow="ALWAYS" />
+            </children>
+        </HBox>
+        <HBox spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" />
+        <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancel" text="%button.cancel" />
+        <TextArea id="console" fx:id="textArea" editable="false" wrapText="true" VBox.vgrow="SOMETIMES" />
+    </children>
+<padding>
+<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+</padding>
+</VBox>

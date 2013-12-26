@@ -15,22 +15,24 @@ import dnanalytics.tools.SelectVariantsTool;
 import dnanalytics.tools.AnnotationTool;
 import dnanalytics.tools.LowFrequencyTool;
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
+import javafx.scene.Node;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
@@ -40,9 +42,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.TilePane;
-import javafx.scene.layout.VBox;
 
 /**
  * DNAnalytics Controller for the FXML View. It controls the main view of the GUI. Main tasks of
@@ -179,55 +179,39 @@ public class DNAMain implements Initializable {
             final Worker worker = tools.get(toolButtons.getToggles().indexOf(toolButtons.
                     getSelectedToggle())).getWorker();
             if (worker != null) {
-                // Create an sets the console
-                // a TextArea which gets Worker output
-                final TextArea area = new TextArea();
-                area.setId("console");
-                area.setWrapText(true);
-                area.setEditable(false);
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("Console.fxml"), resources);
+                Node node = null;
+                try {
+                    node = loader.load();
+                } catch (IOException ex) {
+                    Logger.getLogger(DNAMain.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                System.out.println("Node loaded");
+                ConsoleController controller = loader.getController();
+                // Binds output, message and progress.
                 worker.setStreams(
-                        new PrintStream(new DNAOutputStream(area, ">")),
-                        new PrintStream(new DNAOutputStream(area, "err>")));
-                // Create the button to cancel the Worker
-                Button button = new Button(resources.getString("button.cancel"));
-                button.setMaxWidth(Float.MAX_VALUE);
-                // And a label with the Worker's message.
-                Label message = new Label(worker.getMessage());
-                message.textProperty().bind(worker.messageProperty());
-                // Put it all together, in a VBox.
-                VBox box = new VBox();
-                box.setAlignment(Pos.TOP_CENTER);
-                box.setFillWidth(true);
-                VBox.setVgrow(area, Priority.SOMETIMES);
-                box.getChildren().addAll(message, button, area);
-
-                // Creates a Progress Bar binded with 
-                // Worker's progress
-                ProgressBar bar = new ProgressBar();
-                bar.progressProperty().bind(worker.progressProperty());
-                // And a label binded with Worker's title
-                Label label = new Label(worker.getTitle(), bar);
+                        new PrintStream(new DNAOutputStream(controller.getTextArea(), ">")),
+                        new PrintStream(new DNAOutputStream(controller.getTextArea(), "err>")));
+                controller.getMessage().textProperty().bind(worker.messageProperty());
+                controller.getProgress().progressProperty().bind(worker.progressProperty());
+                // Tab title, binded to worker title.
+                Label label = new Label(worker.getTitle());
                 label.textProperty().bind(worker.titleProperty());
-                label.setContentDisplay(ContentDisplay.BOTTOM);
-
-                // Create the new tab, and sets its content
-                // and graphic.
+                // Create the new tab, and set its content
                 final Tab tab = new Tab();
-                tab.setContent(box);
+                tab.setContent(node);
                 tab.setGraphic(label);
                 tab.setClosable(false);
                 consoleTabPane.getTabs().add(tab);
                 consoleTabPane.getSelectionModel().select(tab);
-                // Add the worker the ability to set the tab
-                // closing policy.
+                // Add the worker the ability to set the tab closing policy.
                 worker.setOnSucceeded(
                         (WorkerStateEvent t) -> {
                             tab.setClosable(true);
                         });
 
-                // Add the button the ability to cancel 
-                // the Worker.
-                button.setOnAction(
+                // Add the button the ability to cancel the Worker.
+                controller.getCancelButton().setOnAction(
                         (ActionEvent t) -> {
                             worker.cancel(true);
                             tab.setClosable(true);
@@ -290,7 +274,7 @@ public class DNAMain implements Initializable {
         File file = FileManager.selectFolder("Temporary directory");
         if (file != null) {
             tempDir.setText(file.getAbsolutePath());
-            Settings.setProperty("tempDir", file. getAbsolutePath());
+            Settings.setProperty("tempDir", file.getAbsolutePath());
         }
     }
 

@@ -2,6 +2,7 @@ package dnanalytics.tools;
 
 import dnanalytics.view.DNAMain;
 import dnanalytics.view.tools.LowFrequencyController;
+import dnanalytics.worker.BAMAnalyzer;
 import dnanalytics.worker.Worker;
 import java.io.IOException;
 import java.util.ResourceBundle;
@@ -37,12 +38,7 @@ public class LowFrequencyTool implements Tool {
 
     @Override
     public Worker getWorker() {
-        System.out.println("Called"
-                + " " + controller.getInput()
-                + " " + controller.getOutput()
-                + " " + controller.getThreshold()
-                + ", but not supported yet");
-        return null;
+        return new BAMAnalyzer(controller.getInput(), controller.getOutput(), controller.getThreshold());
     }
 
     @Override
