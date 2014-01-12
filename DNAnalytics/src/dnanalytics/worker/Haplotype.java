@@ -3,7 +3,6 @@ package dnanalytics.worker;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.ResourceBundle;
 
 /**
  * Script for calling variants using HaplotypeCaller from GATK. If 'recalibrate', output file will
@@ -43,30 +42,6 @@ public class Haplotype extends WorkerScript {
 
     @Override
     protected int start() {
-        ResourceBundle controller = getResourceBundle();
-        int noFileErr = -1;
-        // Check if all parameters are OK.
-        if (!new File(genome).exists()) {
-            System.err.println(controller.getString("no.genome"));
-            return noFileErr;
-        }
-        if (!new File(dbsnp).exists()) {
-            System.err.println(controller.getString("no.dbsnp"));
-            return noFileErr;
-        }
-        /*if (!new File(temp).exists()) {
-         System.err.println(controller.getString(
-         "no.temp"));
-         return noFileErr;
-         }*/
-        if (output.isEmpty()) {
-            System.err.println(controller.getString("no.output"));
-            return noFileErr;
-        }
-        if (!new File(input).exists()) {
-            System.err.println(controller.getString("no.input"));
-            return noFileErr;
-        }
         updateTitle("Calling " + new File(output).getName());
         // Haha, this is what one has to do to avoid /s/l/a/s/h/e/s/
         // although in the end this is not running in Windows OS
@@ -77,7 +52,7 @@ public class Haplotype extends WorkerScript {
         SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd_HHmmss_");
         String timestamp = "call_" + df.format(new Date());
 
-        updateMessage(controller.getString("call.call"));
+        updateMessage(resources.getString("call.call"));
         updateProgress(1, (recalibrate ? 3 : 2));
         executeCommand(gatk
                 + " -T HaplotypeCaller"
@@ -88,25 +63,12 @@ public class Haplotype extends WorkerScript {
 
         // Recalibrate
         if (recalibrate) {
-            // Check for database
-            if (!new File(mills).exists()) {
-                System.err.println(controller.getString("no.mills"));
-                return noFileErr;
-            }
-            if (!new File(hapmap).exists()) {
-                System.err.println(controller.getString("no.hapmap"));
-                return noFileErr;
-            }
-            if (!new File(omni).exists()) {
-                System.err.println(controller.getString("no.omni"));
-                return noFileErr;
-            }
             File tranches = new File(temp, timestamp + "tranches");
             File recal = new File(temp, timestamp + "recal");
             File outputRecalibrated = new File(output.
                     replace(".vcf", "_recalibrated.vcf"));
             updateProgress(1.5, 3);
-            updateMessage(controller.getString("call.prerecal"));
+            updateMessage(resources.getString("call.prerecal"));
             executeCommand(gatk
                     + " -T VariantRecalibrator"
                     + " -R " + genome
@@ -124,7 +86,7 @@ public class Haplotype extends WorkerScript {
                     + " -an QD -an MQRankSum -an ReadPosRankSum -an FS -an MQ -an DP"
                     + " -mode BOTH");
 
-            updateMessage(controller.getString("call.recal"));
+            updateMessage(resources.getString("call.recal"));
             updateProgress(2.5, 3);
             executeCommand(gatk
                     + " -T ApplyRecalibration"
@@ -138,10 +100,53 @@ public class Haplotype extends WorkerScript {
 
             tranches.delete();
             recal.delete();
-            updateMessage(controller.getString("call.completed"));
+            updateMessage(resources.getString("call.completed"));
             updateProgress(1, 1);
         }
 
         return 0;
+    }
+
+    @Override
+    public boolean checkParameters() {
+        
+        // Check if all parameters are OK.
+        if (!new File(genome).exists()) {
+            System.err.println(resources.getString("no.genome"));
+            return false;
+        }
+        if (!new File(dbsnp).exists()) {
+            System.err.println(resources.getString("no.dbsnp"));
+            return false;
+        }
+        /*if (!new File(temp).exists()) {
+         System.err.println(controller.getString(
+         "no.temp"));
+         return noFileErr;
+         }*/
+        if (output.isEmpty()) {
+            System.err.println(resources.getString("no.output"));
+            return false;
+        }
+        if (!new File(input).exists()) {
+            System.err.println(resources.getString("no.input"));
+            return false;
+        }
+        if (recalibrate) {
+            // Check for database
+            if (!new File(mills).exists()) {
+                System.err.println(resources.getString("no.mills"));
+                return false;
+            }
+            if (!new File(hapmap).exists()) {
+                System.err.println(resources.getString("no.hapmap"));
+                return false;
+            }
+            if (!new File(omni).exists()) {
+                System.err.println(resources.getString("no.omni"));
+                return false;
+            }
+        }
+        return true;
     }
 }

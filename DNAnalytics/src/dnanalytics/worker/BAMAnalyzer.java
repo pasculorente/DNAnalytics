@@ -2,14 +2,13 @@ package dnanalytics.worker;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,7 +26,7 @@ import java.util.logging.Logger;
  */
 public class BAMAnalyzer extends WorkerScript {
 
-    private static final SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
+    //private static final SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
     private static final int[] lengths = new int[24];//1..22, X, Y
     private final int threshold;
     private final String input, output;
@@ -131,14 +130,16 @@ public class BAMAnalyzer extends WorkerScript {
      * @param info Some message
      */
     private void printProgress(String info) {
-        updateMessage(info);
-        updateProgress(currentChromosome, lengths.length);
-        outStream.println(df.format(System.currentTimeMillis() - startTime)
-                + "\t" + df.format(System.currentTimeMillis() - stepTime)
+        updateProgress(info, currentChromosome, lengths.length);
+//        updateMessage(info);
+//        updateProgress(currentChromosome, lengths.length);
+        outStream.println(dateFormat.format(System.currentTimeMillis() - startTime)
+                + "\t" + dateFormat.format(System.currentTimeMillis() - stepTime)
                 + "\t" + info);
     }
 
     private void startProgress() {
+        updateProgress("Parsing BAM file: " + input, 1, 100);
         outStream.println("Total time\tStep time\tInfo");
         startTime = System.currentTimeMillis();
         stepTime = startTime;
@@ -331,10 +332,6 @@ public class BAMAnalyzer extends WorkerScript {
         outStream.println("Parsing BAM File: " + input);
         updateTitle("Parsing " + input);
         startProgress();
-        // It was giving problems with the hours, this line fixes it, but I'm not happy at all,
-        // cause I'm not sure if this is portable.
-        df.setTimeZone(TimeZone.getTimeZone("GMT"));
-
         // Process to read the BAM file.
         // This is an external process. We use samtools.
         ProcessBuilder builder = comandoSAMTools(input);
@@ -401,6 +398,20 @@ public class BAMAnalyzer extends WorkerScript {
         }
         updateProgress(1, 1);
         return 0;
+    }
+
+    @Override
+    public boolean checkParameters() {
+        if (!new File(input).exists()) {
+            return false;
+        }
+        if (threshold == -1) {
+            return false;
+        }
+        if (output.isEmpty()) {
+            return false;
+        }
+        return true;
     }
 
     class PrimateExon {

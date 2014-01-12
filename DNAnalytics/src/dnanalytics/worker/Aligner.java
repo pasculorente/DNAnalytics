@@ -5,18 +5,18 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Script for the alignment of a sample sequences. <p>Alignment General View</p>
+ * Script for the alignment of a sample sequences.
+ * <p>
+ * Alignment General View</p>
  * <ol>
- * <li>Initial alignment</li> <ol type="a"> <li>[BWA] aln 1</li> <li>[BWA] aln
- * 2</li> <li>[BWA] sampe 1 n 2
+ * <li>Initial alignment</li> <ol type="a"> <li>[BWA] aln 1</li> <li>[BWA] aln 2</li> <li>[BWA]
+ * sampe 1 n 2
  * </li> </ol> <li> Refinement </li> <ol type="a"> <li>[Picard] CleanSam</li>
- * <li>[Picard] SortSam</li> <li>[Picard] MarkDuplicates</li> <li>[Picard]
- * AddOrReplaceRGHeader</li> <li>[Picard] BuildBamIndex</li> </ol>
- * <li>Realignment and recalibration</li> <ol type="a"> <li>[GATK]
- * RealignerTargetCreator</li> <li>[GATK] IndelRealigner</li> <li>[GATK]
- * BaseRecalibrator</li>
- * <li>[GATK] PrintReads</li> </ol> <li>Reduce Reads (experimental and
- * optional)</li> <ol type="a">
+ * <li>[Picard] SortSam</li> <li>[Picard] MarkDuplicates</li> <li>[Picard] AddOrReplaceRGHeader</li>
+ * <li>[Picard] BuildBamIndex</li> </ol>
+ * <li>Realignment and recalibration</li> <ol type="a"> <li>[GATK] RealignerTargetCreator</li>
+ * <li>[GATK] IndelRealigner</li> <li>[GATK] BaseRecalibrator</li>
+ * <li>[GATK] PrintReads</li> </ol> <li>Reduce Reads (experimental and optional)</li> <ol type="a">
  * <li>[GATK] ReduceReads</li> </ol> </ol>
  *
  * @author Pascual Lorente Arencibia
@@ -42,40 +42,6 @@ public class Aligner extends WorkerScript {
 
     @Override
     protected int start() {
-        int noFileErr = 1;
-        // Check if all parameters are OK.
-        if (!new File(genome).exists()) {
-            errStream.println(getResourceBundle().getString("no.genome"));
-            return noFileErr;
-        }
-        if (!new File(forward).exists()) {
-            errStream.println(getResourceBundle().getString("no.forward"));
-            return noFileErr;
-        }
-        if (!new File(reverse).exists()) {
-            errStream.println(getResourceBundle().getString("no.reverse"));
-            return noFileErr;
-        }
-        if (!new File(dbsnp).exists()) {
-            errStream.println(getResourceBundle().getString("no.dbsnp"));
-            return noFileErr;
-        }
-        if (!new File(mills).exists()) {
-            errStream.println(getResourceBundle().getString("no.mills"));
-            return noFileErr;
-        }
-        if (!new File(phase1).exists()) {
-            errStream.println(getResourceBundle().getString("no.phase1"));
-            return noFileErr;
-        }
-        if (!new File(temp).exists()) {
-            errStream.println(getResourceBundle().getString("no.temp"));
-            return noFileErr;
-        }
-        if (output.isEmpty()) {
-            errStream.println(getResourceBundle().getString("no.output"));
-            return noFileErr;
-        }
 
         updateTitle("Aligning " + new File(output).getName());
 
@@ -231,7 +197,6 @@ public class Aligner extends WorkerScript {
          * 10: IndelRealigner
          *    Makes the realigment
          */
-
         // GATK commandLine
         //  -Xmx10g : Limits use of memory (for Java execution) to 10 GB
         //  -nct    : Number of threads
@@ -295,7 +260,6 @@ public class Aligner extends WorkerScript {
                 + " --knownSites " + mills
                 + " --knownSites " + phase1
                 + " -o " + recal);
-
 
         updateProgress(counter++, total);
         updateMessage(getResourceBundle().getString("align.recal"));
@@ -384,5 +348,43 @@ public class Aligner extends WorkerScript {
 //        BuildBamIndex buildBamIndex = new BuildBamIndex();
 //        buildBamIndex.INPUT = picard4.getAbsolutePath();
 //        buildBamIndex.instanceMain(args);
+
+    @Override
+    public boolean checkParameters() {
+        // Check if all parameters are OK.
+        if (!new File(genome).exists()) {
+            errStream.println(getResourceBundle().getString("no.genome"));
+            return false;
+        }
+        if (!new File(forward).exists()) {
+            errStream.println(getResourceBundle().getString("no.forward"));
+            return false;
+        }
+        if (!new File(reverse).exists()) {
+            errStream.println(getResourceBundle().getString("no.reverse"));
+            return false;
+        }
+        if (!new File(dbsnp).exists()) {
+            errStream.println(getResourceBundle().getString("no.dbsnp"));
+            return false;
+        }
+        if (!new File(mills).exists()) {
+            errStream.println(getResourceBundle().getString("no.mills"));
+            return false;
+        }
+        if (!new File(phase1).exists()) {
+            errStream.println(getResourceBundle().getString("no.phase1"));
+            return false;
+        }
+        if (!new File(temp).exists()) {
+            errStream.println(getResourceBundle().getString("no.temp"));
+            return false;
+        }
+        if (output.isEmpty()) {
+            errStream.println(getResourceBundle().getString("no.output"));
+            return false;
+        }
+        return true;
+    }
 
 }

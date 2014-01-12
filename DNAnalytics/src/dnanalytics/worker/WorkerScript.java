@@ -5,11 +5,11 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.ResourceBundle;
+import java.util.TimeZone;
 
 /**
- * Extends Worker so just need to implement start(). It provides
- * executeCommand(String string) to launch system commands to a /bin/bash
- * console. Remember:
+ * Extends Worker so just need to implement start(). It provides executeCommand(String string) to
+ * launch system commands to a /bin/bash console. Remember:
  * <ul><li>From Worker
  * <ol>
  * <li>extend Worker</li>
@@ -29,14 +29,20 @@ import java.util.ResourceBundle;
 public abstract class WorkerScript extends Worker {
 
     private Process process;
-    private final static ResourceBundle resources = DNAMain.getResources();
+    protected final static ResourceBundle resources = DNAMain.getResources();
     private long startTime;
     private boolean exit;
+    protected final static SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+
+    {
+        // It was giving problems with the hours, this line fixes it, but I'm not happy at all,
+        // cause I'm not sure if this is portable.
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+    }
 
     @Override
     protected Integer call() {
         // Previous tasks
-        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
         startTime = System.currentTimeMillis();
         outStream.println(resources.getString("time.start") + " " + dateFormat.
                 format(Calendar.getInstance().getTime()));
@@ -99,7 +105,7 @@ public abstract class WorkerScript extends Worker {
         }
         exit = true;
         updateProgress(1, 1);
-        
+
     }
 
     protected ResourceBundle getResourceBundle() {
@@ -107,10 +113,24 @@ public abstract class WorkerScript extends Worker {
     }
 
     /**
-     * Write the translation of your script here. Use executeCommand() to run an
-     * external command.
+     * Write the translation of your script here. Use executeCommand() to run an external command.
      *
      * @return
      */
     protected abstract int start();
+
+    /**
+     * Calls updateProgress and updateMessage from Task, but also updates timestamps.
+     *
+     * @param message The message for updateMessage.
+     * @param progress The progress.
+     * @param max The end of the progress.
+     */
+    protected void updateProgress(String message, double progress, double max) {
+        updateMessage(message);
+        updateProgress(progress, max);
+        elapsedTime.setValue(dateFormat.format(System.currentTimeMillis() - startTime));
+    }
+
+    
 }

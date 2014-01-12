@@ -1,10 +1,10 @@
 package dnanalytics.tools;
 
 import dnanalytics.utils.Settings;
-import dnanalytics.worker.WorkerScript;
 import dnanalytics.view.DNAMain;
 import dnanalytics.view.tools.CombineVariantsController;
 import dnanalytics.worker.Worker;
+import dnanalytics.worker.WorkerScript;
 import java.io.File;
 import java.io.IOException;
 import java.util.ResourceBundle;
@@ -32,42 +32,30 @@ public class CombineVariantsTool implements Tool {
     @Override
     public Node getView() {
         if (loader == null) {
-            loader = new FXMLLoader(CombineVariantsController.class.getResource("CombineVariants.fxml"), resources);
+            loader = new FXMLLoader(CombineVariantsController.class.getResource(
+                    "CombineVariants.fxml"), resources);
             try {
                 view = loader.load();
             } catch (IOException ex) {
-                Logger.getLogger(CombineVariantsController.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(CombineVariantsController.class.getName()).log(Level.SEVERE, null,
+                        ex);
             }
             controller = loader.getController();
         }
         return view;
     }
-    private boolean checkParameters() {
-        if (Settings.getGenome() == null) {
-            System.err.println(DNAMain.getResources().getString("no.genome"));
-            return false;
-        }
-        if (controller.getCombinedVCF().isEmpty()) {
-            System.err.println(DNAMain.getResources().getString("no.output"));
-            return false;
-        }
-        return true;
-    }
 
     @Override
     public Worker getWorker() {
-
-        if (!checkParameters()) {
-            return null;
-        }
         return new WorkerScript() {
             ListView<String> vcfList = controller.getVcfList();
             String gatk = "";
             String variants = "";
-            
+
             private void initializeSettings() {
-                variants = vcfList.getItems().stream().map((var) -> " -V " + var).reduce(variants, String::concat);
-                
+                variants = vcfList.getItems().stream().map((var) -> " -V " + var).reduce(variants,
+                        String::concat);
+
                 gatk = "java -jar software" + File.separator + "gatk" + File.separator
                         + "GenomeAnalysisTK.jar";
             }
@@ -105,17 +93,31 @@ public class CombineVariantsTool implements Tool {
                 updateTitle("combinig " + new File(controller.getCombinedVCF()).getName());
 
                 switch (controller.getOperation()) {
-                    case "intersection":
-                        intersectVariants();
-                        break;
-                    case "aggregation":
-                        aggregateVariants();
-                        break;
-                    case "difference":
-                        deductVariants();
+                case "intersection":
+                    intersectVariants();
+                    break;
+                case "aggregation":
+                    aggregateVariants();
+                    break;
+                case "difference":
+                    deductVariants();
                 }
                 return 0;
             }
+
+            @Override
+            public boolean checkParameters() {
+                if (Settings.getGenome() == null) {
+                    System.err.println(DNAMain.getResources().getString("no.genome"));
+                    return false;
+                }
+                if (controller.getCombinedVCF().isEmpty()) {
+                    System.err.println(DNAMain.getResources().getString("no.output"));
+                    return false;
+                }
+                return true;
+            }
+
         };
     }
 

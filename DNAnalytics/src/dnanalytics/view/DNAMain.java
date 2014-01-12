@@ -1,23 +1,25 @@
 package dnanalytics.view;
 
 import dnanalytics.tools.AlignViewTool;
-import dnanalytics.utils.FileManager;
-import dnanalytics.utils.Settings;
-import dnanalytics.worker.Worker;
-import dnanalytics.utils.DNAOutputStream;
-import dnanalytics.tools.Tool;
+import dnanalytics.tools.AnnotationTool;
 import dnanalytics.tools.CallVariantsTool;
 import dnanalytics.tools.CombineVariantsTool;
 import dnanalytics.tools.DindelTool;
 import dnanalytics.tools.FilterFrequenciesTool;
 import dnanalytics.tools.IndexFastaTool;
-import dnanalytics.tools.SelectVariantsTool;
-import dnanalytics.tools.AnnotationTool;
 import dnanalytics.tools.LowFrequencyTool;
+import dnanalytics.tools.SelectVariantsTool;
+import dnanalytics.tools.Tool;
+import dnanalytics.utils.DNAOutputStream;
+import dnanalytics.utils.FileManager;
+import dnanalytics.utils.Settings;
+import dnanalytics.worker.Worker;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -81,6 +83,8 @@ public class DNAMain implements Initializable {
     private final ToggleGroup toolButtons = new ToggleGroup();
     private final ArrayList<Tool> tools = new ArrayList<>();
 
+    private final DateFormat df = new SimpleDateFormat("HH:mm:ss");
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
@@ -112,16 +116,16 @@ public class DNAMain implements Initializable {
         /* Do the magic, when the user selects a tool, make it visible in the currentTool pane */
         toolButtons.selectedToggleProperty().addListener(
                 (ObservableValue<? extends Toggle> ov, Toggle t, Toggle t1) -> {
-                    ToggleButton button = (ToggleButton) t1;
-                    if (t1 != null) {
-                        Tool tool = tools.get(toolButtons.
-                                getToggles().indexOf(t1));
-                        currentTool.setContent(tool.getView());
-                        ImageView a = (ImageView) button.getGraphic();
-                        currentTool.setGraphic(new ImageView(a.getImage()));
-                        currentTool.setText(tool.getTitle());
-                    }
-                });
+            ToggleButton button = (ToggleButton) t1;
+            if (t1 != null) {
+                Tool tool = tools.get(toolButtons.
+                        getToggles().indexOf(t1));
+                currentTool.setContent(tool.getView());
+                ImageView a = (ImageView) button.getGraphic();
+                currentTool.setGraphic(new ImageView(a.getImage()));
+                currentTool.setText(tool.getTitle());
+            }
+        });
 
         // Redirect outputs
         System.setErr(new PrintStream(new DNAOutputStream(console, "err>")));
@@ -142,13 +146,13 @@ public class DNAMain implements Initializable {
         // system language.
         languagesBox.getSelectionModel().selectedItemProperty().addListener(
                 (ObservableValue<? extends String> ov, String old, String current) -> {
-                    for (Locale locale : Settings.getLocales()) {
-                        if (current.equals(locale.getDisplayName(Settings.getLocale()))) {
-                            Settings.setLocale(locale);
-                            return;
-                        }
-                    }
-                });
+            for (Locale locale : Settings.getLocales()) {
+                if (current.equals(locale.getDisplayName(Settings.getLocale()))) {
+                    Settings.setLocale(locale);
+                    return;
+                }
+            }
+        });
     }
 
     /**
@@ -178,48 +182,51 @@ public class DNAMain implements Initializable {
             // And if the tool has a worker
             final Worker worker = tools.get(toolButtons.getToggles().indexOf(toolButtons.
                     getSelectedToggle())).getWorker();
-            if (worker != null) {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("Console.fxml"), resources);
-                Node node = null;
-                try {
-                    node = loader.load();
-                } catch (IOException ex) {
-                    Logger.getLogger(DNAMain.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                System.out.println("Node loaded");
-                ConsoleController controller = loader.getController();
-                // Binds output, message and progress.
-                worker.setStreams(
-                        new PrintStream(new DNAOutputStream(controller.getTextArea(), ">")),
-                        new PrintStream(new DNAOutputStream(controller.getTextArea(), "err>")));
-                controller.getMessage().textProperty().bind(worker.messageProperty());
-                controller.getProgress().progressProperty().bind(worker.progressProperty());
-                // Tab title, binded to worker title.
-                Label label = new Label(worker.getTitle());
-                label.textProperty().bind(worker.titleProperty());
-                // Create the new tab, and set its content
-                final Tab tab = new Tab();
-                tab.setContent(node);
-                tab.setGraphic(label);
-                tab.setClosable(false);
-                consoleTabPane.getTabs().add(tab);
-                consoleTabPane.getSelectionModel().select(tab);
-                // Add the worker the ability to set the tab closing policy.
-                worker.setOnSucceeded(
-                        (WorkerStateEvent t) -> {
-                            tab.setClosable(true);
-                        });
-
-                // Add the button the ability to cancel the Worker.
-                controller.getCancelButton().setOnAction(
-                        (ActionEvent t) -> {
-                            worker.cancel(true);
-                            tab.setClosable(true);
-                        });
-
-                // Everything is ready, let's go.
-                new Thread(worker).start();
+            if (!worker.checkParameters()) {
+                System.err.println("Error en los parámetros.");
+                return;
             }
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("Console.fxml"), resources);
+            Node node = null;
+            try {
+                node = loader.load();
+            } catch (IOException ex) {
+                Logger.getLogger(DNAMain.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            System.out.println("Node loaded");
+            ConsoleController controller = loader.getController();
+            // Binds output, message and progress.
+            worker.setStreams(
+                    new PrintStream(new DNAOutputStream(controller.getTextArea(), ">")),
+                    new PrintStream(new DNAOutputStream(controller.getTextArea(), "err>")));
+            controller.getMessage().textProperty().bind(worker.messageProperty());
+            controller.getProgress().progressProperty().bind(worker.progressProperty());
+            // Tab title, binded to worker title.
+            Label label = new Label(worker.getTitle());
+            label.textProperty().bind(worker.titleProperty());
+            controller.getStarted().setText(df.format(System.currentTimeMillis()));
+            controller.getTotalTime().textProperty().bind(worker.getElapsedTime());
+            // Create the new tab, and set its content
+            final Tab tab = new Tab();
+            tab.setContent(node);
+            tab.setGraphic(label);
+            tab.setClosable(false);
+            consoleTabPane.getTabs().add(tab);
+            consoleTabPane.getSelectionModel().select(tab);
+            // Add the worker the ability to set the tab closing policy.
+            worker.setOnSucceeded(
+                    (WorkerStateEvent t) -> {
+                tab.setClosable(true);
+            });
+            // Add the button the ability to cancel the Worker.
+            controller.getCancelButton().setOnAction(
+                    (ActionEvent t) -> {
+                worker.cancel(true);
+                tab.setClosable(true);
+            });
+
+            // Everything is ready, let's go.
+            new Thread(worker).start();
         }
     }
 

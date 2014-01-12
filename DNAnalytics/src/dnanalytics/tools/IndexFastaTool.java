@@ -20,7 +20,7 @@ import javafx.scene.Node;
 public class IndexFastaTool implements Tool {
 
     private final static ResourceBundle resources = DNAMain.getResources();
-    
+
     private Node view;
 
     private FXMLLoader loader;
@@ -30,7 +30,8 @@ public class IndexFastaTool implements Tool {
     @Override
     public Node getView() {
         if (loader == null) {
-            loader = new FXMLLoader(IndexFastaController.class.getResource("IndexFasta.fxml"), resources);
+            loader = new FXMLLoader(IndexFastaController.class.getResource("IndexFasta.fxml"),
+                    resources);
             try {
                 view = loader.load();
             } catch (IOException ex) {
@@ -43,16 +44,22 @@ public class IndexFastaTool implements Tool {
 
     @Override
     public Worker getWorker() {
-        if (!new File(controller.getGenome()).exists()) {
-            System.err.println(resources.getString("no.genome"));
-            return null;
-        }
         return new WorkerScript() {
             @Override
             protected int start() {
                 updateTitle("Indexing " + new File(controller.getGenome()).getName());
                 updateMessage(resources.getString("index.index"));
                 return executeCommand("bwa index -a bwtsw " + controller.getGenome());
+            }
+
+            @Override
+            public boolean checkParameters() {
+
+                if (!new File(controller.getGenome()).exists()) {
+                    System.err.println(resources.getString("no.genome"));
+                    return false;
+                }
+                return true;
             }
         };
     }
@@ -66,5 +73,5 @@ public class IndexFastaTool implements Tool {
     public String getStyleID() {
         return "indexFasta";
     }
-    
+
 }

@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package dnanalytics.view.tools;
 
 import dnanalytics.utils.FileManager;
@@ -35,16 +34,20 @@ public class LowFrequencyController {
     private void setOutput(ActionEvent event) {
         FileManager.setSaveFile("TSV", "Tabulated", null, ".tsv", output);
     }
-    
-    public String getInput(){
+
+    public String getInput() {
         return input.getText();
     }
-    
-    public String getOutput(){
+
+    public String getOutput() {
         return output.getText();
     }
-    
-    public int getThreshold(){
-        return Integer.valueOf(threshold.getText());
+
+    public int getThreshold() {
+        try {
+            return Integer.valueOf(threshold.getText());
+        } catch (NumberFormatException exception) {
+            return -1;
+        }
     }
 }

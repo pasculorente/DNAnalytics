@@ -32,7 +32,8 @@ public class FilterFrequenciesController {
     private TextField maxFrequency;
 
     public void initialize() {
-        columnField.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
+        columnField.textProperty().addListener((ObservableValue<? extends String> ov, String t,
+                String t1) -> {
             columnName.setText("Check first line");
             if (new File(frequencyFile.getText()).exists()) {
                 BufferedReader br = null;
@@ -72,8 +73,12 @@ public class FilterFrequenciesController {
                 FileManager.TSV_FILTERS, frequencyFile);
     }
 
-    public String getColumnField() {
-        return columnField.getText();
+    public int getColumn() {
+        try {
+            return Integer.valueOf(columnField.getText());
+        } catch (NumberFormatException exception) {
+            return -1;
+        }
     }
 
     public String getFrequencyFile() {
@@ -81,7 +86,12 @@ public class FilterFrequenciesController {
     }
 
     public Double getMaxFrequency() {
-        return Double.valueOf(maxFrequency.getText());
+        try {
+            return Double.valueOf(maxFrequency.getText());
+        } catch (NumberFormatException ex) {
+            return -1.0;
+        }
+
     }
 
 }

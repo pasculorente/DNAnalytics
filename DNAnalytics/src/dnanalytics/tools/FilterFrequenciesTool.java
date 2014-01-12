@@ -1,9 +1,9 @@
 package dnanalytics.tools;
 
-import dnanalytics.worker.WorkerScript;
 import dnanalytics.view.DNAMain;
 import dnanalytics.view.tools.FilterFrequenciesController;
 import dnanalytics.worker.Worker;
+import dnanalytics.worker.WorkerScript;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -32,11 +32,13 @@ public class FilterFrequenciesTool implements Tool {
     @Override
     public Node getView() {
         if (loader == null) {
-            loader = new FXMLLoader(FilterFrequenciesController.class.getResource("FilterFrequencies.fxml"), resources);
+            loader = new FXMLLoader(FilterFrequenciesController.class.getResource(
+                    "FilterFrequencies.fxml"), resources);
             try {
                 view = loader.load();
             } catch (IOException ex) {
-                Logger.getLogger(FilterFrequenciesController.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(FilterFrequenciesController.class.getName()).
+                        log(Level.SEVERE, null, ex);
             }
             controller = loader.getController();
         }
@@ -45,47 +47,35 @@ public class FilterFrequenciesTool implements Tool {
 
     @Override
     public Worker getWorker() {
-        if (controller.getFrequencyFile().isEmpty()) {
-            System.err.println(resources.getString("no.output"));
-            return null;
-        }
-        final int column;
-        try {
-            column = Integer.valueOf(controller.getColumnField());
-        } catch (NumberFormatException ex) {
-            System.err.println("Wrong column number format");
-            return null;
-        }
+        final String input = controller.getFrequencyFile();
+        final int column = controller.getColumn();
         final double freq = controller.getMaxFrequency();
 
         return new WorkerScript() {
             @Override
             protected int start() {
                 String line;
-                BufferedReader br = null;
-                BufferedWriter bw = null;
                 String[] columns;
 
-                updateTitle("Filtering " + new File(controller.getFrequencyFile()).getName());
+                updateTitle("Filtering " + new File(input).getName());
                 try {
                     Thread.sleep(3000);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(FilterFrequenciesTool.class.getName()).log(Level.SEVERE,
                             null, ex);
                 }
-                try {
-                    File fr = new File(controller.getFrequencyFile());
-                    br = new BufferedReader(new FileReader(fr));
-                    bw = new BufferedWriter(new FileWriter(controller.getFrequencyFile().replace(".tsv", "_filtered.tsv")));
-                    long total = fr.length();
+                File fr = new File(input);
+                long total = fr.length();
+                try (BufferedReader br = new BufferedReader(new FileReader(fr));
+                        BufferedWriter bw = new BufferedWriter(new FileWriter(input.replace(".tsv",
+                                                "_filtered.tsv")));) {
                     long read = 0;
                     updateProgress(read, total);
                     // Looking for column title
                     if ((line = br.readLine()) != null) {
                         columns = line.split("\t");
                         if (column <= columns.length && column > 0) {
-                            outStream.println(
-                                    "Looking at " + columns[column - 1]);
+                            outStream.println("Looking at " + columns[column - 1]);
                         }
                         bw.write(line);
                         bw.newLine();
@@ -126,24 +116,26 @@ public class FilterFrequenciesTool implements Tool {
                         }
                     }
                 } catch (FileNotFoundException ex) {
-                    errStream.println(
-                            "File " + controller.getFrequencyFile() + "not found");
+                    errStream.println("File " + input + " not found");
                 } catch (IOException ex) {
                     System.err.println("Error reading file");
-                } finally {
-                    try {
-                        if (br != null) {
-                            br.close();
-                        }
-                        if (bw != null) {
-                            bw.close();
-                        }
-                    } catch (IOException ex) {
-                        Logger.getLogger(DNAMain.class.getName()).log(
-                                Level.SEVERE, null, ex);
-                    }
-                }
+                } 
                 return 0;
+            }
+
+            @Override
+            public boolean checkParameters() {
+                if (input.isEmpty() || !new File(input).exists()) {
+                    System.err.println(resources.getString("no.output"));
+                    return false;
+                }
+                if (column == -1) {
+                    return false;
+                }
+                if (freq < 0) {
+                    return false;
+                }
+                return true;
             }
 
         };

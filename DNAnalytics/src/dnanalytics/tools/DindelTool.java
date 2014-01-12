@@ -46,28 +46,8 @@ public class DindelTool implements Tool {
         return view;
     }
 
-    private boolean checkParameters() {
-        // Checking parameters
-        if (!new File(controller.getInput()).exists()) {
-            System.err.println(resources.getString("no.input"));
-            return false;
-        }
-        if (controller.getOutput().isEmpty()) {
-            System.err.println(resources.getString("no.output"));
-            return false;
-        }
-        if (Settings.getGenome() == null || !Settings.getGenome().exists()) {
-            System.err.println(resources.getString("no.genome"));
-            return false;
-        }
-        return true;
-    }
-
     @Override
     public Worker getWorker() {
-        if (!checkParameters()) {
-            return null;
-        }
         return new WorkerScript() {
             // If output is /path/to/myfile.vcf, name will be myfile
             private String name;
@@ -89,6 +69,24 @@ public class DindelTool implements Tool {
                 windows.mkdir();
                 windows2.mkdir();
                 dindel = new File("software", "dindel");
+            }
+
+            @Override
+            public boolean checkParameters() {
+                // Checking parameters
+                if (!new File(controller.getInput()).exists()) {
+                    System.err.println(resources.getString("no.input"));
+                    return false;
+                }
+                if (controller.getOutput().isEmpty()) {
+                    System.err.println(resources.getString("no.output"));
+                    return false;
+                }
+                if (Settings.getGenome() == null || !Settings.getGenome().exists()) {
+                    System.err.println(resources.getString("no.genome"));
+                    return false;
+                }
+                return true;
             }
 
             /**
@@ -142,8 +140,8 @@ public class DindelTool implements Tool {
 
             /**
              * Third step for dindel standard workflow: for every window, DindelTool will generate
- candidate haplotypes from the candidate indels and SNPs it detects in the BAM file,
- and realign the reads to these candidate haplotypes. The realignment step is the
+             * candidate haplotypes from the candidate indels and SNPs it detects in the BAM file,
+             * and realign the reads to these candidate haplotypes. The realignment step is the
              * computationally most intensive step.
              */
             private void realignToHaplotypes() {
@@ -158,7 +156,7 @@ public class DindelTool implements Tool {
                 //   --outputFile temp/name/windows2/name_windows001.txt \
                 //   &>/dev/null
                 // For this phase we will take into account progress.
-                
+
                 long start = System.currentTimeMillis();
                 int i = 1;
                 File[] files = windows.listFiles();
@@ -190,7 +188,7 @@ public class DindelTool implements Tool {
 
             /**
              * Last step for dindel standard workflow: interpreting the output from DindelTool and
- produce indel calls and qualities in the VCF4 format.
+             * produce indel calls and qualities in the VCF4 format.
              */
             private void mergeIndelsInVcf() {
                 // Command appearance:
