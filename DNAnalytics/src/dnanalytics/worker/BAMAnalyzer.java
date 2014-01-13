@@ -24,7 +24,7 @@ import java.util.logging.Logger;
  *
  * @author Pascual
  */
-public class BAMAnalyzer extends WorkerScript {
+public class BAMAnalyzer extends Worker {
 
     //private static final SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
     private static final int[] lengths = new int[24];//1..22, X, Y

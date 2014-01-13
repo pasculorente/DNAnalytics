@@ -1,6 +1,6 @@
 package dnanalytics.tools;
 
-import dnanalytics.utils.Settings;
+import dnanalytics.DNAnalytics;
 import dnanalytics.view.DNAMain;
 import dnanalytics.view.tools.CallVariantsController;
 import dnanalytics.worker.Haplotype;
@@ -40,10 +40,10 @@ public class CallVariantsTool implements Tool {
     @Override
     public Worker getWorker() {
         return new Haplotype(
-                Settings.getGenome().getAbsolutePath(), controller.getDbsnp(),
+                DNAnalytics.getProperties().getProperty("genome"), controller.getDbsnp(),
                 controller.getOmni(), controller.getHapmap(), controller.getMills(),
                 controller.getOutput(), controller.getInput(), controller.isRecalibrate(),
-                Settings.getProperty("tempDir"));
+                DNAnalytics.getProperties().getProperty("tempDir"));
     }
 
     @Override

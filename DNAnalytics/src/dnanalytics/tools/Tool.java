@@ -48,7 +48,7 @@ public interface Tool {
      * Style ID for the ToggleButton. Create an entry on the css with
      * identically ID.
      *
-     * @return an String with the css Style.
+     * @return an String with the css Style String.
      */
     public String getStyleID();
 }

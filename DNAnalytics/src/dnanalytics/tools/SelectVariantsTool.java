@@ -1,10 +1,9 @@
 package dnanalytics.tools;
 
-import dnanalytics.utils.Settings;
+import dnanalytics.DNAnalytics;
 import dnanalytics.view.DNAMain;
 import dnanalytics.view.tools.SelectVariantsController;
 import dnanalytics.worker.Worker;
-import dnanalytics.worker.WorkerScript;
 import java.io.File;
 import java.io.IOException;
 import java.util.ResourceBundle;
@@ -43,7 +42,8 @@ public class SelectVariantsTool implements Tool {
     public Worker getWorker() {
 
         // The Worker selecter is created, it will select the variants in background
-        return new WorkerScript() {
+        return new Worker() {
+            String genome = DNAnalytics.getProperties().getProperty("genome");
             @Override
             protected int start() {
                 updateTitle("Selecting " + new File(controller.getInput()).getName());
@@ -52,7 +52,7 @@ public class SelectVariantsTool implements Tool {
                         "java -jar software" + File.separator + "gatk" + File.separator
                         + "GenomeAnalysisTK.jar"
                         + " -T SelectVariants"
-                        + " -R " + Settings.getGenome()
+                        + " -R " + genome
                         + " -V " + controller.getInput()
                         + " -restrictAllelesTo BIALLELIC"
                         + " -o " + controller.getOutput()
@@ -63,7 +63,7 @@ public class SelectVariantsTool implements Tool {
             @Override
             public boolean checkParameters() {
                 // Check the params in the main thread, to avoid launching a dummy Worker.
-                if (Settings.getGenome() == null) {
+                if (!new File(genome).exists()) {
                     System.err.println(resources.getString("no.genome"));
                     return false;
                 }

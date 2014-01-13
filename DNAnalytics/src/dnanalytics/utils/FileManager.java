@@ -309,7 +309,7 @@ public class FileManager {
      * Opens a dialog for the user to create a Variant Call File (.vcf). The file is not created
      * immediately, just stored as text.
      *
-     * @param textField
+     * @param textField textField containig VCF file name.
      */
     public static void saveVCF(TextField textField) {
         setSaveFile(VCF_DESCRIPTION, VCF_DESCRIPTION, VCF_FILTERS, ".vcf", textField);

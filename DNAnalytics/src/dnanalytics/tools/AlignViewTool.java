@@ -1,6 +1,6 @@
 package dnanalytics.tools;
 
-import dnanalytics.utils.Settings;
+import dnanalytics.DNAnalytics;
 import dnanalytics.view.DNAMain;
 import dnanalytics.view.tools.AlignViewController;
 import dnanalytics.worker.Aligner;
@@ -38,9 +38,9 @@ public class AlignViewTool implements Tool {
 
     @Override
     public Worker getWorker() {
-        return new Aligner(Settings.getProperty("tempDir"),
+        return new Aligner(DNAnalytics.getProperties().getProperty("tempDir"),
                 controller.getForward(), controller.getReverse(),
-                Settings.getGenome().getAbsolutePath(), controller.getDbsnp(),
+                DNAnalytics.getProperties().getProperty("genome"), controller.getDbsnp(),
                 controller.getMills(), controller.getPhase1(), controller.getOutput(),
                 controller.getEncoding().equals("isIllumina"), controller.isReduce());
     }

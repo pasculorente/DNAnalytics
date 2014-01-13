@@ -3,7 +3,7 @@ package dnanalytics.tools;
 import dnanalytics.view.DNAMain;
 import dnanalytics.view.tools.FilterFrequenciesController;
 import dnanalytics.worker.Worker;
-import dnanalytics.worker.WorkerScript;
+import dnanalytics.worker.Worker;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -51,7 +51,7 @@ public class FilterFrequenciesTool implements Tool {
         final int column = controller.getColumn();
         final double freq = controller.getMaxFrequency();
 
-        return new WorkerScript() {
+        return new Worker() {
             @Override
             protected int start() {
                 String line;

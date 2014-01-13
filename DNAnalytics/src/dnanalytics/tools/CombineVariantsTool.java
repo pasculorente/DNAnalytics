@@ -1,10 +1,9 @@
 package dnanalytics.tools;
 
-import dnanalytics.utils.Settings;
+import dnanalytics.DNAnalytics;
 import dnanalytics.view.DNAMain;
 import dnanalytics.view.tools.CombineVariantsController;
 import dnanalytics.worker.Worker;
-import dnanalytics.worker.WorkerScript;
 import java.io.File;
 import java.io.IOException;
 import java.util.ResourceBundle;
@@ -16,8 +15,7 @@ import javafx.scene.control.ListView;
 
 /**
  * FXML Controller class
- * <p/>
- * @author uai
+ * @author Pascual Lorente Arencibia
  */
 public class CombineVariantsTool implements Tool {
 
@@ -47,11 +45,12 @@ public class CombineVariantsTool implements Tool {
 
     @Override
     public Worker getWorker() {
-        return new WorkerScript() {
+        return new Worker() {
             ListView<String> vcfList = controller.getVcfList();
             String gatk = "";
             String variants = "";
-
+            String genome = DNAnalytics.getProperties().getProperty("genome");
+            
             private void initializeSettings() {
                 variants = vcfList.getItems().stream().map((var) -> " -V " + var).reduce(variants,
                         String::concat);
@@ -63,7 +62,7 @@ public class CombineVariantsTool implements Tool {
             private void intersectVariants() {
                 executeCommand(gatk
                         + " -T CombineVariants"
-                        + " -R " + Settings.getGenome()
+                        + " -R " + genome
                         + " -minN " + vcfList.getItems().size()
                         + " -o " + controller.getCombinedVCF()
                         + variants);
@@ -73,7 +72,7 @@ public class CombineVariantsTool implements Tool {
             private void aggregateVariants() {
                 executeCommand(gatk
                         + " -T CombineVariants"
-                        + " -R " + Settings.getGenome()
+                        + " -R " + genome
                         + " -o " + controller.getCombinedVCF()
                         + variants);
             }
@@ -81,7 +80,7 @@ public class CombineVariantsTool implements Tool {
             private void deductVariants() {
                 executeCommand(gatk
                         + " -T SelectVariants"
-                        + " -R " + Settings.getGenome()
+                        + " -R " + genome
                         + " -V " + vcfList.getItems().get(0)
                         + " -o " + controller.getCombinedVCF()
                         + " --discordance " + vcfList.getItems().get(1));
@@ -107,7 +106,7 @@ public class CombineVariantsTool implements Tool {
 
             @Override
             public boolean checkParameters() {
-                if (Settings.getGenome() == null) {
+                if (!new File(genome).exists()) {
                     System.err.println(DNAMain.getResources().getString("no.genome"));
                     return false;
                 }

@@ -1,5 +1,6 @@
 package dnanalytics.view;
 
+import dnanalytics.DNAnalytics;
 import dnanalytics.tools.AlignViewTool;
 import dnanalytics.tools.AnnotationTool;
 import dnanalytics.tools.CallVariantsTool;
@@ -12,7 +13,6 @@ import dnanalytics.tools.SelectVariantsTool;
 import dnanalytics.tools.Tool;
 import dnanalytics.utils.DNAOutputStream;
 import dnanalytics.utils.FileManager;
-import dnanalytics.utils.Settings;
 import dnanalytics.worker.Worker;
 import java.io.File;
 import java.io.IOException;
@@ -22,6 +22,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,14 +49,10 @@ import javafx.scene.layout.TilePane;
 
 /**
  * DNAnalytics Controller for the FXML View. It controls the main view of the GUI. Main tasks of
- * DNAMain are:
- * <ul>
- * <li>To control settings: reference genome, temp directory and language.</li>
- * <li>To show the view of the selected Tool, by requesting it to each Tool.</li>
- * <li>To launch the Worker of the selected Tool.</li>
- * <li>To show main console, with System output (standard and error).</li>
- * </ul>
- * <p/>
+ * DNAMain are: (1) to control settings: reference genome, temp directory and language; (2) to show
+ * the view of the selected Tool, by requesting it to each Tool; (3) to launch the Worker of the
+ * selected Tool; (4) to show the main console, with System output (standard and error).
+ *
  * @author Pasucal Lorente Arencibia
  */
 public class DNAMain implements Initializable {
@@ -85,19 +82,17 @@ public class DNAMain implements Initializable {
 
     private final DateFormat df = new SimpleDateFormat("HH:mm:ss");
 
+    private Properties properties;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
         resources = rb;
-
+        this.properties = DNAnalytics.getProperties();
         //Initialize Settings
-        String value;
-        value = Settings.getProperty("genome");
-        genome.setText((value != null) ? value : "");
-        value = Settings.getProperty("tempDir");
-        tempDir.setText(value != null ? value : "");
+        genome.setText(properties.getProperty("genome", ""));
+        tempDir.setText(properties.getProperty("tempDir", ""));
         if (isIndexed()) {
-            alreadyIndexed.setText(getResources().getString("label.indexed"));
+            alreadyIndexed.setText(resources.getString("label.indexed"));
         }
         // Add Tools
         addTool(new IndexFastaTool());
@@ -118,8 +113,7 @@ public class DNAMain implements Initializable {
                 (ObservableValue<? extends Toggle> ov, Toggle t, Toggle t1) -> {
             ToggleButton button = (ToggleButton) t1;
             if (t1 != null) {
-                Tool tool = tools.get(toolButtons.
-                        getToggles().indexOf(t1));
+                Tool tool = tools.get(toolButtons.getToggles().indexOf(t1));
                 currentTool.setContent(tool.getView());
                 ImageView a = (ImageView) button.getGraphic();
                 currentTool.setGraphic(new ImageView(a.getImage()));
@@ -130,25 +124,31 @@ public class DNAMain implements Initializable {
         // Redirect outputs
         System.setErr(new PrintStream(new DNAOutputStream(console, "err>")));
         System.setOut(new PrintStream(new DNAOutputStream(console, ">")));
-        System.out.println(getResources().getString("label.welcome"));
-        System.out.println(getResources().getString("label.version"));
+        System.out.println(resources.getString("label.welcome"));
+        System.out.println(resources.getString("label.version"));
 
-        // Load languages for settings.
-        languagesBox.getItems().clear();
-        for (Locale locale : Settings.getLocales()) {
-            languagesBox.getItems().add(locale.getDisplayName(Settings.getLocale()));
-            if (Settings.getLocale().equals(locale)) {
-                languagesBox.getSelectionModel().selectLast();
-            }
+        // Load languages from settings.
+        Locale currentLocale = resources.getLocale();
+        for (Locale locale : DNAnalytics.getAppLocales()) {
+            languagesBox.getItems().add(locale.getDisplayName(currentLocale));
         }
+        languagesBox.getSelectionModel().select(currentLocale.getDisplayName());
+//        languagesBox.getItems().clear();
+//        for (Locale locale : Settings.getLocales()) {
+//            languagesBox.getItems().add(locale.getDisplayName(Settings.getLocale()));
+//            if (Settings.getLocale().equals(locale)) {
+//                languagesBox.getSelectionModel().selectLast();
+//            }
+//        }
 
-        // Give the languagesBox the ability to change 
-        // system language.
+        // Give the languagesBox the ability to change system language.
         languagesBox.getSelectionModel().selectedItemProperty().addListener(
                 (ObservableValue<? extends String> ov, String old, String current) -> {
-            for (Locale locale : Settings.getLocales()) {
-                if (current.equals(locale.getDisplayName(Settings.getLocale()))) {
-                    Settings.setLocale(locale);
+            for (Locale locale : DNAnalytics.getAppLocales()) {
+                if (current.equals(locale.getDisplayName(currentLocale))) {
+                    properties.setProperty("language", locale.getLanguage());
+                    properties.setProperty("country", locale.getCountry());
+                    //resources = ResourceBundle.getBundle("dnanalytics.view.dnanalytics", locale);
                     return;
                 }
             }
@@ -232,9 +232,9 @@ public class DNAMain implements Initializable {
 
     /**
      * Properly stops all running Workers before closing the app. Nop, do nothing.
-     * <p/>
-     * @param event
-     * @return
+     *
+     * @param event ?
+     * @return always false
      */
     @FXML
     public boolean closeApp(ActionEvent event) {
@@ -253,11 +253,12 @@ public class DNAMain implements Initializable {
                 FileManager.FASTA_FILTERS, genome);
         // Save it on settings.
         if (f != null) {
-            Settings.setProperty("genome", f.getAbsolutePath());
+            properties.setProperty("genome", f.getAbsolutePath());
+//            Settings.setProperty("genome", f.getAbsolutePath());
         }
         // Check if indexed.
         alreadyIndexed.setText(
-                isIndexed() ? getResources().getString("label.indexed") : "");
+                isIndexed() ? resources.getString("label.indexed") : "");
     }
 
     /**
@@ -281,7 +282,7 @@ public class DNAMain implements Initializable {
         File file = FileManager.selectFolder("Temporary directory");
         if (file != null) {
             tempDir.setText(file.getAbsolutePath());
-            Settings.setProperty("tempDir", file.getAbsolutePath());
+            properties.setProperty("tempDir", file.getAbsolutePath());
         }
     }
 

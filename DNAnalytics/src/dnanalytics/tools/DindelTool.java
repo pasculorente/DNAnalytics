@@ -1,10 +1,9 @@
 package dnanalytics.tools;
 
-import dnanalytics.utils.Settings;
+import dnanalytics.DNAnalytics;
 import dnanalytics.view.DNAMain;
 import dnanalytics.view.tools.DindelController;
 import dnanalytics.worker.Worker;
-import dnanalytics.worker.WorkerScript;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -48,11 +47,11 @@ public class DindelTool implements Tool {
 
     @Override
     public Worker getWorker() {
-        return new WorkerScript() {
+        return new Worker() {
             // If output is /path/to/myfile.vcf, name will be myfile
             private String name;
             private File temp, windows, windows2, dindel;
-
+            String genome = DNAnalytics.getProperties().getProperty("genome");
             /**
              * Creates directory tree and initializes variables.
              */
@@ -62,7 +61,7 @@ public class DindelTool implements Tool {
                 //   | - windows
                 //   | - windows2
                 name = new File(controller.getOutput()).getName().replace(".vcf", "");
-                temp = new File(Settings.getProperty("tempDir"), name);
+                temp = new File(DNAnalytics.getProperties().getProperty("tempDir"), name);
                 windows = new File(temp, "windows");
                 windows2 = new File(temp, "windows2");
                 temp.mkdir();
@@ -82,7 +81,7 @@ public class DindelTool implements Tool {
                     System.err.println(resources.getString("no.output"));
                     return false;
                 }
-                if (Settings.getGenome() == null || !Settings.getGenome().exists()) {
+                if (!new File(genome).exists()) {
                     System.err.println(resources.getString("no.genome"));
                     return false;
                 }
@@ -104,7 +103,7 @@ public class DindelTool implements Tool {
                 executeCommand(new File(dindel, "dindel")
                         + " --analysis getCIGARindels"
                         + " --bamFile " + controller.getInput()
-                        + " --ref " + Settings.getGenome()
+                        + " --ref " + genome
                         + " --outputFile " + new File(temp, name));
                 // This will generate two files
                 // temp/name/name.libraries.txt
@@ -169,7 +168,7 @@ public class DindelTool implements Tool {
                             + " --analysis indels"
                             + " --doDiploid"
                             + " --bamFile " + controller.getInput()
-                            + " --ref " + Settings.getGenome()
+                            + " --ref " + genome
                             + " --varFile " + file
                             + " --libFile " + new File(temp, name + ".libraries.txt")
                             + " --outputFile " + new File(windows2, file.getName())
@@ -208,7 +207,7 @@ public class DindelTool implements Tool {
                     Logger.getLogger(DindelTool.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 executeCommand("python " + new File(dindel, "mergeOutputDiploid.py")
-                        + " --ref " + Settings.getGenome()
+                        + " --ref " + genome
                         + " --inputFiles " + fileList
                         + " --outputFile " + controller.getOutput());
             }

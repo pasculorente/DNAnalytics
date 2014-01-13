@@ -1,8 +1,9 @@
 package dnanalytics.view.tools;
 
+import dnanalytics.DNAnalytics;
 import dnanalytics.utils.FileManager;
-import dnanalytics.utils.Settings;
 import java.io.File;
+import java.util.Properties;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -34,6 +35,8 @@ public class CallVariantsController {
     @FXML
     private VBox trainingDatasets;
 
+    private final Properties properties = DNAnalytics.getProperties();
+    
     @FXML
     void initialize() {
 
@@ -41,15 +44,10 @@ public class CallVariantsController {
                 (ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
                     trainingDatasets.setDisable(!t1);
         });
-
-        String value = Settings.getProperty("call.dbsnp");
-        dbsnp.setText(value != null ? value : "");
-        value = Settings.getProperty("call.mills");
-        mills.setText(value == null ? "" : value);
-        value = Settings.getProperty("call.omni");
-        omni.setText(value == null ? "" : value);
-        value = Settings.getProperty("call.hapmap");
-        hapmap.setText(value == null ? "" : value);
+        dbsnp.setText(properties.getProperty("call.dbsnp"));
+        mills.setText(properties.getProperty("call.mills"));
+        omni.setText(properties.getProperty("call.omni"));
+        hapmap.setText(properties.getProperty("call.hapmap"));
     }
 
     @FXML
@@ -67,7 +65,7 @@ public class CallVariantsController {
     void selectDbsnp(ActionEvent event) {
         File f = FileManager.openVCF(dbsnp);
         if (f != null) {
-            Settings.setProperty("call.dbsnp", f.getAbsolutePath());
+            properties.setProperty("call.dbsnp", f.getAbsolutePath());
         }
     }
 
@@ -75,7 +73,7 @@ public class CallVariantsController {
     void selectHapmap(ActionEvent event) {
         File f = FileManager.openVCF(hapmap);
         if (f != null) {
-            Settings.setProperty("call.hapmap", f.getAbsolutePath());
+            properties.setProperty("call.hapmap", f.getAbsolutePath());
         }
     }
 
@@ -83,7 +81,7 @@ public class CallVariantsController {
     void selectMills(ActionEvent event) {
         File f = FileManager.openVCF(mills);
         if (f != null) {
-            Settings.setProperty("call.mills", f.getAbsolutePath());
+            properties.setProperty("call.mills", f.getAbsolutePath());
         }
     }
 
@@ -91,7 +89,7 @@ public class CallVariantsController {
     void selectOmni(ActionEvent event) {
         File f = FileManager.openVCF(omni);
         if (f != null) {
-            Settings.setProperty("call.omni", f.getAbsolutePath());
+            properties.setProperty("call.omni", f.getAbsolutePath());
         }
     }
 

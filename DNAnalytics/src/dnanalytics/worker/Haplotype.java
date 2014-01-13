@@ -7,10 +7,10 @@ import java.util.Date;
 /**
  * Script for calling variants using HaplotypeCaller from GATK. If 'recalibrate', output file will
  * pass a Variant Quality Score Recalibration (VQSR). See Worker to know how to launch it.
- * <p/>
+ * 
  * @author Pascual Lorente Arencibia
  */
-public class Haplotype extends WorkerScript {
+public class Haplotype extends Worker {
 
     private final String genome, dbsnp, omni, hapmap, mills, output, temp, input;
     private final boolean recalibrate;

@@ -1,8 +1,9 @@
 package dnanalytics.view.tools;
 
+import dnanalytics.DNAnalytics;
 import dnanalytics.utils.FileManager;
-import dnanalytics.utils.Settings;
 import java.io.File;
+import java.util.Properties;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -34,15 +35,14 @@ public class AlignViewController {
     @FXML
     private CheckBox reduce;
 
+    private final Properties properties = DNAnalytics.getProperties();
+
     @FXML
     void initialize() {
         // Recover settings
-        String value = Settings.getProperty("align.dbsnp");
-        dbsnp.setText(value != null ? value : "");
-        value = Settings.getProperty("align.mills");
-        mills.setText(value != null ? value : "");
-        value = Settings.getProperty("align.phase1");
-        phase1.setText(value != null ? value : "");
+        dbsnp.setText(properties.getProperty("align.dbsnp", ""));
+        mills.setText(properties.getProperty("align.mills", ""));
+        phase1.setText(properties.getProperty("align.phase1", ""));
     }
 
     @FXML
@@ -61,7 +61,7 @@ public class AlignViewController {
     void selectDbsnp(ActionEvent event) {
         File f = FileManager.openVCF(dbsnp);
         if (f != null) {
-            Settings.setProperty("align.dbsnp", f.getAbsolutePath());
+            properties.setProperty("align.dbsnp", f.getAbsolutePath());
         }
     }
 
@@ -69,7 +69,7 @@ public class AlignViewController {
     void selectMills(ActionEvent event) {
         File f = FileManager.openVCF(mills);
         if (f != null) {
-            Settings.setProperty("align.mills", f.getAbsolutePath());
+            properties.setProperty("align.mills", f.getAbsolutePath());
         }
     }
 
@@ -77,7 +77,7 @@ public class AlignViewController {
     void selectPhase1(ActionEvent event) {
         File f = FileManager.openVCF(phase1);
         if (f != null) {
-            Settings.setProperty("align.phase1", f.getAbsolutePath());
+            properties.setProperty("align.phase1", f.getAbsolutePath());
         }
     }
 

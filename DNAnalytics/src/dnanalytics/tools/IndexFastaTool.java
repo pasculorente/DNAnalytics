@@ -3,7 +3,7 @@ package dnanalytics.tools;
 import dnanalytics.view.DNAMain;
 import dnanalytics.view.tools.IndexFastaController;
 import dnanalytics.worker.Worker;
-import dnanalytics.worker.WorkerScript;
+import dnanalytics.worker.Worker;
 import java.io.File;
 import java.io.IOException;
 import java.util.ResourceBundle;
@@ -44,7 +44,7 @@ public class IndexFastaTool implements Tool {
 
     @Override
     public Worker getWorker() {
-        return new WorkerScript() {
+        return new Worker() {
             @Override
             protected int start() {
                 updateTitle("Indexing " + new File(controller.getGenome()).getName());

@@ -5,23 +5,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Script for the alignment of a sample sequences.
- * <p>
- * Alignment General View</p>
- * <ol>
- * <li>Initial alignment</li> <ol type="a"> <li>[BWA] aln 1</li> <li>[BWA] aln 2</li> <li>[BWA]
- * sampe 1 n 2
- * </li> </ol> <li> Refinement </li> <ol type="a"> <li>[Picard] CleanSam</li>
- * <li>[Picard] SortSam</li> <li>[Picard] MarkDuplicates</li> <li>[Picard] AddOrReplaceRGHeader</li>
- * <li>[Picard] BuildBamIndex</li> </ol>
- * <li>Realignment and recalibration</li> <ol type="a"> <li>[GATK] RealignerTargetCreator</li>
- * <li>[GATK] IndelRealigner</li> <li>[GATK] BaseRecalibrator</li>
- * <li>[GATK] PrintReads</li> </ol> <li>Reduce Reads (experimental and optional)</li> <ol type="a">
- * <li>[GATK] ReduceReads</li> </ol> </ol>
+ * Script for the alignment of a sample sequences. (1) Initial alignment (2) Refinement (3)
+ * Realignment and recalibration (4) Reduce Reads (experimental and optional)
  *
  * @author Pascual Lorente Arencibia
  */
-public class Aligner extends WorkerScript {
+public class Aligner extends Worker {
 
     private final String forward, reverse, genome, dbsnp, mills, phase1, output, temp;
     private final boolean illumina, reduceReads;
@@ -70,8 +59,9 @@ public class Aligner extends WorkerScript {
         File seq2 = new File(temp, timestamp + "seq2.sai");
         File bwa = new File(temp, timestamp + "bwa.sam");
 
-        updateProgress(counter++, total);
-        updateMessage(getResourceBundle().getString("align.forward"));
+        updateProgress(resources.getString("align.forward"), counter++, total);
+//        updateProgress(counter++, total);
+//        updateMessage(getResourceBundle().getString("align.forward"));
         executeCommand(
                 "bwa aln"
                 + " -t " + cores

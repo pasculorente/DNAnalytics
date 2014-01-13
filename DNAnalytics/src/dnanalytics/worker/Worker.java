@@ -1,6 +1,12 @@
 package dnanalytics.worker;
 
+import dnanalytics.view.DNAMain;
+import java.io.IOException;
 import java.io.PrintStream;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.ResourceBundle;
+import java.util.TimeZone;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.concurrent.Task;
@@ -16,13 +22,27 @@ import javafx.concurrent.Task;
  * the DNAMain will do it. When implementing a Worker, outStream and errStream can be used to have
  * messages printed in a separated console.
  *
+ * Every Worker just needs to implement start(). It provides executeCommand(String string) to
+ * launch system commands to a /bin/bash console.
+ * 
  * @author Pascual Lorente Arencibia
  */
 public abstract class Worker extends Task<Integer> {
 
+    private Process process;
+    protected final static ResourceBundle resources = DNAMain.getResources();
+    private long startTime;
+    private boolean exit;
     protected PrintStream outStream = System.out;
     protected PrintStream errStream = System.err;
     protected final StringProperty elapsedTime = new SimpleStringProperty();
+    protected final static SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+
+    {
+        // It was giving problems with the hours. This line fixes it, but I'm not happy at all,
+        // cause I'm not sure if this is portable.
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+    }
 
     /**
      * Redirect outputs of the Worker. By default, the streams are redirected to the System streams
@@ -51,4 +71,95 @@ public abstract class Worker extends Task<Integer> {
      * @return true if parameters are OK. false if Worker shouldn't be run.
      */
     public abstract boolean checkParameters();
+
+    @Override
+    protected Integer call() {
+        // Previous tasks
+        startTime = System.currentTimeMillis();
+        exit = false;
+
+        // User execution
+        int ret = start();
+
+        // Afterwards tasks
+        outStream.println(resources.getString("time.end") + " "
+                + dateFormat.format(Calendar.getInstance().getTime()));
+        outStream.println(resources.getString("time.total") + " "
+                + dateFormat.format(System.currentTimeMillis() - startTime));
+        updateProgress(1, 1);
+        return ret;
+    }
+
+    protected int executeCommand(String command) {
+        // Simple trigger to terminate execution
+        if (exit) {
+            return 2;
+        }
+        // Uncomment this line will show the precise command on the console, really useful to debug.
+        outStream.println("Command: " + command);
+        ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", command);
+        processBuilder.redirectErrorStream(true);
+        int ret = 0;
+        try {
+            process = processBuilder.start();
+            // Capture output of the process character by character.
+            // Although this method seems inefficient (opposite to readLine()), it gives more control
+            // and the process is asleep if there are no characters to read. 
+            int c;
+            try {
+                while ((c = process.getInputStream().read()) != -1) {
+                    outStream.print((char) c);
+                }
+            } catch (IOException ex) {
+                errStream.println(resources.getString("worker.lost"));
+            }
+            ret = process.waitFor();
+        } catch (InterruptedException | IOException ex) {
+            process.destroy();
+        }
+        //outStream.println("Return value: " + ret);
+        // Check if command was succesful
+        if (ret != 0) {
+            errStream.println(resources.getString("worker.error"));
+            // Stop thread
+            cancel(true);
+        }
+        return 0;
+    }
+
+    @Override
+    protected void cancelled() {
+        errStream.println(resources.getString("worker.cancel"));
+        if (process != null) {
+            process.destroy();
+        }
+        exit = true;
+        updateProgress(1, 1);
+
+    }
+
+    protected ResourceBundle getResourceBundle() {
+        return resources;
+    }
+
+    /**
+     * Write the translation of your script here. Use executeCommand() to run an external command.
+     *
+     * @return process return value.
+     */
+    protected abstract int start();
+
+    /**
+     * Calls updateProgress and updateMessage from Task, but also updates timestamps.
+     *
+     * @param message The message for updateMessage.
+     * @param progress The progress.
+     * @param max The end of the progress.
+     */
+    protected void updateProgress(String message, double progress, double max) {
+        updateMessage(message);
+        updateProgress(progress, max);
+        elapsedTime.setValue(dateFormat.format(System.currentTimeMillis() - startTime));
+    }
+
 }
