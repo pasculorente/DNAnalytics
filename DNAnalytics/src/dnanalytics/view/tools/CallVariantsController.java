@@ -39,7 +39,6 @@ public class CallVariantsController {
     
     @FXML
     void initialize() {
-
         recalibrate.selectedProperty().addListener(
                 (ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
                     trainingDatasets.setDisable(!t1);
