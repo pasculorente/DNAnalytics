@@ -46,7 +46,12 @@ public class DNAnalytics extends Application {
         } else {
             properties.load(new FileInputStream(PROPERTIES_FILE));
         }
+        if (!properties.containsKey("language") || !properties.containsKey("country")) {
+            properties.setProperty("language", "en");
+            properties.setProperty("country", "US");
+        }
         Locale l = new Locale(properties.getProperty("language"), properties.getProperty("country"));
+
         System.out.println(new File(PROPERTIES_FILE).getAbsolutePath());
         ResourceBundle dnaBundle = ResourceBundle.getBundle("dnanalytics.view.dnanalytics", l);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("view/DNAMain.fxml"), dnaBundle);

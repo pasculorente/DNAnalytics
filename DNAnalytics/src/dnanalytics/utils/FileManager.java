@@ -1,12 +1,15 @@
 package dnanalytics.utils;
 
 import dnanalytics.view.DNAMain;
+import java.awt.Desktop;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -329,5 +332,23 @@ public class FileManager {
         chooser.setInitialDirectory(lastPath);
         File file = chooser.showDialog(null);
         return (file != null) ? (lastPath = file) : null;
+    }
+    
+    /**
+     * Launches the default system web browser and opens the specified url.
+     *
+     * @param url URL to visit.
+     */
+    public static void browse(String url) {
+        try {
+            if (Desktop.isDesktopSupported()) {
+                Desktop.getDesktop().browse(new URI(url));
+            }
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 }

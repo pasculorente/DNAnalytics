@@ -13,18 +13,21 @@ import javafx.beans.property.StringProperty;
 import javafx.concurrent.Task;
 
 /**
- * A Worker is an abstract class used to package all single tasks DNAnalytics does. Every Worker
- * runs in background. They are similar to Linux scripts. As it is an extension of the Task class,
- * it is started as a Task, being recommended Thread encapsulated method:
+ * A Worker is an abstract class used to package all single tasks DNAnalytics
+ * does. Every Worker runs in background. They are similar to Linux scripts. As
+ * it is an extension of the Task class, it is started as a Task, being
+ * recommended Thread encapsulated method:
  * <p>
  * new <b>Thread</b>(new <b>Worker</b>()).start().
  * <p>
- * Into DNAnalytics, a Worker is required into a Tool, and it is not needed to launch it manually,
- * the DNAMain will do it. When implementing a Worker, outStream and errStream can be used to have
- * messages printed in a separated console.
+ * Into DNAnalytics, a Worker is required into a Tool, and it is not needed to
+ * launch it manually, the DNAMain will do it. When implementing a Worker,
+ * outStream and errStream can be used to have messages printed in a separated
+ * console.
  *
- * Every Worker just needs to implement start(). It provides executeCommand(String string) to launch
- * system commands to a /bin/bash console.
+ * Every Worker just needs to implement start(). It provides
+ * executeCommand(String string) to launch system commands to a /bin/bash
+ * console.
  *
  * @author Pascual Lorente Arencibia
  */
@@ -46,8 +49,9 @@ public abstract class Worker extends Task<Integer> {
     }
 
     /**
-     * Redirect outputs of the Worker. By default, the streams are redirected to the System streams
-     * (System.out and System.err). Use this method if you want to print the output elsewhere.
+     * Redirect outputs of the Worker. By default, the streams are redirected to
+     * the System streams (System.out and System.err). Use this method if you
+     * want to print the output elsewhere.
      *
      * @param output The new standard output stream.
      * @param error The new error output stream.
@@ -63,15 +67,6 @@ public abstract class Worker extends Task<Integer> {
     public StringProperty getElapsedTime() {
         return elapsedTime;
     }
-
-    /**
-     * Override this method to ensure all parameters are OK. Check here if files exist and
-     * parameters are logic. If this method returns false, no new tab will be added to DNAnalytics,
-     * and Worker won't be lauched.
-     *
-     * @return true if parameters are OK. false if Worker shouldn't be run.
-     */
-    public abstract boolean checkParameters();
 
     @Override
     protected Integer call() {
@@ -100,12 +95,12 @@ public abstract class Worker extends Task<Integer> {
         // Uncomment this line will show the precise command on the console, really useful to debug.
         outStream.println("Command: " + command);
         switch (System.getProperty("os.name")) {
-        case "Windows 7":
-            builder = new ProcessBuilder("cmd", "/C", command);
-            break;
-        case "Linux":
-        default:
-            builder = new ProcessBuilder("/bin/bash", "-c", command);
+            case "Windows 7":
+                builder = new ProcessBuilder("cmd", "/C", command);
+                break;
+            case "Linux":
+            default:
+                builder = new ProcessBuilder("/bin/bash", "-c", command);
         }
         builder.redirectErrorStream(true);
         int ret = 0;
@@ -150,14 +145,8 @@ public abstract class Worker extends Task<Integer> {
     }
 
     /**
-     * Write the translation of your script here. Use executeCommand() to run an external command.
-     *
-     * @return process return value.
-     */
-    protected abstract int start();
-
-    /**
-     * Calls updateProgress and updateMessage from Task, but also updates timestamps.
+     * Calls updateProgress and updateMessage from Task, but also updates
+     * timestamps.
      *
      * @param message The message for updateMessage.
      * @param progress The progress.
@@ -169,11 +158,29 @@ public abstract class Worker extends Task<Integer> {
         elapsedTime.setValue(dateFormat.format(System.currentTimeMillis() - startTime));
     }
 
-    protected void parseLine(String line){
-        
+    protected void parseLine(String line) {
+
     }
 
     public long getStartTime() {
         return startTime;
     }
+
+    /**
+     * Write the translation of your script here. Use executeCommand() to run an
+     * external command.
+     *
+     * @return process return value.
+     */
+    protected abstract int start();
+
+    /**
+     * Override this method to ensure all parameters are OK. Check here if files
+     * exist and parameters are logic. If this method returns false, no new tab
+     * will be added to DNAnalytics, and Worker won't be lauched.
+     *
+     * @return true if parameters are OK. false if Worker shouldn't be run.
+     */
+    public abstract boolean checkParameters();
+
 }

@@ -5,9 +5,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Script for calling variants using HaplotypeCaller from GATK. If 'recalibrate', output file will
- * pass a Variant Quality Score Recalibration (VQSR). See Worker to know how to launch it.
- * 
+ * Script for calling variants using HaplotypeCaller from GATK. If
+ * 'recalibrate', output file will pass a Variant Quality Score Recalibration
+ * (VQSR). See Worker to know how to launch it.
+ *
  * @author Pascual Lorente Arencibia
  */
 public class Haplotype extends Worker {
@@ -43,6 +44,7 @@ public class Haplotype extends Worker {
     @Override
     protected int start() {
         updateTitle("Calling " + new File(output).getName());
+
         // Haha, this is what one has to do to avoid /s/l/a/s/h/e/s/
         // although in the end this is not running in Windows OS
         String gatk = "java -jar software"
@@ -52,8 +54,9 @@ public class Haplotype extends Worker {
         SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd_HHmmss_");
         String timestamp = "call_" + df.format(new Date());
 
-        updateMessage(resources.getString("call.call"));
-        updateProgress(1, (recalibrate ? 3 : 2));
+        updateProgress(resources.getString("call.call"), 1, (recalibrate ? 3 : 2));
+//        updateMessage(resources.getString("call.call"));
+//        updateProgress(1, (recalibrate ? 3 : 2));
         executeCommand(gatk
                 + " -T HaplotypeCaller"
                 + " -R " + genome
@@ -67,8 +70,9 @@ public class Haplotype extends Worker {
             File recal = new File(temp, timestamp + "recal");
             File outputRecalibrated = new File(output.
                     replace(".vcf", "_recalibrated.vcf"));
-            updateProgress(1.5, 3);
-            updateMessage(resources.getString("call.prerecal"));
+            updateProgress(resources.getString("call.prerecal"), 1.5, 3);
+//            updateProgress(1.5, 3);
+//            updateMessage(resources.getString("call.prerecal"));
             executeCommand(gatk
                     + " -T VariantRecalibrator"
                     + " -R " + genome
@@ -85,9 +89,9 @@ public class Haplotype extends Worker {
                     + dbsnp
                     + " -an QD -an MQRankSum -an ReadPosRankSum -an FS -an MQ -an DP"
                     + " -mode BOTH");
-
-            updateMessage(resources.getString("call.recal"));
-            updateProgress(2.5, 3);
+            updateProgress(resources.getString("call.recal"), 2.5, 3);
+//            updateMessage(resources.getString("call.recal"));
+//            updateProgress(2.5, 3);
             executeCommand(gatk
                     + " -T ApplyRecalibration"
                     + " -R " + genome
@@ -100,8 +104,9 @@ public class Haplotype extends Worker {
 
             tranches.delete();
             recal.delete();
-            updateMessage(resources.getString("call.completed"));
-            updateProgress(1, 1);
+            updateProgress(resources.getString("call.completed"), 1, 1);
+//            updateMessage(resources.getString("call.completed"));
+//            updateProgress(1, 1);
         }
 
         return 0;
@@ -109,7 +114,7 @@ public class Haplotype extends Worker {
 
     @Override
     public boolean checkParameters() {
-        
+
         // Check if all parameters are OK.
         if (!new File(genome).exists()) {
             System.err.println(resources.getString("no.genome"));

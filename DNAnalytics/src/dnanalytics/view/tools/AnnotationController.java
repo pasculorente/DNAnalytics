@@ -1,6 +1,7 @@
 package dnanalytics.view.tools;
 
-import dnanalytics.utils.Browser;
+import dnanalytics.utils.FileManager;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
@@ -13,21 +14,25 @@ public class AnnotationController {
 
     @FXML
     void siftIndels(ActionEvent event) {
-        Browser.browse("http://sift.bii.a-star.edu.sg/www/SIFT_indels2.html");
+        Platform.runLater(() -> {
+            FileManager.browse("http://sift.bii.a-star.edu.sg/www/SIFT_indels2.html");
+        });
     }
 
     @FXML
     void siftRestrict(ActionEvent event) {
-        Browser.browse("http://sift.bii.a-star.edu.sg/www/SIFT_intersect_coding_submit.html");
+        Platform.runLater(() -> {
+            FileManager.browse("http://sift.bii.a-star.edu.sg/www/SIFT_intersect_coding_submit.html");
+        });
     }
 
     @FXML
     void siftSNP(ActionEvent event) {
-        Browser.browse("http://siftdna.org/www/Extended_SIFT_chr_coords_submit.html");
+        FileManager.browse("http://siftdna.org/www/Extended_SIFT_chr_coords_submit.html");
     }
 
     @FXML
     void annovar(ActionEvent event) {
-        Browser.browse("http://wannovar.usc.edu/");
+        FileManager.browse("http://wannovar.usc.edu/");
     }
 }
