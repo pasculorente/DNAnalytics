@@ -10,6 +10,7 @@ import dnanalytics.tools.FilterFrequenciesTool;
 import dnanalytics.tools.IndexFastaTool;
 import dnanalytics.tools.LowFrequencyTool;
 import dnanalytics.tools.SelectVariantsTool;
+import dnanalytics.tools.TestTool;
 import dnanalytics.tools.Tool;
 import dnanalytics.utils.DNAOutputStream;
 import dnanalytics.utils.FileManager;
@@ -104,6 +105,7 @@ public class DNAMain implements Initializable {
         addTool(new AnnotationTool());
         addTool(new DindelTool());
         addTool(new LowFrequencyTool());
+        addTool(new TestTool());
 
         // Prepare tools pane
         currentTool.setCollapsible(false);
@@ -132,7 +134,7 @@ public class DNAMain implements Initializable {
         for (Locale locale : DNAnalytics.getAppLocales()) {
             languagesBox.getItems().add(locale.getDisplayName(currentLocale));
         }
-        languagesBox.getSelectionModel().select(currentLocale.getDisplayName());
+        languagesBox.getSelectionModel().select(currentLocale.getDisplayName(currentLocale));
 //        languagesBox.getItems().clear();
 //        for (Locale locale : Settings.getLocales()) {
 //            languagesBox.getItems().add(locale.getDisplayName(Settings.getLocale()));

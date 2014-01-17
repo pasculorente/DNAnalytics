@@ -1,5 +1,5 @@
 #DNAnalytics properties
-#Sun Jan 12 22:25:05 GMT 2014
+#Wed Jan 15 10:56:47 WET 2014
 genome=D\:hola.fasta
 align.dbsnp=D\:\niv_19_32_hc_20130415_common.vcf
 tempDir=D\:bwa

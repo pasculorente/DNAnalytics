@@ -61,7 +61,7 @@ public class Aligner extends Worker {
 
         updateProgress(resources.getString("align.forward"), counter++, total);
 //        updateProgress(counter++, total);
-//        updateMessage(getResourceBundle().getString("align.forward"));
+//        updateMessage(resources.getString("align.forward"));
         executeCommand(
                 "bwa aln"
                 + " -t " + cores
@@ -72,7 +72,7 @@ public class Aligner extends Worker {
 
         updateProgress(counter, total);
 
-        updateMessage(getResourceBundle().getString("align.reverse"));
+        updateMessage(resources.getString("align.reverse"));
         executeCommand(
                 "bwa aln"
                 + " -t " + cores
@@ -83,7 +83,7 @@ public class Aligner extends Worker {
 
         updateProgress(counter, total);
 
-        updateMessage(getResourceBundle().getString("align.sampe"));
+        updateMessage(resources.getString("align.sampe"));
         executeCommand(
                 "bwa sampe"
                 + " " + genome
@@ -128,7 +128,7 @@ public class Aligner extends Worker {
         File metrics = new File(temp, timestamp + "dedup.metrics");
 
         updateProgress(counter++, total);
-        updateMessage(getResourceBundle().getString("align.clean"));
+        updateMessage(resources.getString("align.clean"));
         executeCommand(picard
                 + "CleanSam.jar"
                 + " INPUT=" + bwa
@@ -136,7 +136,7 @@ public class Aligner extends Worker {
         bwa.delete();
 
         updateProgress(counter++, total);
-        updateMessage(getResourceBundle().getString("align.sort"));
+        updateMessage(resources.getString("align.sort"));
         executeCommand(picard
                 + "SortSam.jar"
                 + " INPUT=" + picard1
@@ -145,7 +145,7 @@ public class Aligner extends Worker {
         picard1.delete();
 
         updateProgress(counter++, total);
-        updateMessage(getResourceBundle().getString("align.dedup"));
+        updateMessage(resources.getString("align.dedup"));
         executeCommand(picard
                 + "MarkDuplicates.jar"
                 + " INPUT=" + picard2
@@ -157,7 +157,7 @@ public class Aligner extends Worker {
         metrics.delete();
 
         updateProgress(counter++, total);
-        updateMessage(getResourceBundle().getString("align.addheader"));
+        updateMessage(resources.getString("align.addheader"));
         executeCommand(picard
                 + "AddOrReplaceReadGroups.jar"
                 + " INPUT=" + picard3
@@ -169,7 +169,7 @@ public class Aligner extends Worker {
         picard3.delete();
 
         updateProgress(counter++, total);
-        updateMessage(getResourceBundle().getString("align.index"));
+        updateMessage(resources.getString("align.index"));
         executeCommand(picard
                 + "BuildBamIndex.jar"
                 + " INPUT=" + picard4);
@@ -197,7 +197,7 @@ public class Aligner extends Worker {
         File gatk1 = new File(temp, timestamp + "gatk1.bam");
 
         updateProgress(counter++, total);
-        updateMessage(getResourceBundle().getString("align.prealign"));
+        updateMessage(resources.getString("align.prealign"));
         executeCommand(
                 gatk
                 + " -T RealignerTargetCreator"
@@ -209,7 +209,7 @@ public class Aligner extends Worker {
                 + " -o " + intervals);
 
         updateProgress(counter++, total);
-        updateMessage(getResourceBundle().getString("align.align"));
+        updateMessage(resources.getString("align.align"));
         executeCommand(
                 gatk
                 + " -T IndelRealigner"
@@ -240,7 +240,7 @@ public class Aligner extends Worker {
         File recal = new File(temp, timestamp + "recal.grp");
 
         updateProgress(counter++, total);
-        updateMessage(getResourceBundle().getString("align.prerecal"));
+        updateMessage(resources.getString("align.prerecal"));
         executeCommand(
                 gatk
                 + " -T BaseRecalibrator"
@@ -252,7 +252,7 @@ public class Aligner extends Worker {
                 + " -o " + recal);
 
         updateProgress(counter++, total);
-        updateMessage(getResourceBundle().getString("align.recal"));
+        updateMessage(resources.getString("align.recal"));
         executeCommand(
                 gatk
                 + " -T PrintReads"
@@ -275,7 +275,7 @@ public class Aligner extends Worker {
             File reduced = new File(output.replace(".bam", "_reduced.bam"));
 
             updateProgress(counter++, total);
-            updateMessage(getResourceBundle().getString("align.reducereads"));
+            updateMessage(resources.getString("align.reducereads"));
             executeCommand(
                     gatk
                     + " -T ReduceReads"
@@ -284,7 +284,7 @@ public class Aligner extends Worker {
                     + " -o " + reduced);
         }
 
-        updateMessage(getResourceBundle().getString("align.completed"));
+        updateMessage(resources.getString("align.completed"));
         outStream.println(output + " generated succesfully (^o^)");
         updateProgress(
                 1, 1);
@@ -294,16 +294,16 @@ public class Aligner extends Worker {
 // Comments
 //        String[] args = {};
 //
-//        outStream.println(getResourceBundle().getString("align.clean"));
-//        updateMessage(getResourceBundle().getString("align.clean"));
+//        outStream.println(resources.getString("align.clean"));
+//        updateMessage(resources.getString("align.clean"));
 //        CleanSam cleanSam = new CleanSam();
 //        cleanSam.INPUT = bwa;
 //        cleanSam.OUTPUT = picard1;
 //        cleanSam.instanceMain(args);
 //        bwa.delete();
 //
-//        outStream.println(getResourceBundle().getString("align.sort"));
-//        updateMessage(getResourceBundle().getString("align.sort"));
+//        outStream.println(resources.getString("align.sort"));
+//        updateMessage(resources.getString("align.sort"));
 //        SortSam sortSam = new SortSam();
 //        sortSam.INPUT = picard1;
 //        sortSam.OUTPUT = picard2;
@@ -312,7 +312,7 @@ public class Aligner extends Worker {
 //        picard1.delete();
 //
 //        outStream.println("Starting dups");
-//        updateMessage(getResourceBundle().getString("align.dedup"));
+//        updateMessage(resources.getString("align.dedup"));
 //        MarkDuplicates markDuplicates = new MarkDuplicates();
 //        markDuplicates.INPUT = new ArrayList<>();
 //        markDuplicates.INPUT.add(picard2);
@@ -323,7 +323,7 @@ public class Aligner extends Worker {
 //        picard2.delete();
 //        metrics.delete();
 //
-//        updateMessage(getResourceBundle().getString("align.addRGheader"));
+//        updateMessage(resources.getString("align.addRGheader"));
 //        AddOrReplaceReadGroups addOrReplaceReadGroups = new AddOrReplaceReadGroups();
 //        addOrReplaceReadGroups.INPUT = picard3;
 //        addOrReplaceReadGroups.OUTPUT = picard4;
@@ -334,7 +334,7 @@ public class Aligner extends Worker {
 //        addOrReplaceReadGroups.instanceMain(args);
 //        picard3.delete();
 //
-//        updateMessage(getResourceBundle().getString("align.index"));
+//        updateMessage(resources.getString("align.index"));
 //        BuildBamIndex buildBamIndex = new BuildBamIndex();
 //        buildBamIndex.INPUT = picard4.getAbsolutePath();
 //        buildBamIndex.instanceMain(args);
@@ -343,35 +343,35 @@ public class Aligner extends Worker {
     public boolean checkParameters() {
         // Check if all parameters are OK.
         if (!new File(genome).exists()) {
-            errStream.println(getResourceBundle().getString("no.genome"));
+            errStream.println(resources.getString("no.genome"));
             return false;
         }
         if (!new File(forward).exists()) {
-            errStream.println(getResourceBundle().getString("no.forward"));
+            errStream.println(resources.getString("no.forward"));
             return false;
         }
         if (!new File(reverse).exists()) {
-            errStream.println(getResourceBundle().getString("no.reverse"));
+            errStream.println(resources.getString("no.reverse"));
             return false;
         }
         if (!new File(dbsnp).exists()) {
-            errStream.println(getResourceBundle().getString("no.dbsnp"));
+            errStream.println(resources.getString("no.dbsnp"));
             return false;
         }
         if (!new File(mills).exists()) {
-            errStream.println(getResourceBundle().getString("no.mills"));
+            errStream.println(resources.getString("no.mills"));
             return false;
         }
         if (!new File(phase1).exists()) {
-            errStream.println(getResourceBundle().getString("no.phase1"));
+            errStream.println(resources.getString("no.phase1"));
             return false;
         }
         if (!new File(temp).exists()) {
-            errStream.println(getResourceBundle().getString("no.temp"));
+            errStream.println(resources.getString("no.temp"));
             return false;
         }
         if (output.isEmpty()) {
-            errStream.println(getResourceBundle().getString("no.output"));
+            errStream.println(resources.getString("no.output"));
             return false;
         }
         return true;

@@ -1,10 +1,11 @@
 package dnanalytics.worker;
 
 import dnanalytics.view.DNAMain;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
 import javafx.beans.property.SimpleStringProperty;
@@ -22,9 +23,9 @@ import javafx.concurrent.Task;
  * the DNAMain will do it. When implementing a Worker, outStream and errStream can be used to have
  * messages printed in a separated console.
  *
- * Every Worker just needs to implement start(). It provides executeCommand(String string) to
- * launch system commands to a /bin/bash console.
- * 
+ * Every Worker just needs to implement start(). It provides executeCommand(String string) to launch
+ * system commands to a /bin/bash console.
+ *
  * @author Pascual Lorente Arencibia
  */
 public abstract class Worker extends Task<Integer> {
@@ -82,10 +83,10 @@ public abstract class Worker extends Task<Integer> {
         int ret = start();
 
         // Afterwards tasks
-        outStream.println(resources.getString("time.end") + " "
-                + dateFormat.format(Calendar.getInstance().getTime()));
-        outStream.println(resources.getString("time.total") + " "
-                + dateFormat.format(System.currentTimeMillis() - startTime));
+//        outStream.println(resources.getString("time.end") + " "
+//                + dateFormat.format(Calendar.getInstance().getTime()));
+//        outStream.println(resources.getString("time.total") + " "
+//                + dateFormat.format(System.currentTimeMillis() - startTime));
         updateProgress(1, 1);
         return ret;
     }
@@ -95,23 +96,32 @@ public abstract class Worker extends Task<Integer> {
         if (exit) {
             return 2;
         }
+        ProcessBuilder builder;
         // Uncomment this line will show the precise command on the console, really useful to debug.
         outStream.println("Command: " + command);
-        ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", command);
-        processBuilder.redirectErrorStream(true);
+        switch (System.getProperty("os.name")) {
+        case "Windows 7":
+            builder = new ProcessBuilder("cmd", "/C", command);
+            break;
+        case "Linux":
+        default:
+            builder = new ProcessBuilder("/bin/bash", "-c", command);
+        }
+        builder.redirectErrorStream(true);
         int ret = 0;
         try {
-            process = processBuilder.start();
+            process = builder.start();
             // Capture output of the process character by character.
             // Although this method seems inefficient (opposite to readLine()), it gives more control
             // and the process is asleep if there are no characters to read. 
             int c;
-            try {
-                while ((c = process.getInputStream().read()) != -1) {
-                    outStream.print((char) c);
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(process.
+                    getInputStream()))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    outStream.println(line);
+                    parseLine(line);
                 }
-            } catch (IOException ex) {
-                errStream.println(resources.getString("worker.lost"));
             }
             ret = process.waitFor();
         } catch (InterruptedException | IOException ex) {
@@ -135,11 +145,8 @@ public abstract class Worker extends Task<Integer> {
         }
         exit = true;
         updateProgress(1, 1);
+        cancel();
 
-    }
-
-    protected ResourceBundle getResourceBundle() {
-        return resources;
     }
 
     /**
@@ -162,4 +169,11 @@ public abstract class Worker extends Task<Integer> {
         elapsedTime.setValue(dateFormat.format(System.currentTimeMillis() - startTime));
     }
 
+    protected void parseLine(String line){
+        
+    }
+
+    public long getStartTime() {
+        return startTime;
+    }
 }

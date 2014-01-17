@@ -1,6 +1,7 @@
 package dnanalytics;
 
 import dnanalytics.view.DNAMain;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -33,11 +34,20 @@ public class DNAnalytics extends Application {
         appLocales.add(Locale.US);
         appLocales.add(new Locale("es", "ES"));
     }
+
     @Override
     public void start(Stage stage) throws Exception {
         properties = new Properties();
-        properties.load(new FileInputStream(PROPERTIES_FILE));
+        File f = new File(PROPERTIES_FILE);
+        if (!f.exists()) {
+            f.createNewFile();
+            properties.setProperty("language", "en");
+            properties.setProperty("country", "US");
+        } else {
+            properties.load(new FileInputStream(PROPERTIES_FILE));
+        }
         Locale l = new Locale(properties.getProperty("language"), properties.getProperty("country"));
+        System.out.println(new File(PROPERTIES_FILE).getAbsolutePath());
         ResourceBundle dnaBundle = ResourceBundle.getBundle("dnanalytics.view.dnanalytics", l);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("view/DNAMain.fxml"), dnaBundle);
         Parent root = (Parent) loader.load();
@@ -52,9 +62,10 @@ public class DNAnalytics extends Application {
     }
 
     /**
-     * The main() method is ignored in correctly deployed JavaFX application. main() serves only as
-     * fallback in case the application can not be launched through deployment artifacts, e.g., in
-     * IDEs with limited FX support. NetBeans ignores main().
+     * The main() method is ignored in correctly deployed JavaFX application.
+     * main() serves only as fallback in case the application can not be
+     * launched through deployment artifacts, e.g., in IDEs with limited FX
+     * support. NetBeans ignores main().
      *
      * @param args the command line arguments
      */
