@@ -184,7 +184,7 @@ public class DNAMain implements Initializable {
             // And if the tool has a worker
             final Worker worker = tools.get(toolButtons.getToggles().indexOf(toolButtons.
                     getSelectedToggle())).getWorker();
-            if (!worker.checkParameters()) {
+            if (!worker.importParameters()) {
                 System.err.println("Error en los parámetros.");
                 return;
             }
@@ -195,7 +195,6 @@ public class DNAMain implements Initializable {
             } catch (IOException ex) {
                 Logger.getLogger(DNAMain.class.getName()).log(Level.SEVERE, null, ex);
             }
-            System.out.println("Node loaded");
             ConsoleController controller = loader.getController();
             // Binds output, message and progress.
             worker.setStreams(
@@ -203,11 +202,11 @@ public class DNAMain implements Initializable {
                     new PrintStream(new DNAOutputStream(controller.getTextArea(), "err>")));
             controller.getMessage().textProperty().bind(worker.messageProperty());
             controller.getProgress().progressProperty().bind(worker.progressProperty());
+            controller.getStarted().setText(df.format(System.currentTimeMillis()));
+            controller.getTotalTime().textProperty().bind(worker.getElapsedTime());
             // Tab title, binded to worker title.
             Label label = new Label(worker.getTitle());
             label.textProperty().bind(worker.titleProperty());
-            controller.getStarted().setText(df.format(System.currentTimeMillis()));
-            controller.getTotalTime().textProperty().bind(worker.getElapsedTime());
             // Create the new tab, and set its content
             final Tab tab = new Tab();
             tab.setContent(node);
@@ -219,12 +218,14 @@ public class DNAMain implements Initializable {
             worker.setOnSucceeded(
                     (WorkerStateEvent t) -> {
                 tab.setClosable(true);
+                controller.getCancelButton().setDisable(true);
             });
             // Add the button the ability to cancel the Worker.
             controller.getCancelButton().setOnAction(
                     (ActionEvent t) -> {
                 worker.cancel(true);
                 tab.setClosable(true);
+                controller.getCancelButton().setDisable(true);
             });
 
             // Everything is ready, let's go.

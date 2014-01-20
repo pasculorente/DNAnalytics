@@ -8,6 +8,7 @@ import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.concurrent.Task;
@@ -86,22 +87,41 @@ public abstract class Worker extends Task<Integer> {
         return ret;
     }
 
-    protected int executeCommand(String command) {
+    /**
+     * Use the system to execute the command passed through the args. In Linux,
+     * "/bin/bash -c" will be called. In Windows, "cmd -C".
+     *
+     * @param args Arguments, separated by commands.
+     * @return the system return value when the command is finished.
+     */
+    protected int executeCommand(String... args) {
         // Simple trigger to terminate execution
         if (exit) {
             return 2;
         }
-        ProcessBuilder builder;
+        String h = "";
+        for (String s : args) {
+            h += s + " ";
+        }
         // Uncomment this line will show the precise command on the console, really useful to debug.
-        outStream.println("Command: " + command);
+        outStream.println("Command=" + h);
+        String[] args2 = new String[args.length + 2];
         switch (System.getProperty("os.name")) {
             case "Windows 7":
-                builder = new ProcessBuilder("cmd", "/C", command);
+                args2[0] = "cmd";
+                args2[1] = "/C";
                 break;
             case "Linux":
             default:
-                builder = new ProcessBuilder("/bin/bash", "-c", command);
+                args2[0] = "/bin/bash";
+                args2[1] = "-c";
         }
+        int i = 2;
+        for (String s : args) {
+            args2[i++] = s;
+        }
+        ProcessBuilder builder;
+        builder = new ProcessBuilder(args2);
         builder.redirectErrorStream(true);
         int ret = 0;
         try {
@@ -140,7 +160,7 @@ public abstract class Worker extends Task<Integer> {
         }
         exit = true;
         updateProgress(1, 1);
-        cancel();
+//        cancel();
 
     }
 
@@ -155,7 +175,9 @@ public abstract class Worker extends Task<Integer> {
     protected void updateProgress(String message, double progress, double max) {
         updateMessage(message);
         updateProgress(progress, max);
-        elapsedTime.setValue(dateFormat.format(System.currentTimeMillis() - startTime));
+        Platform.runLater(() -> {
+            elapsedTime.setValue(dateFormat.format(System.currentTimeMillis() - startTime));
+        });
     }
 
     protected void parseLine(String line) {
@@ -181,6 +203,6 @@ public abstract class Worker extends Task<Integer> {
      *
      * @return true if parameters are OK. false if Worker shouldn't be run.
      */
-    public abstract boolean checkParameters();
+    public abstract boolean importParameters();
 
 }

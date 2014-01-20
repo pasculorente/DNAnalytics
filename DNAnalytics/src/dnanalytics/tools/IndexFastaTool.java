@@ -53,7 +53,7 @@ public class IndexFastaTool implements Tool {
             }
 
             @Override
-            public boolean checkParameters() {
+            public boolean importParameters() {
 
                 if (!new File(controller.getGenome()).exists()) {
                     System.err.println(resources.getString("no.genome"));

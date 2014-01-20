@@ -401,7 +401,7 @@ public class BAMAnalyzer extends Worker {
     }
 
     @Override
-    public boolean checkParameters() {
+    public boolean importParameters() {
         if (!new File(input).exists()) {
             return false;
         }

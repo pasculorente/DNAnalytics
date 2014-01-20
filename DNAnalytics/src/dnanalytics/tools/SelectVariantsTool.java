@@ -61,7 +61,7 @@ public class SelectVariantsTool implements Tool {
             }
 
             @Override
-            public boolean checkParameters() {
+            public boolean importParameters() {
                 // Check the params in the main thread, to avoid launching a dummy Worker.
                 if (!new File(genome).exists()) {
                     System.err.println(resources.getString("no.genome"));

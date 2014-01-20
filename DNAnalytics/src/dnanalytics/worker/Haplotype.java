@@ -113,7 +113,7 @@ public class Haplotype extends Worker {
     }
 
     @Override
-    public boolean checkParameters() {
+    public boolean importParameters() {
 
         // Check if all parameters are OK.
         if (!new File(genome).exists()) {

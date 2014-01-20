@@ -124,7 +124,7 @@ public class FilterFrequenciesTool implements Tool {
             }
 
             @Override
-            public boolean checkParameters() {
+            public boolean importParameters() {
                 if (input.isEmpty() || !new File(input).exists()) {
                     System.err.println(resources.getString("no.output"));
                     return false;

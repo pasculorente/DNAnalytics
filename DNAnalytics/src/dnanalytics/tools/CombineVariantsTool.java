@@ -105,7 +105,7 @@ public class CombineVariantsTool implements Tool {
             }
 
             @Override
-            public boolean checkParameters() {
+            public boolean importParameters() {
                 if (!new File(genome).exists()) {
                     System.err.println(DNAMain.getResources().getString("no.genome"));
                     return false;

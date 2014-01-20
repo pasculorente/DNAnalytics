@@ -2,11 +2,13 @@ package dnanalytics.worker;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
- * Script for the alignment of a sample sequences. (1) Initial alignment (2) Refinement (3)
- * Realignment and recalibration (4) Reduce Reads (experimental and optional)
+ * Script for the alignment of a sample sequences. (1) Initial alignment (2)
+ * Refinement (3) Realignment and recalibration (4) Reduce Reads (experimental
+ * and optional)
  *
  * @author Pascual Lorente Arencibia
  */
@@ -36,13 +38,26 @@ public class Aligner extends Worker {
 
         // USE ALL THE COOOORES!!!!
         int cores = Runtime.getRuntime().availableProcessors();
-        double counter = 0.5;
-        final int total = 14;
         SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd_HHmmss_");
         String timestamp = "aln_" + df.format(new Date());
+        String seq1 = new File(temp, timestamp + "seq1.sai").getAbsolutePath();
+        String seq2 = new File(temp, timestamp + "seq2.sai").getAbsolutePath();
+        String bwa = new File(temp, timestamp + "bwa.sam").getAbsolutePath();
+        String picard = "java -jar software" + File.separator + "picard" + File.separator;
+        String picard1 = new File(temp, timestamp + "picard1.bam").getAbsolutePath();
+        String picard2 = new File(temp, timestamp + "picard2.bam").getAbsolutePath();
+        String picard3 = new File(temp, timestamp + "picard3.bam").getAbsolutePath();
+        String picard4 = new File(temp, timestamp + "picard4.bam").getAbsolutePath();
+        String metrics = new File(temp, timestamp + "dedup.metrics").getAbsolutePath();
+        String gatk = "java -jar software" + File.separator + "gatk"
+                + File.separator + "GenomeAnalysisTK.jar";
+        String intervals = new File(temp, timestamp + "gatk.intervals").getAbsolutePath();
+        String gatk1 = new File(temp, timestamp + "gatk1.bam").getAbsolutePath();
+        String recal = new File(temp, timestamp + "recal.grp").getAbsolutePath();
+        ArrayList<Command> commands = new ArrayList<>();
         /*
          * Phase A: Align/Map sequences.
-         *  Burrows-Wheeler Alignment. As this project works with paired end sequences, we use 
+         *  Burrows-Wheeler Aligner. As this project works with paired end sequences, we use 
          *  simple, basic-parameters workflow.
          * 
          * 1 and 2: Align both sequences.
@@ -55,48 +70,17 @@ public class Aligner extends Worker {
          * 3: Generate alignments.
          *   bwa sampe genome.fasta seq1.sai seq2.sai sequence1.fq.gz sequence2.fq.gz > bwa.sam
          */
-        File seq1 = new File(temp, timestamp + "seq1.sai");
-        File seq2 = new File(temp, timestamp + "seq2.sai");
-        File bwa = new File(temp, timestamp + "bwa.sam");
-
-        updateProgress(resources.getString("align.forward"), counter++, total);
-//        updateProgress(counter++, total);
-//        updateMessage(resources.getString("align.forward"));
-        executeCommand(
-                "bwa aln"
-                + " -t " + cores
-                + " " + genome
-                + " " + forward
-                + (illumina ? " -I" : "")
-                + " > " + seq1);
-
-        updateProgress(counter, total);
-
-        updateMessage(resources.getString("align.reverse"));
-        executeCommand(
-                "bwa aln"
-                + " -t " + cores
-                + " " + genome
-                + " " + reverse
-                + (illumina ? " -I" : "")
-                + " > " + seq2);
-
-        updateProgress(counter, total);
-
-        updateMessage(resources.getString("align.sampe"));
-        executeCommand(
-                "bwa sampe"
-                + " " + genome
-                + " " + seq1
-                + " " + seq2
-                + " " + forward
-                + " " + reverse
-                + " > " + bwa);
-
-        seq1.delete();
-
-        seq2.delete();
-
+        commands.add(new Command(resources.getString("align.forward"),
+                "bwa", "aln", "-t", String.valueOf(cores),
+                genome, forward, (illumina ? "-I" : ""), ">", seq1
+        ));
+        commands.add(new Command(resources.getString("align.reverse"),
+                "bwa", "aln", "-t", String.valueOf(cores),
+                genome, reverse, (illumina ? "-I" : ""), ">", seq2
+        ));
+        commands.add(new Command(resources.getString("align.sampe"),
+                "bwa", "sampe", genome, seq1, seq2, forward, reverse, ">", bwa
+        ));
         /*
          * Phase B: Prepare BAM for GATK
          *   SAM file from BWA must pass several filters before entering GATK. 
@@ -120,60 +104,37 @@ public class Aligner extends Worker {
          * 8: BAM Index
          *   Generates an Index of the BAM file (.bai)
          */
-        String picard = "java -jar software" + File.separator + "picard" + File.separator;
-        File picard1 = new File(temp, timestamp + "picard1.bam");
-        File picard2 = new File(temp, timestamp + "picard2.bam");
-        File picard3 = new File(temp, timestamp + "picard3.bam");
-        File picard4 = new File(temp, timestamp + "picard4.bam");
-        File metrics = new File(temp, timestamp + "dedup.metrics");
-
-        updateProgress(counter++, total);
-        updateMessage(resources.getString("align.clean"));
-        executeCommand(picard
-                + "CleanSam.jar"
-                + " INPUT=" + bwa
-                + " OUTPUT=" + picard1);
-        bwa.delete();
-
-        updateProgress(counter++, total);
-        updateMessage(resources.getString("align.sort"));
-        executeCommand(picard
-                + "SortSam.jar"
-                + " INPUT=" + picard1
-                + " OUTPUT=" + picard2
-                + " SORT_ORDER=coordinate");
-        picard1.delete();
-
-        updateProgress(counter++, total);
-        updateMessage(resources.getString("align.dedup"));
-        executeCommand(picard
-                + "MarkDuplicates.jar"
-                + " INPUT=" + picard2
-                + " OUTPUT=" + picard3
-                + " REMOVE_DUPLICATES=true"
-                + " METRICS_FILE=" + metrics);
-        picard2.delete();
-
-        metrics.delete();
-
-        updateProgress(counter++, total);
-        updateMessage(resources.getString("align.addheader"));
-        executeCommand(picard
-                + "AddOrReplaceReadGroups.jar"
-                + " INPUT=" + picard3
-                + " OUTPUT=" + picard4
-                + " RGPL=Illumina"
-                + " RGSM=niv"
-                + " RGPU=flowcell-barcode.lane"
-                + " RGLB=BAITS");
-        picard3.delete();
-
-        updateProgress(counter++, total);
-        updateMessage(resources.getString("align.index"));
-        executeCommand(picard
-                + "BuildBamIndex.jar"
-                + " INPUT=" + picard4);
-
+        commands.add(new Command(resources.getString("align.clean"),
+                picard + "CleanSam.jar",
+                "INPUT=" + bwa,
+                "OUTPUT=" + picard1
+        ));
+        commands.add(new Command(resources.getString("align.sort"),
+                picard + "SortSam.jar",
+                "INPUT=" + picard1,
+                "OUTPUT=" + picard2,
+                "SORT_ORDER=coordinate"
+        ));
+        commands.add(new Command(resources.getString("align.dedup"),
+                picard + "MarkDuplicates.jar",
+                "INPUT=" + picard2,
+                "OUTPUT=" + picard3,
+                "REMOVE_DUPLICATES=true",
+                "METRICS_FILE=" + metrics
+        ));
+        commands.add(new Command(resources.getString("align.addheader"),
+                picard + "AddOrReplaceReadGroups.jar",
+                "INPUT=" + picard3,
+                "OUTPUT=" + picard4,
+                "RGPL=Illumina",
+                "RGSM=niv",
+                "RGPU=flowcell-barcode.lane",
+                "RGLB=BAITS"
+        ));
+        commands.add(new Command(resources.getString("align.index"),
+                picard + "BuildBamIndex.jar",
+                "INPUT=" + picard4
+        ));
         /* 
          * Phase C: Realign around Indels
          *   GATK has an algorithm to avoid false positives which consists in looking at high
@@ -187,43 +148,25 @@ public class Aligner extends Worker {
          * 10: IndelRealigner
          *    Makes the realigment
          */
-        // GATK commandLine
-        //  -Xmx10g : Limits use of memory (for Java execution) to 10 GB
-        //  -nct    : Number of threads
-        String gatk = "java -jar software"
-                + File.separator + "gatk"
-                + File.separator + "GenomeAnalysisTK.jar";
-        File intervals = new File(temp, timestamp + "gatk.intervals");
-        File gatk1 = new File(temp, timestamp + "gatk1.bam");
-
-        updateProgress(counter++, total);
-        updateMessage(resources.getString("align.prealign"));
-        executeCommand(
-                gatk
-                + " -T RealignerTargetCreator"
-                + " -R " + genome
-                + " -I " + picard4
-                + " -known " + mills
-                + " -known " + phase1
-                + (illumina ? "" : " --fix_misencoded_quality_scores")
-                + " -o " + intervals);
-
-        updateProgress(counter++, total);
-        updateMessage(resources.getString("align.align"));
-        executeCommand(
-                gatk
-                + " -T IndelRealigner"
-                + " -R " + genome
-                + " -I " + picard4
-                + " -known " + mills
-                + " -known " + phase1
-                + (illumina ? "" : " --fix_misencoded_quality_scores")
-                + " -targetIntervals " + intervals
-                + " -o " + gatk1);
-        picard4.delete();
-
-        intervals.delete();
-
+        commands.add(new Command(resources.getString("align.prealign"),
+                gatk, "-T", "RealignerTargetCreator",
+                "-R", genome,
+                "-I", picard4,
+                "-known", mills,
+                "-known", phase1,
+                (illumina ? "" : "--fix_misencoded_quality_scores"),
+                "-o", intervals
+        ));
+        commands.add(new Command(resources.getString("align.align"),
+                gatk, "-T", "IndelRealigner",
+                "-R", genome,
+                "-I", picard4,
+                "-known", mills,
+                "-known", phase1,
+                (illumina ? "" : " --fix_misencoded_quality_scores"),
+                "-targetIntervals", intervals,
+                "-o", gatk1
+        ));
         /* 
          * Phase D: Base Quality Score Recalibration
          *   GATK uses Quality Scores to generate a calibrated error model and apply it to alignments
@@ -237,34 +180,22 @@ public class Aligner extends Worker {
          * 12: PrintReads
          *   Applies the recalibration
          */
-        File recal = new File(temp, timestamp + "recal.grp");
-
-        updateProgress(counter++, total);
-        updateMessage(resources.getString("align.prerecal"));
-        executeCommand(
-                gatk
-                + " -T BaseRecalibrator"
-                + " -I " + gatk1
-                + " -R " + genome
-                + " --knownSites " + dbsnp
-                + " --knownSites " + mills
-                + " --knownSites " + phase1
-                + " -o " + recal);
-
-        updateProgress(counter++, total);
-        updateMessage(resources.getString("align.recal"));
-        executeCommand(
-                gatk
-                + " -T PrintReads"
-                + " -R " + genome
-                + " -I " + gatk1
-                + " -BQSR " + recal
-                + " -o " + output);
-
-        gatk1.delete();
-
-        recal.delete();
-
+        commands.add(new Command(resources.getString("align.prerecal"),
+                gatk, "-T", "BaseRecalibrator",
+                "-I", gatk1,
+                "-R", genome,
+                "--knownSites", dbsnp,
+                "--knownSites", mills,
+                "--knownSites", phase1,
+                "-o", recal
+        ));
+        commands.add(new Command(resources.getString("align.recal"),
+                gatk, "-T", "PrintReads",
+                "-R", genome,
+                "-I", gatk1,
+                "-BQSR", recal,
+                "-o", output
+        ));
         /* 
          * Phase E: Reduce reads
          *  Expererimental Tool that reduces the size of BAM Files. Optional.
@@ -272,75 +203,39 @@ public class Aligner extends Worker {
          * 13: ReduceReads
          */
         if (reduceReads) {
-            File reduced = new File(output.replace(".bam", "_reduced.bam"));
-
-            updateProgress(counter++, total);
-            updateMessage(resources.getString("align.reducereads"));
-            executeCommand(
-                    gatk
-                    + " -T ReduceReads"
-                    + " -R " + genome
-                    + " -I " + output
-                    + " -o " + reduced);
+            String reduced = new File(output.replace(".bam", "_reduced.bam")).getAbsolutePath();
+            commands.add(new Command(resources.getString("align.reducereads"),
+                    gatk, "-T", "ReduceReads",
+                    "-R", genome,
+                    "-I", output,
+                    "-o", reduced
+            ));
         }
+        int i = 0;
+        for (Command command : commands) {
+            updateProgress(command.message, i++, commands.size());
+            if (executeCommand(command.args) != 0) {
+                return -1;
+            }
+        }
+        new File(bwa).delete();
+        new File(seq1).delete();
+        new File(seq2).delete();
+        new File(picard1).delete();
+        new File(picard2).delete();
+        new File(picard3).delete();
+        new File(picard4).delete();
+        new File(metrics).delete();
+        new File(intervals).delete();
+        new File(gatk1).delete();
+        new File(recal).delete();
 
-        updateMessage(resources.getString("align.completed"));
-        outStream.println(output + " generated succesfully (^o^)");
-        updateProgress(
-                1, 1);
-
+        updateProgress("Finished", 1, 1);
         return 0;
     }
-// Comments
-//        String[] args = {};
-//
-//        outStream.println(resources.getString("align.clean"));
-//        updateMessage(resources.getString("align.clean"));
-//        CleanSam cleanSam = new CleanSam();
-//        cleanSam.INPUT = bwa;
-//        cleanSam.OUTPUT = picard1;
-//        cleanSam.instanceMain(args);
-//        bwa.delete();
-//
-//        outStream.println(resources.getString("align.sort"));
-//        updateMessage(resources.getString("align.sort"));
-//        SortSam sortSam = new SortSam();
-//        sortSam.INPUT = picard1;
-//        sortSam.OUTPUT = picard2;
-//        sortSam.SORT_ORDER = SAMFileHeader.SortOrder.coordinate;
-//        sortSam.instanceMain(args);
-//        picard1.delete();
-//
-//        outStream.println("Starting dups");
-//        updateMessage(resources.getString("align.dedup"));
-//        MarkDuplicates markDuplicates = new MarkDuplicates();
-//        markDuplicates.INPUT = new ArrayList<>();
-//        markDuplicates.INPUT.add(picard2);
-//        markDuplicates.OUTPUT = picard3;
-//        markDuplicates.REMOVE_DUPLICATES = true;
-//        markDuplicates.METRICS_FILE = metrics;
-//        markDuplicates.instanceMain(args);
-//        picard2.delete();
-//        metrics.delete();
-//
-//        updateMessage(resources.getString("align.addRGheader"));
-//        AddOrReplaceReadGroups addOrReplaceReadGroups = new AddOrReplaceReadGroups();
-//        addOrReplaceReadGroups.INPUT = picard3;
-//        addOrReplaceReadGroups.OUTPUT = picard4;
-//        addOrReplaceReadGroups.RGPL = "Illumina";
-//        addOrReplaceReadGroups.RGSM = "niv";
-//        addOrReplaceReadGroups.RGPU = "flowcell-barcode.lane";
-//        addOrReplaceReadGroups.RGLB = "BAITS";
-//        addOrReplaceReadGroups.instanceMain(args);
-//        picard3.delete();
-//
-//        updateMessage(resources.getString("align.index"));
-//        BuildBamIndex buildBamIndex = new BuildBamIndex();
-//        buildBamIndex.INPUT = picard4.getAbsolutePath();
-//        buildBamIndex.instanceMain(args);
 
     @Override
-    public boolean checkParameters() {
+    public boolean importParameters() {
         // Check if all parameters are OK.
         if (!new File(genome).exists()) {
             errStream.println(resources.getString("no.genome"));
@@ -377,4 +272,15 @@ public class Aligner extends Worker {
         return true;
     }
 
+    private class Command {
+
+        String message;
+        String[] args;
+
+        public Command(String message, String... args) {
+            this.message = message;
+            this.args = args;
+        }
+
+    }
 }

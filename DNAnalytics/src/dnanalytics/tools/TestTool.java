@@ -40,7 +40,7 @@ public class TestTool implements Tool {
             long millis;
 
             @Override
-            public boolean checkParameters() {
+            public boolean importParameters() {
                 try {
                     lines = controller.getLines();
                     millis = controller.getMilliseconds();
@@ -58,18 +58,14 @@ public class TestTool implements Tool {
                 long cp = 0;
                 updateProgress("Empezamos", c, lines);
                 while (c < lines) {
-                    if (System.currentTimeMillis() - cp > millis) {
-                        outStream.println("Test tool progress: " + (c * 100 / lines) + "%. Line "
-                                + ++c + "/" + lines);
-                        try {
-                            updateProgress("Test tool", c, lines);
-                        } catch (Exception ex) {
-                            //Logger.getLogger(TestTool.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-
-                        cp = System.currentTimeMillis();
+                    updateProgress("Test tool (" + c++ + "/" + lines + ")", c, lines);
+                    executeCommand("date", "-u");
+                    try {
+                        Thread.sleep(millis);
+                    } catch (InterruptedException ex) {
                     }
                 }
+                updateProgress("Test tool completed", 1, 1);
                 return 0;
             }
         };

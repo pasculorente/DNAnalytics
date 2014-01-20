@@ -71,7 +71,7 @@ public class DindelTool implements Tool {
             }
 
             @Override
-            public boolean checkParameters() {
+            public boolean importParameters() {
                 // Checking parameters
                 if (!new File(controller.getInput()).exists()) {
                     System.err.println(resources.getString("no.input"));
