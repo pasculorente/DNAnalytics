@@ -95,6 +95,15 @@ public abstract class Worker extends Task<Integer> {
      * @return the system return value when the command is finished.
      */
     protected int executeCommand(String... args) {
+        return execute(null, args);
+    }
+
+    protected int executeCommand(LineParser parser, String... args) {
+        return execute(parser, args);
+
+    }
+
+    private int execute(LineParser parser, String... args) {
         // Simple trigger to terminate execution
         if (exit) {
             return 2;
@@ -126,15 +135,15 @@ public abstract class Worker extends Task<Integer> {
         int ret = 0;
         try {
             process = builder.start();
-            // Capture output of the process character by character.
-            // Although this method seems inefficient (opposite to readLine()), it gives more control
-            // and the process is asleep if there are no characters to read. 
             try (BufferedReader br = new BufferedReader(new InputStreamReader(process.
                     getInputStream()))) {
                 String line;
                 while ((line = br.readLine()) != null) {
                     outStream.println(line);
-                    parseLine(line);
+                    if (parser != null) {
+                        parser.updateLine(line);
+                        updateProgress(parser.getMessage(), parser.getProgress(), 1);
+                    }
                 }
             }
             ret = process.waitFor();

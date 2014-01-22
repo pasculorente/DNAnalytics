@@ -2,6 +2,7 @@ package dnanalytics.tools;
 
 import dnanalytics.view.DNAMain;
 import dnanalytics.view.tools.TestToolController;
+import dnanalytics.worker.LineParser;
 import dnanalytics.worker.Worker;
 import java.io.IOException;
 import javafx.fxml.FXMLLoader;
@@ -57,14 +58,17 @@ public class TestTool implements Tool {
                 int c = 0;
                 long cp = 0;
                 updateProgress("Empezamos", c, lines);
-                while (c < lines) {
-                    updateProgress("Test tool (" + c++ + "/" + lines + ")", c, lines);
-                    executeCommand("date", "-u");
-                    try {
-                        Thread.sleep(millis);
-                    } catch (InterruptedException ex) {
-                    }
-                }
+                executeCommand("pwd");
+                executeCommand(new TestParser(), "software/test_script.sh "
+                        + String.valueOf(controller.getLines()) + " "
+                        + String.valueOf(controller.getMilliseconds() / 1000));
+//                while (c < lines) {
+//                    updateProgress("Test tool (" + c++ + "/" + lines + ")", c, lines);
+//                    try {
+//                        Thread.sleep(millis);
+//                    } catch (InterruptedException ex) {
+//                    }
+//                }
                 updateProgress("Test tool completed", 1, 1);
                 return 0;
             }
@@ -79,6 +83,27 @@ public class TestTool implements Tool {
     @Override
     public String getStyleID() {
         return "illumina";
+    }
+
+    public class TestParser implements LineParser{
+
+        String line;
+        
+        @Override
+        public void updateLine(String line) {
+            this.line = line;
+        }
+
+        @Override
+        public String getMessage() {
+            return line.substring(4);
+        }
+
+        @Override
+        public double getProgress() {
+            return line.charAt(0);
+        }
+
     }
 
 }
