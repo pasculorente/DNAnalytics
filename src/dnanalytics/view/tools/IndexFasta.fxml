@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?scenebuilder-preview-i18n-resource ../../DNAMain.properties?>
+
+<VBox id="VBox" alignment="CENTER" spacing="5.0" xmlns:fx="http://javafx.com/fxml" fx:controller="dnanalytics.view.tools.IndexFastaController">
+  <children>
+    <HBox alignment="CENTER">
+      <children>
+        <Separator HBox.hgrow="ALWAYS" />
+        <Label text="%label.input" />
+        <Separator HBox.hgrow="ALWAYS" />
+      </children>
+    </HBox>
+    <HBox spacing="2.0">
+      <children>
+        <TextField fx:id="genome" editable="false" HBox.hgrow="ALWAYS" promptText="%file.fasta"/>
+        <Button defaultButton="true" mnemonicParsing="false" onAction="#selectFASTA" text="%button.browse" />
+      </children>
+    </HBox>
+  </children>
+</VBox>

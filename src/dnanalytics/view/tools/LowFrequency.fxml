@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dnanalytics.view.tools.LowFrequencyController">
+<children><HBox alignment="CENTER" spacing="2.0">
+<children><Separator HBox.hgrow="SOMETIMES" /><Label text="Input" /><Separator HBox.hgrow="SOMETIMES" />
+</children></HBox><HBox alignment="CENTER" spacing="2.0">
+<children><TextField fx:id="input" promptText="BAM File" HBox.hgrow="SOMETIMES" /><Button mnemonicParsing="false" onAction="#setInput" text="%button.browse" />
+</children></HBox><HBox alignment="CENTER" spacing="2.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<children>
+<Separator HBox.hgrow="SOMETIMES" />
+<Label text="Threshold" />
+<Separator HBox.hgrow="SOMETIMES" />
+</children>
+</HBox><HBox alignment="CENTER" spacing="2.0">
+<children><TextField fx:id="threshold" HBox.hgrow="SOMETIMES" />
+</children></HBox><HBox alignment="CENTER" spacing="2.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<children>
+<Separator HBox.hgrow="SOMETIMES" />
+<Label text="Output" />
+<Separator HBox.hgrow="SOMETIMES" />
+</children>
+</HBox><HBox alignment="CENTER" spacing="2.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<children>
+<TextField fx:id="output" promptText="TSV File" HBox.hgrow="SOMETIMES" />
+<Button mnemonicParsing="false" onAction="#setOutput" text="%button.browse" />
+</children>
+</HBox>
+</children></VBox>

@@ -1,0 +1,17 @@
+-- Directory contents:
+
+Makefile	For compiling the xhmm source code
+params.txt	"Typical" parameters for running xhmm (may need to be modified by the user)
+
+
+sources/scripts/xcnv_to_cnv	C-shell script for converting the .xcnv XHMM output to PLINK's .cnv format
+
+sources/scripts/example_make_XHMM_plots.R	R script for plotting XHMM metrics and CNV calls
+sources/scripts/R_functions			R code for making these plots and parsing XHMM output
+
+
+-- Directories containing C++ source code for XHMM and hmm++ library:
+sources/include
+sources/lib
+sources/execs
+sources/hmm++
