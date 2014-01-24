@@ -1,6 +1,7 @@
 package dnanalytics.tools;
 
 import dnanalytics.DNAnalytics;
+import dnanalytics.utils.Command;
 import dnanalytics.view.DNAMain;
 import dnanalytics.view.tools.SelectVariantsController;
 import dnanalytics.worker.Worker;
@@ -44,19 +45,20 @@ public class SelectVariantsTool implements Tool {
         // The Worker selecter is created, it will select the variants in background
         return new Worker() {
             String genome = DNAnalytics.getProperties().getProperty("genome");
+
             @Override
             protected int start() {
                 updateTitle("Selecting " + new File(controller.getInput()).getName());
                 updateMessage(resources.getString("select.select"));
-                executeCommand(
-                        "java -jar software" + File.separator + "gatk" + File.separator
-                        + "GenomeAnalysisTK.jar"
-                        + " -T SelectVariants"
-                        + " -R " + genome
-                        + " -V " + controller.getInput()
-                        + " -restrictAllelesTo BIALLELIC"
-                        + " -o " + controller.getOutput()
-                        + " -select \"" + controller.getExpression() + '\"');
+                String gatk = DNAnalytics.getProperties().getProperty("java7")
+                        + " -jar software" + File.separator + "gatk"
+                        + File.separator + "GenomeAnalysisTK.jar";
+                new Command(gatk, "-T", "SelectVariants",
+                        "-R", genome,
+                        "-V", controller.getInput(),
+                        "-restrictAllelesTo", "BIALLELIC",
+                        "-o", controller.getOutput(),
+                        "-select", "\"" + controller.getExpression() + '\"').execute();
                 return 0;
             }
 

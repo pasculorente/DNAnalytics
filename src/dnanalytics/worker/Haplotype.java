@@ -1,5 +1,7 @@
 package dnanalytics.worker;
 
+import dnanalytics.DNAnalytics;
+import dnanalytics.utils.Command;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -47,20 +49,17 @@ public class Haplotype extends Worker {
 
         // Haha, this is what one has to do to avoid /s/l/a/s/h/e/s/
         // although in the end this is not running in Windows OS
-        String gatk = "java -jar software"
-                + File.separator + "gatk"
+        String gatk = DNAnalytics.getProperties().getProperty("java7")
+                + " -jar software" + File.separator + "gatk"
                 + File.separator + "GenomeAnalysisTK.jar";
 
         SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd_HHmmss_");
         String timestamp = "call_" + df.format(new Date());
 
         updateProgress(resources.getString("call.call"), 1, (recalibrate ? 3 : 2));
-        executeCommand(gatk,
-                "-T", "HaplotypeCaller",
-                "-R", genome,
-                "-I", input,
-                "-o", output,
-                "--dbsnp", dbsnp);
+        new Command(outStream, gatk, "-T", "HaplotypeCaller",
+                "-R", genome, "-I", input, "-o", output,
+                "--dbsnp", dbsnp).execute();
 
         // Recalibrate
         if (recalibrate) {
@@ -68,10 +67,8 @@ public class Haplotype extends Worker {
             String recal = new File(temp, timestamp + "recal").getAbsolutePath();
             String outputRecalibrated = output.replace(".vcf", "_recalibrated.vcf");
             updateProgress(resources.getString("call.prerecal"), 1.5, 3);
-            executeCommand(gatk,
-                    "-T", "VariantRecalibrator",
-                    "-R", genome,
-                    "-input", output,
+            new Command(outStream, gatk, "-T", "VariantRecalibrator",
+                    "-R", genome, "-input", output,
                     "-tranchesFile", tranches,
                     "-recalFile ", recal,
                     "-resource:hapmap,known=false,training=true,truth=true,prior=15.0",
@@ -83,17 +80,14 @@ public class Haplotype extends Worker {
                     "-resource:dbsnp,known=true,training=false,truth=false,prior=6.0",
                     dbsnp,
                     "-an", "QD", "-an", "MQRankSum", "-an", "ReadPosRankSum",
-                    "-an", "FS", "-an", "MQ", "-an", "DP", "-mode BOTH");
+                    "-an", "FS", "-an", "MQ", "-an", "DP", "-mode BOTH").execute();
             updateProgress(resources.getString("call.recal"), 2.5, 3);
-            executeCommand(gatk,
-                    "-T", "ApplyRecalibration",
-                    "-R", genome,
-                    "-input", output,
+            new Command(outStream, gatk, "-T", "ApplyRecalibration",
+                    "-R", genome, "-input", output,
                     "-tranchesFile", tranches,
                     "-recalFile", recal,
                     "-o", outputRecalibrated,
-                    "--ts_filter_level", "97.0", "-mode", "BOTH");
-
+                    "--ts_filter_level", "97.0", "-mode", "BOTH").execute();
             new File(tranches).delete();
             new File(recal).delete();
             updateProgress(resources.getString("call.completed"), 1, 1);

@@ -1,6 +1,7 @@
 package dnanalytics.tools;
 
 import dnanalytics.DNAnalytics;
+import dnanalytics.utils.Command;
 import dnanalytics.view.DNAMain;
 import dnanalytics.view.tools.CombineVariantsController;
 import dnanalytics.worker.Worker;
@@ -15,6 +16,7 @@ import javafx.scene.control.ListView;
 
 /**
  * FXML Controller class
+ *
  * @author Pascual Lorente Arencibia
  */
 public class CombineVariantsTool implements Tool {
@@ -50,7 +52,7 @@ public class CombineVariantsTool implements Tool {
             String gatk = "";
             String variants = "";
             String genome = DNAnalytics.getProperties().getProperty("genome");
-            
+
             private void initializeSettings() {
                 variants = vcfList.getItems().stream().map((var) -> " -V " + var).reduce(variants,
                         String::concat);
@@ -60,46 +62,41 @@ public class CombineVariantsTool implements Tool {
             }
 
             private void intersectVariants() {
-                executeCommand(gatk
-                        + " -T CombineVariants"
-                        + " -R " + genome
-                        + " -minN " + vcfList.getItems().size()
-                        + " -o " + controller.getCombinedVCF()
-                        + variants);
-
+                new Command(outStream, gatk, "-T", "CombineVariants",
+                        "-R", genome,
+                        "-minN", String.valueOf(vcfList.getItems().size()),
+                        "-o", controller.getCombinedVCF(),
+                        variants).execute();
             }
 
             private void aggregateVariants() {
-                executeCommand(gatk
-                        + " -T CombineVariants"
-                        + " -R " + genome
-                        + " -o " + controller.getCombinedVCF()
-                        + variants);
+                new Command(outStream, gatk, "-T", "CombineVariants",
+                        "-R", genome,
+                        "-o", controller.getCombinedVCF(),
+                        variants).execute();
             }
 
             private void deductVariants() {
-                executeCommand(gatk
-                        + " -T SelectVariants"
-                        + " -R " + genome
-                        + " -V " + vcfList.getItems().get(0)
-                        + " -o " + controller.getCombinedVCF()
-                        + " --discordance " + vcfList.getItems().get(1));
+                new Command(outStream, gatk,"-T", "SelectVariants",
+                        "-R", genome,
+                        "-V", vcfList.getItems().get(0),
+                        "-o", controller.getCombinedVCF(),
+                        "--discordance", vcfList.getItems().get(1)).execute();
             }
 
             @Override
             protected int start() {
                 initializeSettings();
-                updateTitle("combinig " + new File(controller.getCombinedVCF()).getName());
-
+                updateTitle("Combinig " + new File(controller.getCombinedVCF()).getName());
                 switch (controller.getOperation()) {
-                case "intersection":
-                    intersectVariants();
-                    break;
-                case "aggregation":
-                    aggregateVariants();
-                    break;
-                case "difference":
-                    deductVariants();
+                    case "intersection":
+                        intersectVariants();
+                        break;
+                    case "aggregation":
+                        aggregateVariants();
+                        break;
+                    case "difference":
+                        deductVariants();
                 }
                 return 0;
             }

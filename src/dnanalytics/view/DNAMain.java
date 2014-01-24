@@ -12,8 +12,8 @@ import dnanalytics.tools.LowFrequencyTool;
 import dnanalytics.tools.SelectVariantsTool;
 import dnanalytics.tools.TestTool;
 import dnanalytics.tools.Tool;
-import dnanalytics.utils.DNAOutputStream;
 import dnanalytics.utils.FileManager;
+import dnanalytics.utils.TextAreaWriter;
 import dnanalytics.worker.Worker;
 import java.io.File;
 import java.io.IOException;
@@ -124,8 +124,8 @@ public class DNAMain implements Initializable {
         });
 
         // Redirect outputs
-        System.setErr(new PrintStream(new DNAOutputStream(console, "err>")));
-        System.setOut(new PrintStream(new DNAOutputStream(console, ">")));
+        System.setErr(new PrintStream(new TextAreaWriter(console)));
+        System.setOut(new PrintStream(new TextAreaWriter(console)));
         System.out.println(resources.getString("label.welcome"));
         System.out.println(resources.getString("label.version"));
 
@@ -135,13 +135,6 @@ public class DNAMain implements Initializable {
             languagesBox.getItems().add(locale.getDisplayName(currentLocale));
         }
         languagesBox.getSelectionModel().select(currentLocale.getDisplayName(currentLocale));
-//        languagesBox.getItems().clear();
-//        for (Locale locale : Settings.getLocales()) {
-//            languagesBox.getItems().add(locale.getDisplayName(Settings.getLocale()));
-//            if (Settings.getLocale().equals(locale)) {
-//                languagesBox.getSelectionModel().selectLast();
-//            }
-//        }
 
         // Give the languagesBox the ability to change system language.
         languagesBox.getSelectionModel().selectedItemProperty().addListener(
@@ -150,7 +143,6 @@ public class DNAMain implements Initializable {
                 if (current.equals(locale.getDisplayName(currentLocale))) {
                     properties.setProperty("language", locale.getLanguage());
                     properties.setProperty("country", locale.getCountry());
-                    //resources = ResourceBundle.getBundle("dnanalytics.view.dnanalytics", locale);
                     return;
                 }
             }
@@ -198,8 +190,8 @@ public class DNAMain implements Initializable {
             ConsoleController controller = loader.getController();
             // Binds output, message and progress.
             worker.setStreams(
-                    new PrintStream(new DNAOutputStream(controller.getTextArea(), ">")),
-                    new PrintStream(new DNAOutputStream(controller.getTextArea(), "err>")));
+                    new PrintStream(new TextAreaWriter(controller.getTextArea())),
+                    new PrintStream(new TextAreaWriter(controller.getTextArea())));
             controller.getMessage().textProperty().bind(worker.messageProperty());
             controller.getProgress().progressProperty().bind(worker.progressProperty());
             controller.getStarted().setText(df.format(System.currentTimeMillis()));

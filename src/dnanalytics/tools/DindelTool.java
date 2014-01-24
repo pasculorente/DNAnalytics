@@ -1,6 +1,7 @@
 package dnanalytics.tools;
 
 import dnanalytics.DNAnalytics;
+import dnanalytics.utils.Command;
 import dnanalytics.view.DNAMain;
 import dnanalytics.view.tools.DindelController;
 import dnanalytics.worker.Worker;
@@ -52,6 +53,7 @@ public class DindelTool implements Tool {
             private String name;
             private File temp, windows, windows2, dindel;
             String genome = DNAnalytics.getProperties().getProperty("genome");
+
             /**
              * Creates directory tree and initializes variables.
              */
@@ -89,9 +91,9 @@ public class DindelTool implements Tool {
             }
 
             /**
-             * First step for standard dindel workflow: extraction of potential indels from the
-             * input BAM file. The output are 2 files, named after sample name (name.libraries.txt
-             * and name.variants.txt)
+             * First step for standard dindel workflow: extraction of potential
+             * indels from the input BAM file. The output are 2 files, named
+             * after sample name (name.libraries.txt and name.variants.txt)
              */
             private void extractCandidatesFromBAM() {
                 // Command appearance:
@@ -100,11 +102,11 @@ public class DindelTool implements Tool {
                 //  --bamFile input.bam \
                 //  --ref reference.fasta \
                 //  --outputFile temp/name
-                executeCommand(new File(dindel, "dindel")
-                        + " --analysis getCIGARindels"
-                        + " --bamFile " + controller.getInput()
-                        + " --ref " + genome
-                        + " --outputFile " + new File(temp, name));
+                new Command(outStream, new File(dindel, "dindel").getAbsolutePath(),
+                        "--analysis", "getCIGARindels",
+                        "--bamFile", controller.getInput(),
+                        "--ref", genome,
+                        "--outputFile", new File(temp, name).getAbsolutePath()).execute();
                 // This will generate two files
                 // temp/name/name.libraries.txt
                 // temp/name/name.variants.txt
@@ -112,12 +114,15 @@ public class DindelTool implements Tool {
             }
 
             /**
-             * Second step for standard dindel workflow: the indels obtained in stage 1 from the BAM
-             * file are the candidate indels; they must be grouped into windows of ∼ 120 basepairs,
-             * into a realign-window-file. The included Python script makeWindows.py will generate
-             * such a file from the file with candidate indels inferred in the first stage. The
-             * output are hundreds of files (temp/name/windows/window001.txt,
-             * /temp/name/windows/window002.txt, /temp/name/windows/windowXXX.txt)
+             * Second step for standard dindel workflow: the indels obtained in
+             * stage 1 from the BAM file are the candidate indels; they must be
+             * grouped into windows of ∼ 120 basepairs, into a
+             * realign-window-file. The included Python script makeWindows.py
+             * will generate such a file from the file with candidate indels
+             * inferred in the first stage. The output are hundreds of files
+             * (temp/name/windows/window001.txt,
+             * /temp/name/windows/window002.txt,
+             * /temp/name/windows/windowXXX.txt)
              */
             private void createRealignWindows() {
                 // Appearance of the command
@@ -125,10 +130,11 @@ public class DindelTool implements Tool {
                 //    --inputFile temp/name/name.variants.txt \
                 //    --windowFilePrefix windows/name_window \
                 //    --numWindowsPerFile 1000
-                executeCommand("python " + new File(dindel, "makeWindows.py")
-                        + " --inputVarFile " + new File(temp, name + ".variants.txt")
-                        + " --windowFilePrefix " + new File(windows, name + "_window")
-                        + " --numWindowsPerFile 1000");
+                new Command(outStream, "python",
+                        new File(dindel, "makeWindows.py").getAbsolutePath(),
+                        "--inputVarFile", new File(temp, name + ".variants.txt").getAbsolutePath(),
+                        "--windowFilePrefix", new File(windows, name + "_window").getAbsolutePath(),
+                        "--numWindowsPerFile", "1000").execute();
                 // So:
                 // temp/name/windows/name_window001.txt
                 // temp/name/windows/name_window002.txt
@@ -138,9 +144,10 @@ public class DindelTool implements Tool {
             }
 
             /**
-             * Third step for dindel standard workflow: for every window, DindelTool will generate
-             * candidate haplotypes from the candidate indels and SNPs it detects in the BAM file,
-             * and realign the reads to these candidate haplotypes. The realignment step is the
+             * Third step for dindel standard workflow: for every window,
+             * DindelTool will generate candidate haplotypes from the candidate
+             * indels and SNPs it detects in the BAM file, and realign the reads
+             * to these candidate haplotypes. The realignment step is the
              * computationally most intensive step.
              */
             private void realignToHaplotypes() {
@@ -164,15 +171,14 @@ public class DindelTool implements Tool {
                 outStream.println("ELAPSED TIME\tREMAINING\tWINDOWS");
                 for (File file : files) {
                     updateMessage("Realigning " + i + " out of " + t + " windows");
-                    executeCommand(new File(dindel, "dindel")
-                            + " --analysis indels"
-                            + " --doDiploid"
-                            + " --bamFile " + controller.getInput()
-                            + " --ref " + genome
-                            + " --varFile " + file
-                            + " --libFile " + new File(temp, name + ".libraries.txt")
-                            + " --outputFile " + new File(windows2, file.getName())
-                            + " &>/dev/null");
+                    new Command(outStream, new File(dindel, "dindel").getAbsolutePath(),
+                            "--analysis", "indels",
+                            "--doDiploid",
+                            "--bamFile", controller.getInput(),
+                            "--ref", genome,
+                            "--varFile", file.getAbsolutePath(),
+                            "--libFile", new File(temp, name + ".libraries.txt").getAbsolutePath(),
+                            "--outputFile", new File(windows2, file.getName()).getAbsolutePath()).execute();
                     long elapsed = System.currentTimeMillis() - start;
                     long remaining = (elapsed / i) * (t - i);
                     outStream.println(df.format(new Date(elapsed))
@@ -186,8 +192,9 @@ public class DindelTool implements Tool {
             }
 
             /**
-             * Last step for dindel standard workflow: interpreting the output from DindelTool and
-             * produce indel calls and qualities in the VCF4 format.
+             * Last step for dindel standard workflow: interpreting the output
+             * from DindelTool and produce indel calls and qualities in the VCF4
+             * format.
              */
             private void mergeIndelsInVcf() {
                 // Command appearance:
@@ -206,10 +213,11 @@ public class DindelTool implements Tool {
                 } catch (IOException ex) {
                     Logger.getLogger(DindelTool.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                executeCommand("python " + new File(dindel, "mergeOutputDiploid.py")
-                        + " --ref " + genome
-                        + " --inputFiles " + fileList
-                        + " --outputFile " + controller.getOutput());
+                new Command(outStream,"python",
+                        new File(dindel, "mergeOutputDiploid.py").getAbsolutePath(),
+                        "--ref", genome,
+                        "--inputFiles", fileList.getAbsolutePath(),
+                        "--outputFile", controller.getOutput()).execute();
             }
 
             @Override

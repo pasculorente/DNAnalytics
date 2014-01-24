@@ -1,5 +1,6 @@
 package dnanalytics.tools;
 
+import dnanalytics.utils.Command;
 import dnanalytics.view.DNAMain;
 import dnanalytics.view.tools.IndexFastaController;
 import dnanalytics.worker.Worker;
@@ -44,13 +45,21 @@ public class IndexFastaTool implements Tool {
     @Override
     public Worker getWorker() {
         return new Worker() {
+            String genome;
+
             @Override
             protected int start() {
-                updateTitle("Indexing " + new File(controller.getGenome()).getName());
-                updateProgress(resources.getString("index.index"), 0.5, 2);
-                executeCommand("bwa", "index", "-a", "bwtsw", controller.getGenome());
-                updateProgress(resources.getString("index.index"), 1.5, 2);
-                return executeCommand("samtools", "faidx", controller.getGenome());
+                updateTitle(resources.getString("index.index") + " " + new File(genome).getName());
+                updateProgress(resources.getString("index.bwa"), 0.5, 3);
+                new Command(outStream, "bwa", "index", "-a", "bwtsw", genome).execute();
+                updateProgress(resources.getString("index.samtools"), 1.5, 3);
+                new Command("samtools", "faidx", controller.getGenome()).execute();
+                updateProgress(resources.getString("index.picard"), 2.5, 3);
+                new Command(outStream, "java", "-jar", "software" + File.separator
+                        + "picard" + File.separator + "CreateSequenceDictionary.jar",
+                        "R=" + genome, "O=" + genome.replace(".fasta", ".dict")).execute();
+                updateProgress(resources.getString("index.end"), 1, 1);
+                return 0;
             }
 
             @Override
@@ -60,6 +69,7 @@ public class IndexFastaTool implements Tool {
                     System.err.println(resources.getString("no.genome"));
                     return false;
                 }
+                genome = controller.getGenome();
                 return true;
             }
         };

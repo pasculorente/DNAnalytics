@@ -1,9 +1,15 @@
 package dnanalytics.worker;
 
+import dnanalytics.DNAnalytics;
+import dnanalytics.utils.Command;
+import static dnanalytics.worker.Worker.resources;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Script for the alignment of a sample sequences. (1) Initial alignment (2)
@@ -40,21 +46,9 @@ public class Aligner extends Worker {
         int cores = Runtime.getRuntime().availableProcessors();
         SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd_HHmmss_");
         String timestamp = "aln_" + df.format(new Date());
-        String seq1 = new File(temp, timestamp + "seq1.sai").getAbsolutePath();
-        String seq2 = new File(temp, timestamp + "seq2.sai").getAbsolutePath();
-        String bwa = new File(temp, timestamp + "bwa.sam").getAbsolutePath();
-        String picard = "java -jar software" + File.separator + "picard" + File.separator;
-        String picard1 = new File(temp, timestamp + "picard1.bam").getAbsolutePath();
-        String picard2 = new File(temp, timestamp + "picard2.bam").getAbsolutePath();
-        String picard3 = new File(temp, timestamp + "picard3.bam").getAbsolutePath();
-        String picard4 = new File(temp, timestamp + "picard4.bam").getAbsolutePath();
-        String metrics = new File(temp, timestamp + "dedup.metrics").getAbsolutePath();
-        String gatk = "java -jar software" + File.separator + "gatk"
-                + File.separator + "GenomeAnalysisTK.jar";
-        String intervals = new File(temp, timestamp + "gatk.intervals").getAbsolutePath();
-        String gatk1 = new File(temp, timestamp + "gatk1.bam").getAbsolutePath();
-        String recal = new File(temp, timestamp + "recal.grp").getAbsolutePath();
-        ArrayList<Command> commands = new ArrayList<>();
+        int counter = 0;
+        int total = reduceReads ? 13 : 12;
+
         /*
          * Phase A: Align/Map sequences.
          *  Burrows-Wheeler Aligner. As this project works with paired end sequences, we use 
@@ -70,17 +64,36 @@ public class Aligner extends Worker {
          * 3: Generate alignments.
          *   bwa sampe genome.fasta seq1.sai seq2.sai sequence1.fq.gz sequence2.fq.gz > bwa.sam
          */
-        commands.add(new Command(resources.getString("align.forward"),
-                "bwa", "aln", "-t", String.valueOf(cores),
-                genome, forward, (illumina ? "-I" : ""), ">", seq1
-        ));
-        commands.add(new Command(resources.getString("align.reverse"),
-                "bwa", "aln", "-t", String.valueOf(cores),
-                genome, reverse, (illumina ? "-I" : ""), ">", seq2
-        ));
-        commands.add(new Command(resources.getString("align.sampe"),
-                "bwa", "sampe", genome, seq1, seq2, forward, reverse, ">", bwa
-        ));
+        String seq1 = new File(temp, timestamp + "seq1.sai").getAbsolutePath();
+        String seq2 = new File(temp, timestamp + "seq2.sai").getAbsolutePath();
+        String bwa = new File(temp, timestamp + "bwa.sam").getAbsolutePath();
+        updateProgress(resources.getString("align.forward"), counter++, total);
+        try (PrintStream f = new PrintStream(seq1)) {
+            new Command(errStream, f, "bwa", "aln", "-t", String.valueOf(cores),
+                    genome, forward, (illumina ? "-I" : "")).execute();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Aligner.class.getName()).log(Level.SEVERE, null, ex);
+            return -1;
+        }
+
+        updateProgress(resources.getString("align.reverse"), counter++, total);
+        try (PrintStream f = new PrintStream(seq2)) {
+            new Command(errStream, f, "bwa", "aln", "-t", String.valueOf(cores),
+                    genome, reverse, (illumina ? "-I" : "")).execute();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Aligner.class.getName()).log(Level.SEVERE, null, ex);
+            return -1;
+        }
+
+        updateProgress(resources.getString("align.sampe"), counter++, total);
+        try (PrintStream f = new PrintStream(bwa)) {
+            new Command(errStream, f, "bwa", "sampe", genome, seq1, seq2,
+                    forward, reverse).execute();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Aligner.class.getName()).log(Level.SEVERE, null, ex);
+            return -1;
+        }
+
         /*
          * Phase B: Prepare BAM for GATK
          *   SAM file from BWA must pass several filters before entering GATK. 
@@ -104,37 +117,40 @@ public class Aligner extends Worker {
          * 8: BAM Index
          *   Generates an Index of the BAM file (.bai)
          */
-        commands.add(new Command(resources.getString("align.clean"),
-                picard + "CleanSam.jar",
+        String picard = "software" + File.separator + "picard" + File.separator;
+        String picard1 = new File(temp, timestamp + "picard1.bam").getAbsolutePath();
+        String picard2 = new File(temp, timestamp + "picard2.bam").getAbsolutePath();
+        String picard3 = new File(temp, timestamp + "picard3.bam").getAbsolutePath();
+        String picard4 = new File(temp, timestamp + "picard4.bam").getAbsolutePath();
+        String metrics = new File(temp, timestamp + "dedup.metrics").getAbsolutePath();
+
+        updateProgress(resources.getString("align.clean"), counter++, total);
+        new Command(outStream, "java", "-jar", picard + "CleanSam.jar",
                 "INPUT=" + bwa,
-                "OUTPUT=" + picard1
-        ));
-        commands.add(new Command(resources.getString("align.sort"),
-                picard + "SortSam.jar",
+                "OUTPUT=" + picard1).execute();
+        updateProgress(resources.getString("align.sort"), counter++, total);
+        new Command(outStream, "java", "-jar", picard + "SortSam.jar",
                 "INPUT=" + picard1,
                 "OUTPUT=" + picard2,
-                "SORT_ORDER=coordinate"
-        ));
-        commands.add(new Command(resources.getString("align.dedup"),
-                picard + "MarkDuplicates.jar",
+                "SORT_ORDER=coordinate").execute();
+        updateProgress(resources.getString("align.dedup"), counter++, total);
+        new Command(outStream, "java", "-jar", picard + "MarkDuplicates.jar",
                 "INPUT=" + picard2,
                 "OUTPUT=" + picard3,
                 "REMOVE_DUPLICATES=true",
-                "METRICS_FILE=" + metrics
-        ));
-        commands.add(new Command(resources.getString("align.addheader"),
-                picard + "AddOrReplaceReadGroups.jar",
+                "METRICS_FILE=" + metrics).execute();
+        updateProgress(resources.getString("align.addheader"), counter++, total);
+        new Command(outStream, "java", "-jar", picard + "AddOrReplaceReadGroups.jar",
                 "INPUT=" + picard3,
                 "OUTPUT=" + picard4,
                 "RGPL=Illumina",
                 "RGSM=niv",
                 "RGPU=flowcell-barcode.lane",
-                "RGLB=BAITS"
-        ));
-        commands.add(new Command(resources.getString("align.index"),
-                picard + "BuildBamIndex.jar",
-                "INPUT=" + picard4
-        ));
+                "RGLB=BAITS").execute();
+        updateProgress(resources.getString("align.index"), counter++, total);
+        new Command(outStream, "java", "-jar", picard + "BuildBamIndex.jar",
+                "INPUT=" + picard4).execute();
+
         /* 
          * Phase C: Realign around Indels
          *   GATK has an algorithm to avoid false positives which consists in looking at high
@@ -148,25 +164,31 @@ public class Aligner extends Worker {
          * 10: IndelRealigner
          *    Makes the realigment
          */
-        commands.add(new Command(resources.getString("align.prealign"),
-                gatk, "-T", "RealignerTargetCreator",
-                "-R", genome,
+        // GATK does NOT work with Java 8, so I installed back java7.
+        String java7 = DNAnalytics.getProperties().getProperty("java7"); 
+        String gatk = "software" + File.separator + "gatk"
+                + File.separator + "GenomeAnalysisTK.jar";
+        String intervals = new File(temp, timestamp + "gatk.intervals").getAbsolutePath();
+        String gatk1 = new File(temp, timestamp + "gatk1.bam").getAbsolutePath();
+        String recal = new File(temp, timestamp + "recal.grp").getAbsolutePath();
+
+        updateProgress(resources.getString("align.prealign"), counter++, total);
+        new Command(outStream, java7, "-jar", gatk, "-T", "RealignerTargetCreator",
+                "-R", genome, 
                 "-I", picard4,
                 "-known", mills,
                 "-known", phase1,
                 (illumina ? "" : "--fix_misencoded_quality_scores"),
-                "-o", intervals
-        ));
-        commands.add(new Command(resources.getString("align.align"),
-                gatk, "-T", "IndelRealigner",
+                "-o", intervals).execute();
+        updateProgress(resources.getString("align.align"), counter++, total);
+        new Command(outStream, java7, "-jar", gatk, "-T", "IndelRealigner",
                 "-R", genome,
                 "-I", picard4,
                 "-known", mills,
                 "-known", phase1,
                 (illumina ? "" : " --fix_misencoded_quality_scores"),
                 "-targetIntervals", intervals,
-                "-o", gatk1
-        ));
+                "-o", gatk1).execute();
         /* 
          * Phase D: Base Quality Score Recalibration
          *   GATK uses Quality Scores to generate a calibrated error model and apply it to alignments
@@ -180,22 +202,20 @@ public class Aligner extends Worker {
          * 12: PrintReads
          *   Applies the recalibration
          */
-        commands.add(new Command(resources.getString("align.prerecal"),
-                gatk, "-T", "BaseRecalibrator",
+        updateProgress(resources.getString("align.prerecal"), counter++, total);
+        new Command(outStream, java7, "-jar", gatk, "-T", "BaseRecalibrator",
                 "-I", gatk1,
                 "-R", genome,
                 "--knownSites", dbsnp,
                 "--knownSites", mills,
                 "--knownSites", phase1,
-                "-o", recal
-        ));
-        commands.add(new Command(resources.getString("align.recal"),
-                gatk, "-T", "PrintReads",
+                "-o", recal).execute();
+        updateProgress(resources.getString("align.recal"), counter++, total);
+        new Command(outStream, java7, "-jar", gatk, "-T", "PrintReads",
                 "-R", genome,
                 "-I", gatk1,
                 "-BQSR", recal,
-                "-o", output
-        ));
+                "-o", output).execute();
         /* 
          * Phase E: Reduce reads
          *  Expererimental Tool that reduces the size of BAM Files. Optional.
@@ -204,19 +224,11 @@ public class Aligner extends Worker {
          */
         if (reduceReads) {
             String reduced = new File(output.replace(".bam", "_reduced.bam")).getAbsolutePath();
-            commands.add(new Command(resources.getString("align.reducereads"),
-                    gatk, "-T", "ReduceReads",
+            updateProgress(resources.getString("align.reducereads"), counter++, total);
+            new Command(outStream, java7, "-jar", gatk, "-T", "ReduceReads",
                     "-R", genome,
                     "-I", output,
-                    "-o", reduced
-            ));
-        }
-        int i = 0;
-        for (Command command : commands) {
-            updateProgress(command.message, i++, commands.size());
-            if (executeCommand(command.args) != 0) {
-                return -1;
-            }
+                    "-o", reduced).execute();
         }
         new File(bwa).delete();
         new File(seq1).delete();
@@ -272,15 +284,4 @@ public class Aligner extends Worker {
         return true;
     }
 
-    private class Command {
-
-        String message;
-        String[] args;
-
-        public Command(String message, String... args) {
-            this.message = message;
-            this.args = args;
-        }
-
-    }
 }

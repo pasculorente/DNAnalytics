@@ -2,12 +2,16 @@ package dnanalytics.worker;
 
 import dnanalytics.view.DNAMain;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -78,11 +82,6 @@ public abstract class Worker extends Task<Integer> {
         // User execution
         int ret = start();
 
-        // Afterwards tasks
-//        outStream.println(resources.getString("time.end") + " "
-//                + dateFormat.format(Calendar.getInstance().getTime()));
-//        outStream.println(resources.getString("time.total") + " "
-//                + dateFormat.format(System.currentTimeMillis() - startTime));
         updateProgress(1, 1);
         return ret;
     }
@@ -94,15 +93,41 @@ public abstract class Worker extends Task<Integer> {
      * @param args Arguments, separated by commands.
      * @return the system return value when the command is finished.
      */
-    protected int executeCommand(String... args) {
+    @Deprecated
+    private int executeCommand(String... args) {
         return execute(null, args);
     }
 
-    protected int executeCommand(LineParser parser, String... args) {
+    @Deprecated
+    private int executeCommand(LineParser parser, String... args) {
         return execute(parser, args);
 
     }
 
+    @Deprecated
+    private int executeCommand(PrintStream output, String ... args) {
+        ProcessBuilder builder = new ProcessBuilder(args);
+        try {
+            process = builder.start();
+            BufferedReader error = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(output));
+            String errLine, inputLine;
+            while ((errLine = error.readLine()) != null){
+                outStream.println(errLine);
+            }
+            while ((inputLine = input.readLine()) != null) {
+                bw.append(inputLine);
+                bw.newLine();
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(Worker.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
+        
+    }
+    
+    @Deprecated
     private int execute(LineParser parser, String... args) {
         // Simple trigger to terminate execution
         if (exit) {
@@ -114,23 +139,8 @@ public abstract class Worker extends Task<Integer> {
         }
         // Uncomment this line will show the precise command on the console, really useful to debug.
         outStream.println("Command=" + h);
-        String[] args2 = new String[args.length + 2];
-        switch (System.getProperty("os.name")) {
-            case "Windows 7":
-                args2[0] = "cmd";
-                args2[1] = "/C";
-                break;
-            case "Linux":
-            default:
-                args2[0] = "/bin/bash";
-                args2[1] = "-c";
-        }
-        int i = 2;
-        for (String s : args) {
-            args2[i++] = s;
-        }
         ProcessBuilder builder;
-        builder = new ProcessBuilder(args2);
+        builder = new ProcessBuilder(args);
         builder.redirectErrorStream(true);
         int ret = 0;
         try {
@@ -168,7 +178,6 @@ public abstract class Worker extends Task<Integer> {
         }
         exit = true;
         updateProgress(1, 1);
-//        cancel();
 
     }
 
@@ -186,10 +195,6 @@ public abstract class Worker extends Task<Integer> {
         Platform.runLater(() -> {
             elapsedTime.setValue(dateFormat.format(System.currentTimeMillis() - startTime));
         });
-    }
-
-    protected void parseLine(String line) {
-
     }
 
     public long getStartTime() {

@@ -1,9 +1,12 @@
 package dnanalytics.tools;
 
+import dnanalytics.DNAnalytics;
+import dnanalytics.utils.Command;
 import dnanalytics.view.DNAMain;
 import dnanalytics.view.tools.TestToolController;
 import dnanalytics.worker.LineParser;
 import dnanalytics.worker.Worker;
+import java.io.File;
 import java.io.IOException;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -58,17 +61,24 @@ public class TestTool implements Tool {
                 int c = 0;
                 long cp = 0;
                 updateProgress("Empezamos", c, lines);
-                executeCommand("pwd");
-                executeCommand(new TestParser(), "software/test_script.sh "
-                        + String.valueOf(controller.getLines()) + " "
-                        + String.valueOf(controller.getMilliseconds() / 1000));
-//                while (c < lines) {
-//                    updateProgress("Test tool (" + c++ + "/" + lines + ")", c, lines);
-//                    try {
-//                        Thread.sleep(millis);
-//                    } catch (InterruptedException ex) {
-//                    }
-//                }
+                //executeCommand("pwd");
+                String java7 = DNAnalytics.getProperties().getProperty("java7");
+                String picard = "software" + File.separator + "picard" + File.separator;
+                String gatk ="software" + File.separator + "gatk"
+                        + File.separator + "GenomeAnalysisTK.jar";
+
+                updateProgress("Testing picard...", 0, 4);
+                new Command(outStream, "java", "-jar", picard + "CleanSam.jar").execute();
+                updateProgress("Testing GATK...", 1, 4);
+                new Command(outStream, java7,"-jar", gatk, "-T", "HaplotypeCaller").execute();
+                updateProgress("Testing bwa", 2, 4);
+                new Command(outStream, "bwa").execute();
+                updateProgress("Testing samtools", 3, 4);
+                new Command(outStream, "samtools").execute();
+
+//                new Command(outStream, "software/test_script.sh",
+//                        String.valueOf(controller.getLines()),
+//                        String.valueOf(controller.getMilliseconds() / 1000)).execute();
                 updateProgress("Test tool completed", 1, 1);
                 return 0;
             }
@@ -85,10 +95,10 @@ public class TestTool implements Tool {
         return "illumina";
     }
 
-    public class TestParser implements LineParser{
+    public class TestParser implements LineParser {
 
         String line;
-        
+
         @Override
         public void updateLine(String line) {
             this.line = line;

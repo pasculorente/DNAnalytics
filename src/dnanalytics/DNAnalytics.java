@@ -15,6 +15,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 /**
@@ -23,7 +24,7 @@ import javafx.stage.Stage;
  * @author Pascual Lorente Arencibia
  */
 public class DNAnalytics extends Application {
-
+    
     DNAMain controller;
 
     private static Properties properties;
@@ -63,6 +64,7 @@ public class DNAnalytics extends Application {
         scene.getStylesheets().add("dnanalytics/view/DNAnalytics.css");
         stage.setTitle("DNAnalytics");
         stage.setScene(scene);
+        stage.getIcons().add(new Image(DNAMain.class.getResourceAsStream("img/ico/align.png")));
         stage.show();
     }
 

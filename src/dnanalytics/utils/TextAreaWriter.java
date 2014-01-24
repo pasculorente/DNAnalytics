@@ -11,31 +11,28 @@ import javafx.scene.control.TextArea;
  *
  * @author Pascual Lorente Arencibia
  */
-public class DNAOutputStream extends OutputStream {
+public class TextAreaWriter extends OutputStream {
 
-    private boolean newline = false;
     private final TextArea area;
-    private final String lineStart;
 
     /**
-     * Creates a new DNAOutputStream.
+     * Creates a new TextAreaWriter.
      *
      * @param area The TextArea where to print.
-     * @param lineStart A String with the beginning for new lines. Not supported.
      */
-    public DNAOutputStream(TextArea area, String lineStart) {
+    public TextAreaWriter(TextArea area) {
         this.area = area;
-        this.lineStart = lineStart;
     }
 
     @Override
     public void write(int b) throws IOException {
         final String character = String.valueOf((char) b);
-        newline = character.equals(System.lineSeparator());
-//        System.out.println("c="+ character + "lb" + System.lineSeparator());
         Platform.runLater(() -> {
             area.appendText(character);
         });
+        flush();
     }
+    
+    
 
 }
