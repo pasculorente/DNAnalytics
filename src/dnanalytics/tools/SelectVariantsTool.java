@@ -7,6 +7,7 @@ import dnanalytics.view.tools.SelectVariantsController;
 import dnanalytics.worker.Worker;
 import java.io.File;
 import java.io.IOException;
+import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -44,17 +45,22 @@ public class SelectVariantsTool implements Tool {
 
         // The Worker selecter is created, it will select the variants in background
         return new Worker() {
-            String genome = DNAnalytics.getProperties().getProperty("genome");
+            Properties properties = DNAnalytics.getProperties();
 
             @Override
             protected int start() {
                 updateTitle("Selecting " + new File(controller.getInput()).getName());
                 updateMessage(resources.getString("select.select"));
-                String gatk = DNAnalytics.getProperties().getProperty("java7")
-                        + " -jar software" + File.separator + "gatk"
-                        + File.separator + "GenomeAnalysisTK.jar";
-                new Command(gatk, "-T", "SelectVariants",
-                        "-R", genome,
+                // java -jar GenomeAnalysisTK.jar
+                // -T Selectvariants -R genome.fasta
+                // -V input.vcf - o output.vcf
+                // -restrictAllelesTo BIALLELIC
+                // -select "expression"
+                new Command(outStream, properties.getProperty("java7"), "-jar",
+                        "software" + File.separator + "gatk"
+                        + File.separator + "GenomeAnalysisTK.jar",
+                        "-T", "SelectVariants",
+                        "-R", properties.getProperty("genome"),
                         "-V", controller.getInput(),
                         "-restrictAllelesTo", "BIALLELIC",
                         "-o", controller.getOutput(),
@@ -65,7 +71,7 @@ public class SelectVariantsTool implements Tool {
             @Override
             public boolean importParameters() {
                 // Check the params in the main thread, to avoid launching a dummy Worker.
-                if (!new File(genome).exists()) {
+                if (!new File(properties.getProperty("genome")).exists()) {
                     System.err.println(resources.getString("no.genome"));
                     return false;
                 }

@@ -170,7 +170,8 @@ public class DindelTool implements Tool {
                 DateFormat df = new SimpleDateFormat("HH:mm:ss");
                 outStream.println("ELAPSED TIME\tREMAINING\tWINDOWS");
                 for (File file : files) {
-                    updateMessage("Realigning " + i + " out of " + t + " windows");
+                    updateProgress("Realigning " + i + " out of " + t + " windows",
+                            20 + 70 * i / t, 100);
                     new Command(outStream, new File(dindel, "dindel").getAbsolutePath(),
                             "--analysis", "indels",
                             "--doDiploid",
@@ -184,9 +185,6 @@ public class DindelTool implements Tool {
                     outStream.println(df.format(new Date(elapsed))
                             + "\t" + df.format(new Date(remaining))
                             + "\t" + i + "/" + t);
-//                    outStream.print("Elapsed: " + df.format(new Date(elapsed)));
-//                    outStream.println("\tRemaining: " + df.format(new Date(remaining)));
-                    updateProgress(20 + 70 * i / t, 100);
                     i++;
                 }
             }
@@ -225,20 +223,16 @@ public class DindelTool implements Tool {
 
                 initializeSettings();
 
-                updateMessage("Extracting candidate indels from BAM");
-                updateProgress(0, 100);
+                updateProgress("Extracting candidate indels from BAM", 0, 100);
                 extractCandidatesFromBAM();
 
-                updateMessage("Creating realignment windows");
-                updateProgress(10, 100);
+                updateProgress("Creating realignment windows", 10, 100);
                 createRealignWindows();
 
-                updateMessage("Realigning");
-                updateProgress(20, 100);
+                updateProgress("Realigning", 20, 100);
                 realignToHaplotypes();
 
-                updateMessage("Generating VCF");
-                updateProgress(90, 100);
+                updateProgress("Generating VCF", 90, 100);
                 mergeIndelsInVcf();
                 updateProgress(1, 1);
                 return 0;

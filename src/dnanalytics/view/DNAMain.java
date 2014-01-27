@@ -1,7 +1,7 @@
 package dnanalytics.view;
 
 import dnanalytics.DNAnalytics;
-import dnanalytics.tools.AlignViewTool;
+import dnanalytics.tools.AlignTool;
 import dnanalytics.tools.AnnotationTool;
 import dnanalytics.tools.CallVariantsTool;
 import dnanalytics.tools.CombineVariantsTool;
@@ -97,7 +97,7 @@ public class DNAMain implements Initializable {
         }
         // Add Tools
         addTool(new IndexFastaTool());
-        addTool(new AlignViewTool());
+        addTool(new AlignTool());
         addTool(new CallVariantsTool());
         addTool(new CombineVariantsTool());
         addTool(new SelectVariantsTool());
@@ -124,16 +124,16 @@ public class DNAMain implements Initializable {
         });
 
         // Redirect outputs
-        System.setErr(new PrintStream(new TextAreaWriter(console)));
-        System.setOut(new PrintStream(new TextAreaWriter(console)));
+        System.setErr(new PrintStream(new TextAreaWriter(console, "e>")));
+        System.setOut(new PrintStream(new TextAreaWriter(console, ">")));
         System.out.println(resources.getString("label.welcome"));
         System.out.println(resources.getString("label.version"));
 
         // Load languages from settings.
         Locale currentLocale = resources.getLocale();
-        for (Locale locale : DNAnalytics.getAppLocales()) {
+        DNAnalytics.getAppLocales().stream().forEach((locale) -> {
             languagesBox.getItems().add(locale.getDisplayName(currentLocale));
-        }
+        });
         languagesBox.getSelectionModel().select(currentLocale.getDisplayName(currentLocale));
 
         // Give the languagesBox the ability to change system language.
@@ -190,8 +190,8 @@ public class DNAMain implements Initializable {
             ConsoleController controller = loader.getController();
             // Binds output, message and progress.
             worker.setStreams(
-                    new PrintStream(new TextAreaWriter(controller.getTextArea())),
-                    new PrintStream(new TextAreaWriter(controller.getTextArea())));
+                    new PrintStream(new TextAreaWriter(controller.getTextArea(), ">")),
+                    new PrintStream(new TextAreaWriter(controller.getTextArea(),"e>")));
             controller.getMessage().textProperty().bind(worker.messageProperty());
             controller.getProgress().progressProperty().bind(worker.progressProperty());
             controller.getStarted().setText(df.format(System.currentTimeMillis()));

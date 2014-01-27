@@ -1,17 +1,10 @@
 package dnanalytics.worker;
 
 import dnanalytics.view.DNAMain;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -84,90 +77,6 @@ public abstract class Worker extends Task<Integer> {
 
         updateProgress(1, 1);
         return ret;
-    }
-
-    /**
-     * Use the system to execute the command passed through the args. In Linux,
-     * "/bin/bash -c" will be called. In Windows, "cmd -C".
-     *
-     * @param args Arguments, separated by commands.
-     * @return the system return value when the command is finished.
-     */
-    @Deprecated
-    private int executeCommand(String... args) {
-        return execute(null, args);
-    }
-
-    @Deprecated
-    private int executeCommand(LineParser parser, String... args) {
-        return execute(parser, args);
-
-    }
-
-    @Deprecated
-    private int executeCommand(PrintStream output, String ... args) {
-        ProcessBuilder builder = new ProcessBuilder(args);
-        try {
-            process = builder.start();
-            BufferedReader error = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(output));
-            String errLine, inputLine;
-            while ((errLine = error.readLine()) != null){
-                outStream.println(errLine);
-            }
-            while ((inputLine = input.readLine()) != null) {
-                bw.append(inputLine);
-                bw.newLine();
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(Worker.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return 0;
-        
-    }
-    
-    @Deprecated
-    private int execute(LineParser parser, String... args) {
-        // Simple trigger to terminate execution
-        if (exit) {
-            return 2;
-        }
-        String h = "";
-        for (String s : args) {
-            h += s + " ";
-        }
-        // Uncomment this line will show the precise command on the console, really useful to debug.
-        outStream.println("Command=" + h);
-        ProcessBuilder builder;
-        builder = new ProcessBuilder(args);
-        builder.redirectErrorStream(true);
-        int ret = 0;
-        try {
-            process = builder.start();
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(process.
-                    getInputStream()))) {
-                String line;
-                while ((line = br.readLine()) != null) {
-                    outStream.println(line);
-                    if (parser != null) {
-                        parser.updateLine(line);
-                        updateProgress(parser.getMessage(), parser.getProgress(), 1);
-                    }
-                }
-            }
-            ret = process.waitFor();
-        } catch (InterruptedException | IOException ex) {
-            process.destroy();
-        }
-        //outStream.println("Return value: " + ret);
-        // Check if command was succesful
-        if (ret != 0) {
-            errStream.println(resources.getString("worker.error"));
-            // Stop thread
-            cancel(true);
-        }
-        return 0;
     }
 
     @Override

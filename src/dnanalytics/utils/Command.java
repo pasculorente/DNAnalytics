@@ -1,6 +1,5 @@
 package dnanalytics.utils;
 
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -79,7 +78,7 @@ public class Command {
             Process p = pb.start();
             new Pipe(p.getInputStream(), output).start();
             if (errOut != null) {
-                new Pipe(p.getErrorStream(), new BufferedOutputStream(errOut)).start();
+                new Pipe(p.getErrorStream(), errOut).start();
             }
             return p.waitFor();
         } catch (IOException ex) {

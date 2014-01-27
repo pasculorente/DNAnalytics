@@ -7,12 +7,14 @@ import dnanalytics.view.tools.CombineVariantsController;
 import dnanalytics.worker.Worker;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.control.ListView;
 
 /**
  * FXML Controller class
@@ -48,67 +50,79 @@ public class CombineVariantsTool implements Tool {
     @Override
     public Worker getWorker() {
         return new Worker() {
-            ListView<String> vcfList = controller.getVcfList();
-            String gatk = "";
-            String variants = "";
-            String genome = DNAnalytics.getProperties().getProperty("genome");
-
-            private void initializeSettings() {
-                variants = vcfList.getItems().stream().map((var) -> " -V " + var).reduce(variants,
-                        String::concat);
-
-                gatk = "java -jar software" + File.separator + "gatk" + File.separator
-                        + "GenomeAnalysisTK.jar";
-            }
-
-            private void intersectVariants() {
-                new Command(outStream, gatk, "-T", "CombineVariants",
-                        "-R", genome,
-                        "-minN", String.valueOf(vcfList.getItems().size()),
-                        "-o", controller.getCombinedVCF(),
-                        variants).execute();
-            }
-
-            private void aggregateVariants() {
-                new Command(outStream, gatk, "-T", "CombineVariants",
-                        "-R", genome,
-                        "-o", controller.getCombinedVCF(),
-                        variants).execute();
-            }
-
-            private void deductVariants() {
-                new Command(outStream, gatk,"-T", "SelectVariants",
-                        "-R", genome,
-                        "-V", vcfList.getItems().get(0),
-                        "-o", controller.getCombinedVCF(),
-                        "--discordance", vcfList.getItems().get(1)).execute();
-            }
 
             @Override
             protected int start() {
-                initializeSettings();
+                ObservableList<String> items = controller.getVcfList().getItems();
                 updateTitle("Combinig " + new File(controller.getCombinedVCF()).getName());
+                ArrayList<String> command = new ArrayList<>();
+                // java7 -jar GenomeAnalysisTK.jar
+                // -R genome.fasta -o output.vcf
+                String[] common = {
+                    DNAnalytics.getProperties().getProperty("java7"), "-jar",
+                    "software" + File.separator + "gatk"
+                    + File.separator + "GenomeAnalysisTK.jar",
+                    "-R", DNAnalytics.getProperties().getProperty("genome"),
+                    "-o", controller.getCombinedVCF()
+                };
+                command.addAll(Arrays.asList(common));
                 switch (controller.getOperation()) {
                     case "intersection":
-                        intersectVariants();
+                        // -minN 3
+                        // -T CombineVariants
+                        // -V variats1.vcf -V variants2.vcf -V variants3.vcf
+                        command.add("-minN");
+                        command.add(String.valueOf(items.size()));
+                        command.add("-T");
+                        command.add("CombineVariants");
+                        items.stream().forEach((s) -> {
+                            command.add("-V");
+                            command.add(s);
+                        });
+                        updateProgress(resources.getString("combine.intersect"), 1, 2);
                         break;
                     case "aggregation":
-                        aggregateVariants();
+                        // -T CombineVariants
+                        // -V variats1.vcf -V variants2.vcf -V variants3.vcf
+                        command.add("-T");
+                        command.add("CombineVariants");
+                        items.stream().forEach((s) -> {
+                            command.add("-V");
+                            command.add(s);
+                        });
+                        updateProgress(resources.getString("combine.aggregate"), 1, 2);
                         break;
                     case "difference":
-                        deductVariants();
+                        // -T SelectVariants
+                        // -V variants1.vcf
+                        // --discordance variants2.vcf
+                        command.add("-T");
+                        command.add("SelectVariants");
+                        command.add("-V");
+                        command.add(items.get(0));
+                        command.add("--discordance");
+                        command.add(items.get(1));
+                        updateProgress(resources.getString("combine.difference"), 1, 2);
                 }
-                return 0;
+                String [] args = new String[command.size()];
+                for (int i = 0; i < command.size(); i++) {
+                    args[i] = command.get(i);
+                }
+                return new Command(outStream, args).execute();
             }
 
             @Override
             public boolean importParameters() {
-                if (!new File(genome).exists()) {
-                    System.err.println(DNAMain.getResources().getString("no.genome"));
+                if (!new File(DNAnalytics.getProperties().getProperty("genome")).exists()) {
+                    System.err.println(resources.getString("no.genome"));
                     return false;
                 }
                 if (controller.getCombinedVCF().isEmpty()) {
-                    System.err.println(DNAMain.getResources().getString("no.output"));
+                    System.err.println(resources.getString("no.output"));
+                    return false;
+                }
+                if (controller.getVcfList().getItems().size() == 0) {
+                    System.err.println(resources.getString("no.input"));
                     return false;
                 }
                 return true;

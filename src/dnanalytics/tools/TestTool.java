@@ -8,6 +8,8 @@ import dnanalytics.worker.LineParser;
 import dnanalytics.worker.Worker;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 
@@ -29,7 +31,7 @@ public class TestTool implements Tool {
             try {
                 view = loader.load();
             } catch (IOException ex) {
-                //Logger.getLogger(TestTool.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(TestTool.class.getName()).log(Level.SEVERE, null, ex);
             }
             controller = loader.getController();
         }

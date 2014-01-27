@@ -3,7 +3,6 @@ package dnanalytics.tools;
 import dnanalytics.view.DNAMain;
 import dnanalytics.view.tools.FilterFrequenciesController;
 import dnanalytics.worker.Worker;
-import dnanalytics.worker.Worker;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -118,7 +117,7 @@ public class FilterFrequenciesTool implements Tool {
                 } catch (FileNotFoundException ex) {
                     errStream.println("File " + input + " not found");
                 } catch (IOException ex) {
-                    System.err.println("Error reading file");
+                    errStream.println("Error reading file");
                 } 
                 return 0;
             }
@@ -130,9 +129,11 @@ public class FilterFrequenciesTool implements Tool {
                     return false;
                 }
                 if (column == -1) {
+                    errStream.println("Negative column");
                     return false;
                 }
                 if (freq < 0) {
+                    errStream.println("Frequency under 0");
                     return false;
                 }
                 return true;

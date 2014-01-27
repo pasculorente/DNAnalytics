@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 
-public class AlignViewTool implements Tool {
+public class AlignTool implements Tool {
 
     private final static ResourceBundle resources = DNAMain.getResources();
 
