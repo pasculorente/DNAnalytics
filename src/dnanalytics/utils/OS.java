@@ -22,15 +22,16 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 
 /**
- * Contains methods to control files in DNAnalytics and fields containing file filters. Open and
- * save files, set TextFileds with the name of the files and compress and uncompress files.
+ * Contains methods to control files in DNAnalytics and fields containing file
+ * filters. Open and save files, set TextFileds with the name of the files and
+ * compress and uncompress files.
  *
  * @author Pascual Lorente Arencibia
  */
-public class FileManager {
+public class OS {
 
     private static File lastPath;
-    static final ResourceBundle resources = DNAMain.getResources();
+    private static final ResourceBundle resources = DNAMain.getResources();
     /**
      * FASTQ Description (FASTQ file)
      */
@@ -110,14 +111,14 @@ public class FileManager {
      */
     public static final String BAM_EXTENSION = ".bam";
 
-    public FileManager() {
+    public OS() {
         switch (System.getProperty("os.name")) {
-        case "Windows 7":
-            lastPath = new File(System.getenv("user.dir"));
-            break;
-        case "Linux":
-        default:
-            lastPath = new File(System.getenv("PWD"));
+            case "Windows 7":
+                lastPath = new File(System.getenv("user.dir"));
+                break;
+            case "Linux":
+            default:
+                lastPath = new File(System.getenv("PWD"));
         }
     }
 
@@ -224,8 +225,9 @@ public class FileManager {
     }
 
     /**
-     * Opens a dialog for the user to select a file and sets textField text to selected file name.
-     * If FileChooser is canceled, textField is not modified.
+     * Opens a dialog for the user to select a file and sets textField text to
+     * selected file name. If FileChooser is canceled, textField is not
+     * modified.
      *
      * @param title FileChooser Title.
      * @param filterDesc Short description of the file filter.
@@ -243,8 +245,8 @@ public class FileManager {
     }
 
     /**
-     * Shows a dialog to the user to select a Variant Call File (.vcf). Sets the text of the
-     * TextField to the name of the file.
+     * Shows a dialog to the user to select a Variant Call File (.vcf). Sets the
+     * text of the TextField to the name of the file.
      *
      * @param textField A TextField to contain the file name.
      * @return The file selected or null if user canceled.
@@ -258,14 +260,14 @@ public class FileManager {
     }
 
     /**
-     * Opens a dialog for the user to create a File. File system file is not created immediately.
-     * The File is just passed to one of the Workers. If the Worker ends successfully, then the file
-     * will have been created.
+     * Opens a dialog for the user to create a File. File system file is not
+     * created immediately. The File is just passed to one of the Workers. If
+     * the Worker ends successfully, then the file will have been created.
      *
      * @param title Dialog title
      * @param filterDesc Description of file type
      * @param filters Regular expressions to filter file types (*.extension)
-     * @param extension defalut extension
+     * @param extension default extension
      * @return A File with the user selected file, or null if not file selected
      */
     public static File createFile(String title, String filterDesc,
@@ -290,9 +292,10 @@ public class FileManager {
     }
 
     /**
-     * Opens a dialog for the user to create a file and sets the text of the TextField to the file
-     * name. File system file is not created immediately. The File is just passed to one of the
-     * Workers. If the Worker ends successfully, then the file will have been created.
+     * Opens a dialog for the user to create a file and sets the text of the
+     * TextField to the file name. File system file is not created immediately.
+     * The File is just passed to one of the Workers. If the Worker ends
+     * successfully, then the file will have been created.
      *
      * @param title Dialog title
      * @param filterDesc Description of file type
@@ -309,8 +312,8 @@ public class FileManager {
     }
 
     /**
-     * Opens a dialog for the user to create a Variant Call File (.vcf). The file is not created
-     * immediately, just stored as text.
+     * Opens a dialog for the user to create a Variant Call File (.vcf). The
+     * file is not created immediately, just stored as text.
      *
      * @param textField textField containig VCF file name.
      */
@@ -333,7 +336,7 @@ public class FileManager {
         File file = chooser.showDialog(null);
         return (file != null) ? (lastPath = file) : null;
     }
-    
+
     /**
      * Launches the default system web browser and opens the specified url.
      *
@@ -345,9 +348,9 @@ public class FileManager {
                 Desktop.getDesktop().browse(new URI(url));
             }
         } catch (URISyntaxException ex) {
-            Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(OS.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(OS.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }

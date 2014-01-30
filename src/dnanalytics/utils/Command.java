@@ -15,9 +15,12 @@ public class Command {
 
     private final String[] args;
     private final PrintStream errOut, stdOut;
+    private Process process = null;
 
     /**
-     * Creates a new command. errOut and stdOut cannot be null.
+     * Creates a new command. errOut and stdOut cannot be null. It is not
+     * recommended to put equal errOut and stdOut. Use another constructor if
+     * you want to merge both outputs.
      *
      * @param errOut Where to flush the error output.
      * @param stdOut Where to flush the standard output.
@@ -56,17 +59,26 @@ public class Command {
 
     /**
      * Executes command. Command must be created with constructor. Cannot be
-     * modified afterward.
+     * modified afterwards. If useBash is true, command will be encapsulated in
+     * a /bin/bash call. Use this if you are able to execute your command in a
+     * shell but not with execute() or if your command has shell pipes (> |).
      *
+     * @param useBash If you want to encapsulate your command in a /bin/bash -c
+     * shell.
      * @return The return value of the system call.
      */
-    public int execute() {
-        String h = "";
-        for (String s : args) {
-            h += s + " ";
+    public int execute(boolean useBash) {
+        ProcessBuilder pb;
+        if (useBash) {
+            String h = "";
+            for (String s : args) {
+                h += s + " ";
+            }
+            pb = new ProcessBuilder("/bin/bash", "-c", h);
+        } else {
+            pb = new ProcessBuilder(args);
         }
-        ProcessBuilder pb = new ProcessBuilder(args);
-        PrintStream output = stdOut;
+        OutputStream output = stdOut;
         if (errOut == null) {
             pb.redirectErrorStream(true);
             if (stdOut == null) {
@@ -74,19 +86,34 @@ public class Command {
             }
         }
         try {
-            output.println("Command=" + h);
-            Process p = pb.start();
-            new Pipe(p.getInputStream(), output).start();
+            process = pb.start();
+            new Pipe(process.getInputStream(), output).start();
             if (errOut != null) {
-                new Pipe(p.getErrorStream(), errOut).start();
+                new Pipe(process.getErrorStream(), errOut).start();
             }
-            return p.waitFor();
+            return process.waitFor();
         } catch (IOException ex) {
             Logger.getLogger(Command.class.getName()).log(Level.SEVERE, null, ex);
             return -1;
         } catch (InterruptedException ex) {
-            Logger.getLogger(Command.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(Command.class.getName()).log(Level.SEVERE, null, ex);
             return -2;
+        }
+    }
+
+    /**
+     * Executes this command. This is equivalent to execute(false);
+     *
+     * @return The return code of the command execution.
+     */
+    public int execute() {
+        return execute(false);
+    }
+
+    public void kill() {
+        if (process != null) {
+            process.destroy();
+            System.out.println("killing" + process);
         }
     }
 

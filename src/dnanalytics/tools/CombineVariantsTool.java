@@ -37,7 +37,7 @@ public class CombineVariantsTool implements Tool {
             loader = new FXMLLoader(CombineVariantsController.class.getResource(
                     "CombineVariants.fxml"), resources);
             try {
-                view = loader.load();
+                view = (Node) loader.load();
             } catch (IOException ex) {
                 Logger.getLogger(CombineVariantsController.class.getName()).log(Level.SEVERE, null,
                         ex);
@@ -75,10 +75,10 @@ public class CombineVariantsTool implements Tool {
                         command.add(String.valueOf(items.size()));
                         command.add("-T");
                         command.add("CombineVariants");
-                        items.stream().forEach((s) -> {
+                        for (String s : items) {
                             command.add("-V");
                             command.add(s);
-                        });
+                        }
                         updateProgress(resources.getString("combine.intersect"), 1, 2);
                         break;
                     case "aggregation":
@@ -86,10 +86,10 @@ public class CombineVariantsTool implements Tool {
                         // -V variats1.vcf -V variants2.vcf -V variants3.vcf
                         command.add("-T");
                         command.add("CombineVariants");
-                        items.stream().forEach((s) -> {
+                        for (String s : items) {
                             command.add("-V");
                             command.add(s);
-                        });
+                        }
                         updateProgress(resources.getString("combine.aggregate"), 1, 2);
                         break;
                     case "difference":
@@ -104,7 +104,7 @@ public class CombineVariantsTool implements Tool {
                         command.add(items.get(1));
                         updateProgress(resources.getString("combine.difference"), 1, 2);
                 }
-                String [] args = new String[command.size()];
+                String[] args = new String[command.size()];
                 for (int i = 0; i < command.size(); i++) {
                     args[i] = command.get(i);
                 }

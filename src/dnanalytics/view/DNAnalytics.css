@@ -8,6 +8,7 @@ root {
     -fx-background-repeat: no-repeat;
     -fx-background-size: cover;
     -fx-font-family: monospace;
+    -fx-background-color: transparent;
 }
 .tab-content-area {
     -fx-background-image: url("img/tabground.jpg");

@@ -1,6 +1,6 @@
 package dnanalytics.view.tools;
 
-import dnanalytics.utils.FileManager;
+import dnanalytics.utils.OS;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 
@@ -16,8 +16,8 @@ public class IndexFastaController {
 
     @FXML
     void selectFASTA() {
-        FileManager.setOpenFile(FileManager.FASTA_DESCRIPTION,
-                FileManager.FASTA_DESCRIPTION, FileManager.FASTA_FILTERS, genome);
+        OS.setOpenFile(OS.FASTA_DESCRIPTION,
+                OS.FASTA_DESCRIPTION, OS.FASTA_FILTERS, genome);
     }
 
     public String getGenome() {

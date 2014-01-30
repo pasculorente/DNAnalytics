@@ -22,6 +22,7 @@ public class Aligner extends Worker {
 
     private final String forward, reverse, genome, dbsnp, mills, phase1, output, temp;
     private final boolean illumina, reduceReads;
+    private Command command = null;
 
     public Aligner(String temp, String forward, String reverse, String genome, String dbsnp,
             String mills, String phase1, String output, boolean illumina, boolean reduceReads) {
@@ -38,6 +39,14 @@ public class Aligner extends Worker {
     }
 
     @Override
+    public boolean cancel(boolean bln) {
+        if (command != null) {
+            command.kill();
+        }
+        return super.cancel(bln); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
     protected int start() {
 
         updateTitle("Aligning " + new File(output).getName());
@@ -46,6 +55,7 @@ public class Aligner extends Worker {
         int cores = Runtime.getRuntime().availableProcessors();
         SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd_HHmmss_");
         String timestamp = "aln_" + df.format(new Date());
+//        timestamp = "aln_20140128_120917_";
         int counter = 0;
         int total = reduceReads ? 13 : 12;
 
@@ -69,21 +79,43 @@ public class Aligner extends Worker {
         String bwa = new File(temp, timestamp + "bwa.sam").getAbsolutePath();
         updateProgress(resources.getString("align.forward"), counter++, total);
         int ret;
-        try (PrintStream f = new PrintStream(seq1)) {
-            ret = new Command(errStream, f, "bwa", "aln",
-                    "-t", String.valueOf(cores),
-                    genome, forward, (illumina ? "-I" : "")).execute();
-            if (ret != 0) {
-                return ret;
-            }
+        try {
+            
+            command = illumina ? new Command(new PrintStream(seq1),
+                    "bwa", "aln", "-I", "-t", String.valueOf(cores), genome, forward)
+                    : new Command(new PrintStream(seq1), "bwa", "aln", "-t", String.valueOf(cores), genome, forward);
+            ret = command.execute();
+            if (ret != 0) return ret;
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Aligner.class.getName()).log(Level.SEVERE, null, ex);
-            return -1;
         }
+        String cmd;
+        if (illumina) {
+            cmd = "bwa aln -t -I " + cores + " " + genome + " " + forward
+                    + " > " + seq1;
+        } else {
+            cmd = "bwa aln -t " + cores + " " + genome + " " + forward
+                    + " > " + seq1;
+        }
+        ret = new Command(outStream, "/bin/bash", "-c", cmd).execute();
+        if (ret != 0) {
+            return ret;
+        }
+//        try (PrintStream f = new PrintStream(seq1)) {
+//            ret = new Command(errStream, f, "bwa", "aln",
+//                    "-t", String.valueOf(cores),
+//                    genome, forward, (illumina ? "-I" : "")).execute();
+//            if (ret != 0) {
+//                return ret;
+//            }
+//        } catch (FileNotFoundException ex) {
+//            Logger.getLogger(Aligner.class.getName()).log(Level.SEVERE, null, ex);
+//            return -1;
+//        }
 
         updateProgress(resources.getString("align.reverse"), counter++, total);
         try (PrintStream f = new PrintStream(seq2)) {
-            ret = new Command(errStream, f, "bwa", "aln",
+            ret = new Command(outStream, f, "bwa", "aln",
                     "-t", String.valueOf(cores),
                     genome, reverse, (illumina ? "-I" : "")).execute();
             if (ret != 0) {
@@ -96,7 +128,7 @@ public class Aligner extends Worker {
 
         updateProgress(resources.getString("align.sampe"), counter++, total);
         try (PrintStream f = new PrintStream(bwa)) {
-            ret = new Command(errStream, f, "bwa", "sampe", genome, seq1, seq2,
+            ret = new Command(outStream, f, "bwa", "sampe", "-P", genome, seq1, seq2,
                     forward, reverse).execute();
             if (ret != 0) {
                 return ret;
@@ -297,21 +329,21 @@ public class Aligner extends Worker {
                 return ret;
             }
         }
-        new File(bwa).delete();
+        //new File(bwa).delete();
         new File(seq1).delete();
         new File(seq2).delete();
         new File(picard1).delete();
         new File(picard2).delete();
         new File(picard3).delete();
-//        new File(picard4).delete();
-//        new File(picard4.replace(".bam", ".bai")).delete();
+        new File(picard4).delete();
+        new File(picard4.replace(".bam", ".bai")).delete();
         new File(metrics).delete();
         new File(intervals).delete();
         new File(gatk1).delete();
         new File(gatk1.replace(".bam", ".bai")).delete();
         new File(recal).delete();
 
-        updateProgress("Finished", 1, 1);
+        updateProgress("Completed " + output, 1, 1);
         return 0;
     }
 

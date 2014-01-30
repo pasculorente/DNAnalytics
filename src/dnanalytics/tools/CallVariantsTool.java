@@ -28,7 +28,7 @@ public class CallVariantsTool implements Tool {
             loader = new FXMLLoader(CallVariantsController.class.getResource("CallVariants.fxml"),
                     resources);
             try {
-                view = loader.load();
+                view = (Node) loader.load();
             } catch (IOException ex) {
                 Logger.getLogger(CallVariantsController.class.getName()).log(Level.SEVERE, null, ex);
             }

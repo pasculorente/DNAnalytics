@@ -1,6 +1,6 @@
 package dnanalytics.view.tools;
 
-import dnanalytics.utils.FileManager;
+import dnanalytics.utils.OS;
 import java.io.File;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -25,8 +25,8 @@ public class CombineVariantsController {
 
     @FXML
     private void addVCF(ActionEvent event) {
-        File file = FileManager.selectFile("Select VCF file",
-                FileManager.VCF_DESCRIPTION, FileManager.VCF_FILTERS);
+        File file = OS.selectFile("Select VCF file",
+                OS.VCF_DESCRIPTION, OS.VCF_FILTERS);
         if (file != null) {
             vcfList.getItems().add(file.getAbsolutePath());
         }
@@ -43,7 +43,7 @@ public class CombineVariantsController {
 
     @FXML
     private void selectOutput(ActionEvent event) {
-        FileManager.saveVCF(combinedVCF);
+        OS.saveVCF(combinedVCF);
     }
 
     public String getCombinedVCF() {

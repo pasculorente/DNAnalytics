@@ -12,7 +12,7 @@ import dnanalytics.tools.LowFrequencyTool;
 import dnanalytics.tools.SelectVariantsTool;
 import dnanalytics.tools.TestTool;
 import dnanalytics.tools.Tool;
-import dnanalytics.utils.FileManager;
+import dnanalytics.utils.OS;
 import dnanalytics.utils.TextAreaWriter;
 import dnanalytics.worker.Worker;
 import java.io.File;
@@ -27,6 +27,7 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
@@ -49,10 +50,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.TilePane;
 
 /**
- * DNAnalytics Controller for the FXML View. It controls the main view of the GUI. Main tasks of
- * DNAMain are: (1) to control settings: reference genome, temp directory and language; (2) to show
- * the view of the selected Tool, by requesting it to each Tool; (3) to launch the Worker of the
- * selected Tool; (4) to show the main console, with System output (standard and error).
+ * DNAnalytics Controller for the FXML View. It controls the main view of the
+ * GUI. Main tasks of DNAMain are: (1) to control settings: reference genome,
+ * temp directory and language; (2) to show the view of the selected Tool, by
+ * requesting it to each Tool; (3) to launch the Worker of the selected Tool;
+ * (4) to show the main console, with System output (standard and error).
  *
  * @author Pasucal Lorente Arencibia
  */
@@ -111,15 +113,19 @@ public class DNAMain implements Initializable {
         currentTool.setCollapsible(false);
         currentTool.setText(resources.getString("label.selecttool"));
         /* Do the magic, when the user selects a tool, make it visible in the currentTool pane */
-        toolButtons.selectedToggleProperty().addListener(
-                (ObservableValue<? extends Toggle> ov, Toggle t, Toggle t1) -> {
-            ToggleButton button = (ToggleButton) t1;
-            if (t1 != null) {
-                Tool tool = tools.get(toolButtons.getToggles().indexOf(t1));
-                currentTool.setContent(tool.getView());
-                ImageView a = (ImageView) button.getGraphic();
-                currentTool.setGraphic(new ImageView(a.getImage()));
-                currentTool.setText(tool.getTitle());
+
+        toolButtons.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+
+            @Override
+            public void changed(ObservableValue<? extends Toggle> ov, Toggle t, Toggle t1) {
+                ToggleButton button = (ToggleButton) t1;
+                if (t1 != null) {
+                    Tool tool = tools.get(toolButtons.getToggles().indexOf(t1));
+                    currentTool.setContent(tool.getView());
+                    ImageView a = (ImageView) button.getGraphic();
+                    currentTool.setGraphic(new ImageView(a.getImage()));
+                    currentTool.setText(tool.getTitle());
+                }
             }
         });
 
@@ -130,28 +136,31 @@ public class DNAMain implements Initializable {
         System.out.println(resources.getString("label.version"));
 
         // Load languages from settings.
-        Locale currentLocale = resources.getLocale();
-        DNAnalytics.getAppLocales().stream().forEach((locale) -> {
+        final Locale currentLocale = resources.getLocale();
+        for (Locale locale : DNAnalytics.getAppLocales()) {
             languagesBox.getItems().add(locale.getDisplayName(currentLocale));
-        });
+        }
         languagesBox.getSelectionModel().select(currentLocale.getDisplayName(currentLocale));
 
         // Give the languagesBox the ability to change system language.
-        languagesBox.getSelectionModel().selectedItemProperty().addListener(
-                (ObservableValue<? extends String> ov, String old, String current) -> {
-            for (Locale locale : DNAnalytics.getAppLocales()) {
-                if (current.equals(locale.getDisplayName(currentLocale))) {
-                    properties.setProperty("language", locale.getLanguage());
-                    properties.setProperty("country", locale.getCountry());
-                    return;
+        languagesBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String t, String current) {
+                for (Locale locale : DNAnalytics.getAppLocales()) {
+                    if (current.equals(locale.getDisplayName(currentLocale))) {
+                        properties.setProperty("language", locale.getLanguage());
+                        properties.setProperty("country", locale.getCountry());
+                        return;
+                    }
                 }
             }
         });
     }
 
     /**
-     * Adds a Tool to the ToolsPanel. Creates a new ToggleButton to select it in the main view. The
-     * Tool is added to a List, binded with its ToggleButton.
+     * Adds a Tool to the ToolsPanel. Creates a new ToggleButton to select it in
+     * the main view. The Tool is added to a List, binded with its ToggleButton.
      * <p/>
      * @param tool The Tool to add to the main view
      */
@@ -166,7 +175,8 @@ public class DNAMain implements Initializable {
     }
 
     /**
-     * Launches the selected worker. This method will request the Worker to the Tool.
+     * Launches the selected worker. This method will request the Worker to the
+     * Tool.
      * <p/>
      */
     @FXML
@@ -183,15 +193,15 @@ public class DNAMain implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("Console.fxml"), resources);
             Node node = null;
             try {
-                node = loader.load();
+                node = (Node) loader.load();
             } catch (IOException ex) {
                 Logger.getLogger(DNAMain.class.getName()).log(Level.SEVERE, null, ex);
             }
-            ConsoleController controller = loader.getController();
+            final ConsoleController controller = loader.getController();
             // Binds output, message and progress.
             worker.setStreams(
-                    new PrintStream(new TextAreaWriter(controller.getTextArea(), ">")),
-                    new PrintStream(new TextAreaWriter(controller.getTextArea(),"e>")));
+                    new PrintStream(new TextAreaWriter(controller.getTextArea(), ">"), true),
+                    new PrintStream(new TextAreaWriter(controller.getTextArea(), "e>"), true));
             controller.getMessage().textProperty().bind(worker.messageProperty());
             controller.getProgress().progressProperty().bind(worker.progressProperty());
             controller.getStarted().setText(df.format(System.currentTimeMillis()));
@@ -207,14 +217,12 @@ public class DNAMain implements Initializable {
             consoleTabPane.getTabs().add(tab);
             consoleTabPane.getSelectionModel().select(tab);
             // Add the worker the ability to set the tab closing policy.
-            worker.setOnSucceeded(
-                    (WorkerStateEvent t) -> {
+            worker.setOnSucceeded((WorkerStateEvent t) -> {
                 tab.setClosable(true);
                 controller.getCancelButton().setDisable(true);
             });
             // Add the button the ability to cancel the Worker.
-            controller.getCancelButton().setOnAction(
-                    (ActionEvent t) -> {
+            controller.getCancelButton().setOnAction((ActionEvent t) -> {
                 worker.cancel(true);
                 tab.setClosable(true);
                 controller.getCancelButton().setDisable(true);
@@ -226,7 +234,8 @@ public class DNAMain implements Initializable {
     }
 
     /**
-     * Properly stops all running Workers before closing the app. Nop, do nothing.
+     * Properly stops all running Workers before closing the app. Nop, do
+     * nothing.
      *
      * @param event ?
      * @return always false
@@ -242,10 +251,10 @@ public class DNAMain implements Initializable {
     @FXML
     void selectGenome(ActionEvent event) {
         // Get the file.
-        File f = FileManager.setOpenFile(
-                FileManager.FASTA_DESCRIPTION,
-                FileManager.FASTA_DESCRIPTION,
-                FileManager.FASTA_FILTERS, genome);
+        File f = OS.setOpenFile(
+                OS.FASTA_DESCRIPTION,
+                OS.FASTA_DESCRIPTION,
+                OS.FASTA_FILTERS, genome);
         // Save it on settings.
         if (f != null) {
             properties.setProperty("genome", f.getAbsolutePath());
@@ -259,7 +268,8 @@ public class DNAMain implements Initializable {
     /**
      * Check if a genome is indexed.
      * <p/>
-     * @return true if all the index files are created, but does not check their integrity.
+     * @return true if all the index files are created, but does not check their
+     * integrity.
      */
     private boolean isIndexed() {
         String g = genome.getText();
@@ -274,7 +284,7 @@ public class DNAMain implements Initializable {
 
     @FXML
     void selectTempDir(ActionEvent event) {
-        File file = FileManager.selectFolder("Temporary directory");
+        File file = OS.selectFolder("Temporary directory");
         if (file != null) {
             tempDir.setText(file.getAbsolutePath());
             properties.setProperty("tempDir", file.getAbsolutePath());

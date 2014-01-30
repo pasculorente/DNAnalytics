@@ -27,7 +27,7 @@ public class AlignTool implements Tool {
         if (loader == null) {
             loader = new FXMLLoader(AlignViewController.class.getResource("AlignView.fxml"), resources);
             try {
-                view = loader.load();
+                view = (Node) loader.load();
             } catch (IOException ex) {
                 Logger.getLogger(AlignViewController.class.getName()).log(Level.SEVERE, null, ex);
             }

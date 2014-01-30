@@ -30,7 +30,7 @@ public class SelectVariantsTool implements Tool {
             loader = new FXMLLoader(SelectVariantsController.class.
                     getResource("SelectVariants.fxml"), resources);
             try {
-                view = loader.load();
+                view = (Node) loader.load();
             } catch (IOException ex) {
                 Logger.getLogger(SelectVariantsController.class.getName()).log(Level.SEVERE, null,
                         ex);
@@ -64,7 +64,7 @@ public class SelectVariantsTool implements Tool {
                         "-V", controller.getInput(),
                         "-restrictAllelesTo", "BIALLELIC",
                         "-o", controller.getOutput(),
-                        "-select", "\"" + controller.getExpression() + '\"').execute();
+                        "-select", controller.getExpression()).execute();
                 return 0;
             }
 

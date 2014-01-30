@@ -7,10 +7,10 @@
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?scenebuilder-preview-i18n-resource ../../dnanalytics_es_ES.properties?>
 
-<VBox id="VBox" alignment="CENTER" disable="false" fillWidth="true" prefHeight="-1.0" prefWidth="-1.0" snapToPixel="false" spacing="3.0" xmlns:fx="http://javafx.com/fxml" fx:controller="dnanalytics.view.tools.AnnotationController">
+<VBox id="VBox" alignment="CENTER" disable="false" fillWidth="true" prefHeight="-1.0" prefWidth="-1.0" snapToPixel="false" spacing="3.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="dnanalytics.view.tools.AnnotationController">
   <children>
+    <Label text="Copy each link and paste in your browser" />
     <HBox alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="NEVER">
       <children>
         <Separator prefWidth="-1.0" HBox.hgrow="SOMETIMES" />
@@ -20,25 +20,28 @@
     </HBox>
     <HBox id="HBox" alignment="TOP_LEFT" spacing="5.0">
       <children>
-        <Button id="siftRestric" alignment="CENTER" cancelButton="false" contentDisplay="CENTER" defaultButton="true" mnemonicParsing="false" onAction="#siftRestrict" text="1" textAlignment="CENTER" />
+        <Button id="siftRestric" alignment="CENTER" cancelButton="false" contentDisplay="CENTER" defaultButton="true" disable="true" mnemonicParsing="false" onAction="#siftRestrict" text="1" textAlignment="CENTER" />
         <Label text="%sift.restrict" />
       </children>
       <VBox.margin>
         <Insets fx:id="x1" />
       </VBox.margin>
     </HBox>
+    <TextField fx:id="sift1" editable="false" prefWidth="200.0" text="http://sift.bii.a-star.edu.sg/www/SIFT_indels2.html" />
     <HBox alignment="TOP_LEFT" spacing="5.0" VBox.margin="$x1">
       <children>
-        <Button alignment="CENTER" cancelButton="false" contentDisplay="CENTER" defaultButton="true" maxWidth="-1.0" mnemonicParsing="false" onAction="#siftSNP" text="2" textAlignment="CENTER" />
+        <Button alignment="CENTER" cancelButton="false" contentDisplay="CENTER" defaultButton="true" disable="true" maxWidth="-1.0" mnemonicParsing="false" onAction="#siftSNP" text="2" textAlignment="CENTER" />
         <Label text="%sift.snp" />
       </children>
     </HBox>
+    <TextField fx:id="sift2" editable="false" prefWidth="200.0" text="http://sift.bii.a-star.edu.sg/www/SIFT_intersect_coding_submit.html" />
     <HBox id="HBox" alignment="TOP_LEFT" spacing="5.0" VBox.margin="$x1">
       <children>
-        <Button cancelButton="false" contentDisplay="CENTER" defaultButton="true" maxWidth="-1.0" mnemonicParsing="false" onAction="#siftIndels" text="3" textAlignment="CENTER" />
+        <Button cancelButton="false" contentDisplay="CENTER" defaultButton="true" disable="true" maxWidth="-1.0" mnemonicParsing="false" onAction="#siftIndels" text="3" textAlignment="CENTER" />
         <Label text="%sift.indel" />
       </children>
     </HBox>
+    <TextField fx:id="sift3" editable="false" prefWidth="200.0" text="http://siftdna.org/www/Extended_SIFT_chr_coords_submit.html" />
     <HBox alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0">
       <children>
         <Separator prefWidth="-1.0" HBox.hgrow="SOMETIMES" />
@@ -48,10 +51,11 @@
     </HBox>
     <HBox id="HBox" alignment="TOP_LEFT" spacing="5.0">
       <children>
-        <Button id="siftRestric" alignment="CENTER" cancelButton="false" contentDisplay="CENTER" defaultButton="true" mnemonicParsing="false" onAction="#annovar" text="1" textAlignment="CENTER" />
+        <Button id="siftRestric" alignment="CENTER" cancelButton="false" contentDisplay="CENTER" defaultButton="true" disable="true" mnemonicParsing="false" onAction="#annovar" text="1" textAlignment="CENTER" />
         <Label text="%sift.annovar" />
       </children>
     </HBox>
+    <TextField fx:id="annovar" editable="false" prefWidth="200.0" text="http://wannovar.usc.edu/" />
   </children>
   <padding>
     <Insets left="5.0" />

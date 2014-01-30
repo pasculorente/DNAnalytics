@@ -34,7 +34,7 @@ public class FilterFrequenciesTool implements Tool {
             loader = new FXMLLoader(FilterFrequenciesController.class.getResource(
                     "FilterFrequencies.fxml"), resources);
             try {
-                view = loader.load();
+                view = (Node) loader.load();
             } catch (IOException ex) {
                 Logger.getLogger(FilterFrequenciesController.class.getName()).
                         log(Level.SEVERE, null, ex);

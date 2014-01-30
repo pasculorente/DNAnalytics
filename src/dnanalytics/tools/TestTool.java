@@ -29,7 +29,7 @@ public class TestTool implements Tool {
             loader = new FXMLLoader(TestToolController.class.getResource("TestTool.fxml"), DNAMain.
                     getResources());
             try {
-                view = loader.load();
+                view = (Node) loader.load();
             } catch (IOException ex) {
                 Logger.getLogger(TestTool.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -66,21 +66,21 @@ public class TestTool implements Tool {
                 //executeCommand("pwd");
                 String java7 = DNAnalytics.getProperties().getProperty("java7");
                 String picard = "software" + File.separator + "picard" + File.separator;
-                String gatk ="software" + File.separator + "gatk"
+                String gatk = "software" + File.separator + "gatk"
                         + File.separator + "GenomeAnalysisTK.jar";
 
                 updateProgress("Testing picard...", 0, 4);
-                new Command(outStream, "java", "-jar", picard + "CleanSam.jar").execute();
+                new Command(errStream, outStream, "java", "-jar", picard + "CleanSam.jar").execute();
                 updateProgress("Testing GATK...", 1, 4);
-                new Command(outStream, java7,"-jar", gatk, "-T", "HaplotypeCaller").execute();
+                new Command(errStream, outStream, java7, "-jar", gatk, "-T", "HaplotypeCaller").execute();
                 updateProgress("Testing bwa", 2, 4);
-                new Command(outStream, "bwa").execute();
+                new Command(errStream, outStream, "bwa").execute();
                 updateProgress("Testing samtools", 3, 4);
-                new Command(outStream, "samtools").execute();
+                new Command(errStream, outStream, "samtools").execute();
 
-//                new Command(outStream, "software/test_script.sh",
-//                        String.valueOf(controller.getLines()),
-//                        String.valueOf(controller.getMilliseconds() / 1000)).execute();
+                new Command(errStream, outStream, "software/test_script.sh",
+                        String.valueOf(controller.getLines()),
+                        String.valueOf(controller.getMilliseconds() / 1000)).execute();
                 updateProgress("Test tool completed", 1, 1);
                 return 0;
             }

@@ -31,18 +31,17 @@ import javafx.concurrent.Task;
  */
 public abstract class Worker extends Task<Integer> {
 
-    private Process process;
     protected final static ResourceBundle resources = DNAMain.getResources();
     private long startTime;
-    private boolean exit;
     protected PrintStream outStream = System.out;
     protected PrintStream errStream = System.err;
     protected final StringProperty elapsedTime = new SimpleStringProperty();
     protected final static SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+    private Timer timer;
 
     {
-        // It was giving problems with the hours. This line fixes it, but I'm not happy at all,
-        // cause I'm not sure if this is portable.
+        // It was giving problems with the hours. This line fixes it,
+        // but I'm not happy at all, because I'm not sure if this is portable.
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
     }
 
@@ -70,40 +69,31 @@ public abstract class Worker extends Task<Integer> {
     protected Integer call() {
         // Previous tasks
         startTime = System.currentTimeMillis();
-        exit = false;
+
+        timer = new Timer();
+        new Thread(timer).start();
 
         // User execution
         int ret = start();
 
+        timer.stop = true;
         updateProgress(1, 1);
         return ret;
     }
 
     @Override
-    protected void cancelled() {
+    public boolean cancel(boolean bln) {
         errStream.println(resources.getString("worker.cancel"));
-        if (process != null) {
-            process.destroy();
-        }
-        exit = true;
+        timer.stop = true;
         updateProgress(1, 1);
+        return super.cancel(bln); //To change body of generated methods, choose Tools | Templates.
 
     }
 
-    /**
-     * Calls updateProgress and updateMessage from Task, but also updates
-     * timestamps.
-     *
-     * @param message The message for updateMessage.
-     * @param progress The progress.
-     * @param max The end of the progress.
-     */
     protected void updateProgress(String message, double progress, double max) {
         updateMessage(message);
         updateProgress(progress, max);
-        Platform.runLater(() -> {
-            elapsedTime.setValue(dateFormat.format(System.currentTimeMillis() - startTime));
-        });
+
     }
 
     public long getStartTime() {
@@ -111,8 +101,8 @@ public abstract class Worker extends Task<Integer> {
     }
 
     /**
-     * Write the translation of your script here. Use executeCommand() to run an
-     * external command.
+     * Write the translation of your script here. Use the class Command to
+     * execute external commands.
      *
      * @return process return value.
      */
@@ -121,10 +111,29 @@ public abstract class Worker extends Task<Integer> {
     /**
      * Override this method to ensure all parameters are OK. Check here if files
      * exist and parameters are logic. If this method returns false, no new tab
-     * will be added to DNAnalytics, and Worker won't be lauched.
+     * will be added to DNAnalytics, and Worker won't be launched.
      *
      * @return true if parameters are OK. false if Worker shouldn't be run.
      */
     public abstract boolean importParameters();
 
+    class Timer extends Task<Void> {
+
+        boolean stop = false;
+
+        @Override
+        protected Void call() throws Exception {
+            while (!stop) {
+                try {
+                    Thread.sleep(1000);
+                    Platform.runLater(() -> {
+                        elapsedTime.setValue(dateFormat.format(System.currentTimeMillis() - startTime));
+                    });
+                } catch (InterruptedException ex) {
+                }
+            }
+            return null;
+        }
+
+    }
 }

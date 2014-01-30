@@ -1,7 +1,7 @@
 package dnanalytics.view.tools;
 
 import dnanalytics.DNAnalytics;
-import dnanalytics.utils.FileManager;
+import dnanalytics.utils.OS;
 import java.io.File;
 import java.util.Properties;
 import javafx.event.ActionEvent;
@@ -47,19 +47,19 @@ public class AlignViewController {
 
     @FXML
     void selectForward(ActionEvent event) {
-        FileManager.setOpenFile(FileManager.FASTQ_DESCRIPTION,
-                FileManager.FASTQ_DESCRIPTION, FileManager.FASTQ_FILTERS, forward);
+        OS.setOpenFile(OS.FASTQ_DESCRIPTION,
+                OS.FASTQ_DESCRIPTION, OS.FASTQ_FILTERS, forward);
     }
 
     @FXML
     void selectReverse(ActionEvent event) {
-        FileManager.setOpenFile(FileManager.FASTQ_DESCRIPTION,
-                FileManager.FASTQ_DESCRIPTION, FileManager.FASTQ_FILTERS, reverse);
+        OS.setOpenFile(OS.FASTQ_DESCRIPTION,
+                OS.FASTQ_DESCRIPTION, OS.FASTQ_FILTERS, reverse);
     }
 
     @FXML
     void selectDbsnp(ActionEvent event) {
-        File f = FileManager.openVCF(dbsnp);
+        File f = OS.openVCF(dbsnp);
         if (f != null) {
             properties.setProperty("align.dbsnp", f.getAbsolutePath());
         }
@@ -67,7 +67,7 @@ public class AlignViewController {
 
     @FXML
     void selectMills(ActionEvent event) {
-        File f = FileManager.openVCF(mills);
+        File f = OS.openVCF(mills);
         if (f != null) {
             properties.setProperty("align.mills", f.getAbsolutePath());
         }
@@ -75,7 +75,7 @@ public class AlignViewController {
 
     @FXML
     void selectPhase1(ActionEvent event) {
-        File f = FileManager.openVCF(phase1);
+        File f = OS.openVCF(phase1);
         if (f != null) {
             properties.setProperty("align.phase1", f.getAbsolutePath());
         }
@@ -83,9 +83,9 @@ public class AlignViewController {
 
     @FXML
     void selectOutput(ActionEvent event) {
-        FileManager.setSaveFile(FileManager.SAM_BAM_DESCRIPTION,
-                FileManager.SAM_BAM_DESCRIPTION, FileManager.SAM_BAM_FILTERS,
-                FileManager.BAM_EXTENSION, output);
+        OS.setSaveFile(OS.SAM_BAM_DESCRIPTION,
+                OS.SAM_BAM_DESCRIPTION, OS.SAM_BAM_FILTERS,
+                OS.BAM_EXTENSION, output);
     }
 
     public String getDbsnp() {

@@ -9,8 +9,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -20,7 +18,7 @@ import javafx.scene.Node;
 
 /**
  *
- * @author uai
+ * @author Pascual Lorente Arencibia
  */
 public class DindelTool implements Tool {
 
@@ -37,7 +35,7 @@ public class DindelTool implements Tool {
         if (loader == null) {
             loader = new FXMLLoader(DindelController.class.getResource("Dindel.fxml"), resources);
             try {
-                view = loader.load();
+                view = (Node) loader.load();
             } catch (IOException ex) {
                 Logger.getLogger(DindelController.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -54,24 +52,6 @@ public class DindelTool implements Tool {
             private File temp, windows, windows2, dindel;
             String genome = DNAnalytics.getProperties().getProperty("genome");
 
-            /**
-             * Creates directory tree and initializes variables.
-             */
-            private void initializeSettings() {
-                // + tempDir
-                // | + name
-                //   | - windows
-                //   | - windows2
-                name = new File(controller.getOutput()).getName().replace(".vcf", "");
-                temp = new File(DNAnalytics.getProperties().getProperty("tempDir"), name);
-                windows = new File(temp, "windows");
-                windows2 = new File(temp, "windows2");
-                temp.mkdir();
-                windows.mkdir();
-                windows2.mkdir();
-                dindel = new File("software", "dindel");
-            }
-
             @Override
             public boolean importParameters() {
                 // Checking parameters
@@ -87,6 +67,18 @@ public class DindelTool implements Tool {
                     System.err.println(resources.getString("no.genome"));
                     return false;
                 }
+                // + tempDir
+                // | + name
+                //   | - windows
+                //   | - windows2
+                name = new File(controller.getOutput()).getName().replace(".vcf", "");
+                temp = new File(DNAnalytics.getProperties().getProperty("tempDir"), name);
+                windows = new File(temp, "windows");
+                windows2 = new File(temp, "windows2");
+                temp.mkdir();
+                windows.mkdir();
+                windows2.mkdir();
+                dindel = new File("software", "dindel");
                 return true;
             }
 
@@ -167,7 +159,6 @@ public class DindelTool implements Tool {
                 int i = 1;
                 File[] files = windows.listFiles();
                 int t = files.length;
-                DateFormat df = new SimpleDateFormat("HH:mm:ss");
                 outStream.println("ELAPSED TIME\tREMAINING\tWINDOWS");
                 for (File file : files) {
                     updateProgress("Realigning " + i + " out of " + t + " windows",
@@ -182,8 +173,8 @@ public class DindelTool implements Tool {
                             "--outputFile", new File(windows2, file.getName()).getAbsolutePath()).execute();
                     long elapsed = System.currentTimeMillis() - start;
                     long remaining = (elapsed / i) * (t - i);
-                    outStream.println(df.format(new Date(elapsed))
-                            + "\t" + df.format(new Date(remaining))
+                    outStream.println(dateFormat.format(new Date(elapsed))
+                            + "\t" + dateFormat.format(new Date(remaining))
                             + "\t" + i + "/" + t);
                     i++;
                 }
@@ -211,7 +202,7 @@ public class DindelTool implements Tool {
                 } catch (IOException ex) {
                     Logger.getLogger(DindelTool.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                new Command(outStream,"python",
+                new Command(outStream, "python",
                         new File(dindel, "mergeOutputDiploid.py").getAbsolutePath(),
                         "--ref", genome,
                         "--inputFiles", fileList.getAbsolutePath(),
@@ -221,7 +212,7 @@ public class DindelTool implements Tool {
             @Override
             protected int start() {
 
-                initializeSettings();
+                updateTitle("Calling indels for " + controller.getInput());
 
                 updateProgress("Extracting candidate indels from BAM", 0, 100);
                 extractCandidatesFromBAM();

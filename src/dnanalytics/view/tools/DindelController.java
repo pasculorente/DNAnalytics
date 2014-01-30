@@ -1,6 +1,6 @@
 package dnanalytics.view.tools;
 
-import dnanalytics.utils.FileManager;
+import dnanalytics.utils.OS;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 
@@ -18,12 +18,12 @@ public class DindelController {
     
     @FXML
     public void selectInput() {
-        FileManager.openBAM(input);
+        OS.openBAM(input);
     }
 
     @FXML
     public void selectOutput() {
-        FileManager.saveVCF(output);
+        OS.saveVCF(output);
     }
 
     public String getInput() {

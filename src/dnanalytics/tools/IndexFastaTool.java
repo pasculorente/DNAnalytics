@@ -6,6 +6,7 @@ import dnanalytics.view.tools.IndexFastaController;
 import dnanalytics.worker.Worker;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,13 +28,16 @@ public class IndexFastaTool implements Tool {
 
     private IndexFastaController controller;
 
+    private final ArrayList<Command> commands = new ArrayList<>();
+    private final ArrayList<String> messages = new ArrayList<>();
+
     @Override
     public Node getView() {
         if (loader == null) {
             loader = new FXMLLoader(IndexFastaController.class.getResource("IndexFasta.fxml"),
                     resources);
             try {
-                view = loader.load();
+                view = (Node) loader.load();
             } catch (IOException ex) {
                 Logger.getLogger(IndexFastaController.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -46,30 +50,49 @@ public class IndexFastaTool implements Tool {
     public Worker getWorker() {
         return new Worker() {
             String genome;
+            Command command = null;
+
+            @Override
+            public boolean cancel(boolean bln) {
+                if (command != null) {
+                    command.kill();
+                }
+                return super.cancel(bln);
+            }
 
             @Override
             protected int start() {
+                genome = controller.getGenome();
+                messages.add(resources.getString("index.bwa"));
+                messages.add(resources.getString("index.samtools"));
+                messages.add(resources.getString("index.picard"));
+                commands.add(new Command(outStream, "bwa", "index", "-a", "bwtsw", genome));
+                commands.add(new Command(outStream, "samtools", "faidx", genome));
+                commands.add(new Command(outStream, "java", "-jar", "software" + File.separator
+                        + "picard" + File.separator + "CreateSequenceDictionary.jar",
+                        "R=" + genome, "O=" + genome.replace(".fasta", ".dict")));
                 updateTitle(resources.getString("index.index") + " " + new File(genome).getName());
                 updateProgress(resources.getString("index.bwa"), 0.5, 3);
-                new Command(outStream, "bwa", "index", "-a", "bwtsw", genome).execute();
-                updateProgress(resources.getString("index.samtools"), 1.5, 3);
-                new Command("samtools", "faidx", controller.getGenome()).execute();
-                updateProgress(resources.getString("index.picard"), 2.5, 3);
-                new Command(outStream, "java", "-jar", "software" + File.separator
-                        + "picard" + File.separator + "CreateSequenceDictionary.jar",
-                        "R=" + genome, "O=" + genome.replace(".fasta", ".dict")).execute();
+                int ret;
+                for (int i = 0; i < commands.size(); i++) {
+                    updateProgress(messages.get(i), i, commands.size());
+                    command = commands.get(i);
+                    ret = command.execute();
+                    if (ret != 0) {
+                        return ret;
+                    }
+                }
                 updateProgress(resources.getString("index.end"), 1, 1);
                 return 0;
             }
 
             @Override
             public boolean importParameters() {
-
                 if (!new File(controller.getGenome()).exists()) {
                     System.err.println(resources.getString("no.genome"));
                     return false;
                 }
-                genome = controller.getGenome();
+
                 return true;
             }
         };

@@ -27,7 +27,7 @@ public class LowFrequencyTool implements Tool {
         if (loader == null) {
             loader = new FXMLLoader(LowFrequencyController.class.getResource("LowFrequency.fxml"), resources);
             try {
-                view = loader.load();
+                view = (Node) loader.load();
             } catch (IOException ex) {
                 Logger.getLogger(LowFrequencyController.class.getName()).log(Level.SEVERE, null, ex);
             }

@@ -5,7 +5,7 @@
  */
 package dnanalytics.view.tools;
 
-import dnanalytics.utils.FileManager;
+import dnanalytics.utils.OS;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
@@ -27,12 +27,12 @@ public class LowFrequencyController {
 
     @FXML
     private void setInput(ActionEvent event) {
-        FileManager.openBAM(input);
+        OS.openBAM(input);
     }
 
     @FXML
     private void setOutput(ActionEvent event) {
-        FileManager.setSaveFile("TSV", "Tabulated", null, ".tsv", output);
+        OS.setSaveFile("TSV", "Tabulated", null, ".tsv", output);
     }
 
     public String getInput() {

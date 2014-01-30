@@ -26,7 +26,7 @@ public class AnnotationTool implements Tool{
         if (loader == null) {
             loader = new FXMLLoader(AnnotationController.class.getResource("Annotation.fxml"), resources);
             try {
-                view = loader.load();
+                view = (Node) loader.load();
             } catch (IOException ex) {
                 Logger.getLogger(AnnotationController.class.getName()).log(Level.SEVERE, null, ex);
             }
