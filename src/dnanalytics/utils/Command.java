@@ -1,7 +1,6 @@
 package dnanalytics.utils;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.logging.Level;
@@ -26,11 +25,11 @@ public class Command {
      * @param stdOut Where to flush the standard output.
      * @param args The command and its arguments.
      */
-    public Command(PrintStream errOut, PrintStream stdOut, String... args) {
-        this.args = args;
-        this.errOut = errOut;
-        this.stdOut = stdOut;
-    }
+//    public Command(PrintStream errOut, PrintStream stdOut, String... args) {
+//        this.args = args;
+//        this.errOut = errOut;
+//        this.stdOut = stdOut;
+//    }
 
     /**
      * Creates a new command. output cannot be null. Both error and standard
@@ -78,26 +77,18 @@ public class Command {
         } else {
             pb = new ProcessBuilder(args);
         }
-        OutputStream output = stdOut;
-        if (errOut == null) {
-            pb.redirectErrorStream(true);
-            if (stdOut == null) {
-                output = System.out;
-            }
-        }
+        pb.redirectErrorStream(true);
+        OutputStream output = (stdOut != null) ? stdOut : System.out;
         try {
             process = pb.start();
-            new Pipe(process.getInputStream(), output).start();
-            if (errOut != null) {
-                new Pipe(process.getErrorStream(), errOut).start();
+            int c;
+            while ((c = process.getInputStream().read()) != -1) {
+                output.write(c);
             }
             return process.waitFor();
-        } catch (IOException ex) {
+        } catch (InterruptedException | IOException ex) {
             Logger.getLogger(Command.class.getName()).log(Level.SEVERE, null, ex);
             return -1;
-        } catch (InterruptedException ex) {
-            //Logger.getLogger(Command.class.getName()).log(Level.SEVERE, null, ex);
-            return -2;
         }
     }
 
@@ -113,30 +104,7 @@ public class Command {
     public void kill() {
         if (process != null) {
             process.destroy();
-            System.out.println("killing" + process);
-        }
-    }
-
-    static class Pipe extends Thread {
-
-        private final InputStream input;
-        private final OutputStream output;
-
-        public Pipe(InputStream input, OutputStream output) {
-            this.input = input;
-            this.output = output;
-        }
-
-        @Override
-        public synchronized void start() {
-            int c;
-            try {
-                while ((c = input.read()) != -1) {
-                    output.write(c);
-                }
-            } catch (IOException ex) {
-                Logger.getLogger(Command.class.getName()).log(Level.SEVERE, null, ex);
-            }
+//            System.out.println("killing" + process);
         }
     }
 }

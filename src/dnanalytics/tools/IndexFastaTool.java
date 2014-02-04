@@ -54,34 +54,25 @@ public class IndexFastaTool implements Tool {
 
             @Override
             public boolean cancel(boolean bln) {
+                boolean ret = super.cancel(bln);
                 if (command != null) {
                     command.kill();
                 }
-                return super.cancel(bln);
+                return ret;
             }
 
             @Override
             protected int start() {
                 genome = controller.getGenome();
-                messages.add(resources.getString("index.bwa"));
-                messages.add(resources.getString("index.samtools"));
-                messages.add(resources.getString("index.picard"));
-                commands.add(new Command(outStream, "bwa", "index", "-a", "bwtsw", genome));
-                commands.add(new Command(outStream, "samtools", "faidx", genome));
-                commands.add(new Command(outStream, "java", "-jar", "software" + File.separator
-                        + "picard" + File.separator + "CreateSequenceDictionary.jar",
-                        "R=" + genome, "O=" + genome.replace(".fasta", ".dict")));
                 updateTitle(resources.getString("index.index") + " " + new File(genome).getName());
                 updateProgress(resources.getString("index.bwa"), 0.5, 3);
-                int ret;
-                for (int i = 0; i < commands.size(); i++) {
-                    updateProgress(messages.get(i), i, commands.size());
-                    command = commands.get(i);
-                    ret = command.execute();
-                    if (ret != 0) {
-                        return ret;
-                    }
-                }
+                new Command(outStream, "bwa", "index", "-a", "bwtsw", genome).execute();
+                updateProgress(resources.getString("index.samtools"), 1.5, 3);
+                new Command(outStream, "samtools", "faidx", genome).execute();
+                updateProgress(resources.getString("index.picard"), 2.5, 3);
+                new Command(outStream, "java", "-jar", "software" + File.separator
+                        + "picard" + File.separator + "CreateSequenceDictionary.jar",
+                        "R=" + genome, "O=" + genome.replace(".fasta", ".dict")).execute(true);
                 updateProgress(resources.getString("index.end"), 1, 1);
                 return 0;
             }
@@ -95,6 +86,7 @@ public class IndexFastaTool implements Tool {
 
                 return true;
             }
+            
         };
     }
 

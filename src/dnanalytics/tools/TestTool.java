@@ -70,15 +70,14 @@ public class TestTool implements Tool {
                         + File.separator + "GenomeAnalysisTK.jar";
 
                 updateProgress("Testing picard...", 0, 4);
-                new Command(errStream, outStream, "java", "-jar", picard + "CleanSam.jar").execute();
+                new Command(outStream, "java", "-jar", picard + "CleanSam.jar").execute();
                 updateProgress("Testing GATK...", 1, 4);
-                new Command(errStream, outStream, java7, "-jar", gatk, "-T", "HaplotypeCaller").execute();
+                new Command(outStream, java7, "-jar", gatk, "-T", "HaplotypeCaller").execute();
                 updateProgress("Testing bwa", 2, 4);
-                new Command(errStream, outStream, "bwa").execute();
+                new Command(outStream, "bwa").execute();
                 updateProgress("Testing samtools", 3, 4);
-                new Command(errStream, outStream, "samtools").execute();
-
-                new Command(errStream, outStream, "software/test_script.sh",
+                new Command(outStream, "samtools").execute();
+                new Command(outStream, "software/test_script.sh",
                         String.valueOf(controller.getLines()),
                         String.valueOf(controller.getMilliseconds() / 1000)).execute();
                 updateProgress("Test tool completed", 1, 1);

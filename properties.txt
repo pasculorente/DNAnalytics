@@ -1,5 +1,5 @@
 #DNAnalytics properties
-#Thu Jan 30 12:56:31 WET 2014
+#Tue Feb 04 11:03:46 WET 2014
 align.phase1=/home/uichuimi03/DNA_Sequencing/database/1000G_phase1.indels.b37.vcf
 country=ES
 align.dbsnp=/home/uichuimi03/DNA_Sequencing/database/dbsnp_135.b37.vcf

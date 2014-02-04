@@ -7,9 +7,10 @@ import dnanalytics.view.tools.DindelController;
 import dnanalytics.worker.Worker;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Date;
+import java.io.PrintStream;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -163,19 +164,23 @@ public class DindelTool implements Tool {
                 for (File file : files) {
                     updateProgress("Realigning " + i + " out of " + t + " windows",
                             20 + 70 * i / t, 100);
-                    new Command(outStream, new File(dindel, "dindel").getAbsolutePath(),
-                            "--analysis", "indels",
-                            "--doDiploid",
-                            "--bamFile", controller.getInput(),
-                            "--ref", genome,
-                            "--varFile", file.getAbsolutePath(),
-                            "--libFile", new File(temp, name + ".libraries.txt").getAbsolutePath(),
-                            "--outputFile", new File(windows2, file.getName()).getAbsolutePath()).execute();
-                    long elapsed = System.currentTimeMillis() - start;
-                    long remaining = (elapsed / i) * (t - i);
-                    outStream.println(dateFormat.format(new Date(elapsed))
-                            + "\t" + dateFormat.format(new Date(remaining))
-                            + "\t" + i + "/" + t);
+                    try (PrintStream devnull = new PrintStream("/dev/null")) {
+                        new Command(devnull, new File(dindel, "dindel").getAbsolutePath(),
+                                "--analysis", "indels",
+                                "--doDiploid",
+                                "--bamFile", controller.getInput(),
+                                "--ref", genome,
+                                "--varFile", file.getAbsolutePath(),
+                                "--libFile", new File(temp, name + ".libraries.txt").getAbsolutePath(),
+                                "--outputFile", new File(windows2, file.getName()).getAbsolutePath()).execute();
+                        long elapsed = System.currentTimeMillis() - start;
+                        long remaining = (elapsed / i) * (t - i);
+                        outStream.println(dateFormat.format(elapsed)
+                                + "\t" + dateFormat.format(remaining)
+                                + "\t" + i + "/" + t);
+                    } catch (FileNotFoundException ex) {
+                        Logger.getLogger(DindelTool.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     i++;
                 }
             }

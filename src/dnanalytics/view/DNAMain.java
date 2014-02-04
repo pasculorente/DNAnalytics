@@ -8,9 +8,7 @@ import dnanalytics.tools.CombineVariantsTool;
 import dnanalytics.tools.DindelTool;
 import dnanalytics.tools.FilterFrequenciesTool;
 import dnanalytics.tools.IndexFastaTool;
-import dnanalytics.tools.LowFrequencyTool;
 import dnanalytics.tools.SelectVariantsTool;
-import dnanalytics.tools.TestTool;
 import dnanalytics.tools.Tool;
 import dnanalytics.utils.OS;
 import dnanalytics.utils.TextAreaWriter;
@@ -27,7 +25,6 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
@@ -82,6 +79,7 @@ public class DNAMain implements Initializable {
     // Local variables
     private final ToggleGroup toolButtons = new ToggleGroup();
     private final ArrayList<Tool> tools = new ArrayList<>();
+    private final ArrayList<Worker> workers = new ArrayList<Worker>();
 
     private final DateFormat df = new SimpleDateFormat("HH:mm:ss");
 
@@ -106,26 +104,22 @@ public class DNAMain implements Initializable {
         addTool(new FilterFrequenciesTool());
         addTool(new AnnotationTool());
         addTool(new DindelTool());
-        addTool(new LowFrequencyTool());
-        addTool(new TestTool());
+//        addTool(new LowFrequencyTool());
+//        addTool(new TestTool());
 
         // Prepare tools pane
         currentTool.setCollapsible(false);
         currentTool.setText(resources.getString("label.selecttool"));
         /* Do the magic, when the user selects a tool, make it visible in the currentTool pane */
 
-        toolButtons.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-
-            @Override
-            public void changed(ObservableValue<? extends Toggle> ov, Toggle t, Toggle t1) {
-                ToggleButton button = (ToggleButton) t1;
-                if (t1 != null) {
-                    Tool tool = tools.get(toolButtons.getToggles().indexOf(t1));
-                    currentTool.setContent(tool.getView());
-                    ImageView a = (ImageView) button.getGraphic();
-                    currentTool.setGraphic(new ImageView(a.getImage()));
-                    currentTool.setText(tool.getTitle());
-                }
+        toolButtons.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> ov, Toggle t, Toggle t1) -> {
+            ToggleButton button = (ToggleButton) t1;
+            if (t1 != null) {
+                Tool tool = tools.get(toolButtons.getToggles().indexOf(t1));
+                currentTool.setContent(tool.getView());
+                ImageView a = (ImageView) button.getGraphic();
+                currentTool.setGraphic(new ImageView(a.getImage()));
+                currentTool.setText(tool.getTitle());
             }
         });
 
@@ -137,22 +131,18 @@ public class DNAMain implements Initializable {
 
         // Load languages from settings.
         final Locale currentLocale = resources.getLocale();
-        for (Locale locale : DNAnalytics.getAppLocales()) {
+        DNAnalytics.getAppLocales().stream().forEach((locale) -> {
             languagesBox.getItems().add(locale.getDisplayName(currentLocale));
-        }
+        });
         languagesBox.getSelectionModel().select(currentLocale.getDisplayName(currentLocale));
 
         // Give the languagesBox the ability to change system language.
-        languagesBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-
-            @Override
-            public void changed(ObservableValue<? extends String> ov, String t, String current) {
-                for (Locale locale : DNAnalytics.getAppLocales()) {
-                    if (current.equals(locale.getDisplayName(currentLocale))) {
-                        properties.setProperty("language", locale.getLanguage());
-                        properties.setProperty("country", locale.getCountry());
-                        return;
-                    }
+        languagesBox.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String t, String current) -> {
+            for (Locale locale : DNAnalytics.getAppLocales()) {
+                if (current.equals(locale.getDisplayName(currentLocale))) {
+                    properties.setProperty("language", locale.getLanguage());
+                    properties.setProperty("country", locale.getCountry());
+                    return;
                 }
             }
         });
@@ -161,7 +151,7 @@ public class DNAMain implements Initializable {
     /**
      * Adds a Tool to the ToolsPanel. Creates a new ToggleButton to select it in
      * the main view. The Tool is added to a List, binded with its ToggleButton.
-     * <p/>
+     * 
      * @param tool The Tool to add to the main view
      */
     private void addTool(Tool tool) {
@@ -177,7 +167,6 @@ public class DNAMain implements Initializable {
     /**
      * Launches the selected worker. This method will request the Worker to the
      * Tool.
-     * <p/>
      */
     @FXML
     void start() {
@@ -227,7 +216,7 @@ public class DNAMain implements Initializable {
                 tab.setClosable(true);
                 controller.getCancelButton().setDisable(true);
             });
-
+            workers.add(worker);
             // Everything is ready, let's go.
             new Thread(worker).start();
         }
@@ -242,6 +231,9 @@ public class DNAMain implements Initializable {
      */
     @FXML
     public boolean closeApp(ActionEvent event) {
+        workers.stream().filter((worker) -> (worker != null)).forEach((worker) -> {
+            worker.cancel(true);
+        });
         return false;
     }
 

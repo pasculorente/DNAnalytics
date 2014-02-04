@@ -6,7 +6,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox prefHeight="-1.0" prefWidth="-1.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dnanalytics.view.tools.DindelController">
+<VBox prefHeight="-1.0" prefWidth="-1.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="dnanalytics.view.tools.DindelController">
   <children>
     <HBox alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0">
       <children>
@@ -18,7 +18,7 @@
     <HBox alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0">
       <children>
         <TextField fx:id="input" prefWidth="-1.0" HBox.hgrow="SOMETIMES" />
-        <Button mnemonicParsing="false" onAction="#selectInput" text="Choose" />
+        <Button mnemonicParsing="false" onAction="#selectInput" text="%button.browse" />
       </children>
     </HBox>
     <HBox alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0">
@@ -31,7 +31,7 @@
     <HBox alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0">
       <children>
         <TextField id="input" fx:id="output" prefWidth="-1.0" HBox.hgrow="SOMETIMES" />
-        <Button mnemonicParsing="false" onAction="#selectOutput" text="Choose" />
+        <Button mnemonicParsing="false" onAction="#selectOutput" text="%button.browse" />
       </children>
     </HBox>
     <HBox alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0" />

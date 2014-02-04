@@ -75,10 +75,10 @@ public class CombineVariantsTool implements Tool {
                         command.add(String.valueOf(items.size()));
                         command.add("-T");
                         command.add("CombineVariants");
-                        for (String s : items) {
+                        items.stream().forEach((s) -> {
                             command.add("-V");
                             command.add(s);
-                        }
+                        });
                         updateProgress(resources.getString("combine.intersect"), 1, 2);
                         break;
                     case "aggregation":

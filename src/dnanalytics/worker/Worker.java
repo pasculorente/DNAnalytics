@@ -83,11 +83,11 @@ public abstract class Worker extends Task<Integer> {
 
     @Override
     public boolean cancel(boolean bln) {
-        errStream.println(resources.getString("worker.cancel"));
+        boolean ret = super.cancel(bln);
+        //errStream.println(resources.getString("worker.cancel"));
         timer.stop = true;
         updateProgress(1, 1);
-        return super.cancel(bln); //To change body of generated methods, choose Tools | Templates.
-
+        return ret;
     }
 
     protected void updateProgress(String message, double progress, double max) {
