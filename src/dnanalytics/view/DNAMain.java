@@ -8,6 +8,7 @@ import dnanalytics.tools.CombineVariantsTool;
 import dnanalytics.tools.DindelTool;
 import dnanalytics.tools.FilterFrequenciesTool;
 import dnanalytics.tools.IndexFastaTool;
+import dnanalytics.tools.LowFrequencyTool;
 import dnanalytics.tools.SelectVariantsTool;
 import dnanalytics.tools.Tool;
 import dnanalytics.utils.OS;
@@ -79,7 +80,7 @@ public class DNAMain implements Initializable {
     // Local variables
     private final ToggleGroup toolButtons = new ToggleGroup();
     private final ArrayList<Tool> tools = new ArrayList<>();
-    private final ArrayList<Worker> workers = new ArrayList<Worker>();
+    private final ArrayList<Worker> workers = new ArrayList<>();
 
     private final DateFormat df = new SimpleDateFormat("HH:mm:ss");
 
@@ -104,7 +105,7 @@ public class DNAMain implements Initializable {
         addTool(new FilterFrequenciesTool());
         addTool(new AnnotationTool());
         addTool(new DindelTool());
-//        addTool(new LowFrequencyTool());
+        addTool(new LowFrequencyTool());
 //        addTool(new TestTool());
 
         // Prepare tools pane
@@ -189,8 +190,9 @@ public class DNAMain implements Initializable {
             final ConsoleController controller = loader.getController();
             // Binds output, message and progress.
             worker.setStreams(
-                    new PrintStream(new TextAreaWriter(controller.getTextArea(), ">"), true),
-                    new PrintStream(new TextAreaWriter(controller.getTextArea(), "e>"), true));
+                    new PrintStream(new TextAreaWriter(controller.getTextArea(), ""), true),
+                    new PrintStream(new TextAreaWriter(controller.getTextArea(), ""), true));
+           // worker.setStreams(System.out, System.err);
             controller.getMessage().textProperty().bind(worker.messageProperty());
             controller.getProgress().progressProperty().bind(worker.progressProperty());
             controller.getStarted().setText(df.format(System.currentTimeMillis()));

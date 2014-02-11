@@ -50,6 +50,7 @@ public class CombineVariantsTool implements Tool {
     @Override
     public Worker getWorker() {
         return new Worker() {
+            private final static String java7 = "/usr/local/jdk1.7.0_45/bin/java";
 
             @Override
             protected int start() {
@@ -58,8 +59,7 @@ public class CombineVariantsTool implements Tool {
                 ArrayList<String> command = new ArrayList<>();
                 // java7 -jar GenomeAnalysisTK.jar
                 // -R genome.fasta -o output.vcf
-                String[] common = {
-                    DNAnalytics.getProperties().getProperty("java7"), "-jar",
+                String[] common = {java7, "-jar",
                     "software" + File.separator + "gatk"
                     + File.separator + "GenomeAnalysisTK.jar",
                     "-R", DNAnalytics.getProperties().getProperty("genome"),

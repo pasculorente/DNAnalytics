@@ -1,6 +1,5 @@
 package dnanalytics.tools;
 
-import dnanalytics.DNAnalytics;
 import dnanalytics.utils.Command;
 import dnanalytics.view.DNAMain;
 import dnanalytics.view.tools.TestToolController;
@@ -41,7 +40,7 @@ public class TestTool implements Tool {
     @Override
     public Worker getWorker() {
         return new Worker() {
-
+            private final static String java7 = "/usr/local/jdk1.7.0_45/bin/java";
             int lines;
             long millis;
 
@@ -64,7 +63,7 @@ public class TestTool implements Tool {
                 long cp = 0;
                 updateProgress("Empezamos", c, lines);
                 //executeCommand("pwd");
-                String java7 = DNAnalytics.getProperties().getProperty("java7");
+
                 String picard = "software" + File.separator + "picard" + File.separator;
                 String gatk = "software" + File.separator + "gatk"
                         + File.separator + "GenomeAnalysisTK.jar";

@@ -53,7 +53,6 @@ public class DNAnalytics extends Application {
         }
         Locale l = new Locale(properties.getProperty("language"), properties.getProperty("country"));
 
-        System.out.println(new File(PROPERTIES_FILE).getAbsolutePath());
         ResourceBundle bundle = ResourceBundle.getBundle("dnanalytics.view.dnanalytics", l);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("view/DNAMain.fxml"), bundle);
         Parent root = (Parent) loader.load();

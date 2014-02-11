@@ -30,7 +30,6 @@ public class Command {
 //        this.errOut = errOut;
 //        this.stdOut = stdOut;
 //    }
-
     /**
      * Creates a new command. output cannot be null. Both error and standard
      * error will be flushed to output.
@@ -107,4 +106,18 @@ public class Command {
 //            System.out.println("killing" + process);
         }
     }
+
+    @Override
+    public String toString() {
+        String ret = "";
+        for (String s : args) {
+            ret += s + " ";
+        }
+        if (stdOut != null) {
+            return stdOut + " " + ret;
+        } else {
+            return "Command=" + ret;
+        }
+    }
+
 }

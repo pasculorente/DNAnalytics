@@ -1,6 +1,5 @@
 package dnanalytics.worker;
 
-import dnanalytics.DNAnalytics;
 import dnanalytics.utils.Command;
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -17,6 +16,7 @@ public class Haplotype extends Worker {
 
     private final String genome, dbsnp, omni, hapmap, mills, output, temp, input;
     private final boolean recalibrate;
+    private final static String java7 = "/usr/local/jdk1.7.0_45/bin/java";
 
     /**
      *
@@ -47,7 +47,6 @@ public class Haplotype extends Worker {
     protected int start() {
         updateTitle("Calling " + new File(output).getName());
         System.out.println("Starting call");
-        String java7 = DNAnalytics.getProperties().getProperty("java7");
         String gatk = "software" + File.separator + "gatk"
                 + File.separator + "GenomeAnalysisTK.jar";
 

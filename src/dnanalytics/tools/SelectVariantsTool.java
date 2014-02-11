@@ -46,6 +46,7 @@ public class SelectVariantsTool implements Tool {
         // The Worker selecter is created, it will select the variants in background
         return new Worker() {
             Properties properties = DNAnalytics.getProperties();
+            private final static String java7 = "/usr/local/jdk1.7.0_45/bin/java";
 
             @Override
             protected int start() {
@@ -56,7 +57,7 @@ public class SelectVariantsTool implements Tool {
                 // -V input.vcf - o output.vcf
                 // -restrictAllelesTo BIALLELIC
                 // -select "expression"
-                new Command(outStream, properties.getProperty("java7"), "-jar",
+                new Command(outStream, java7, "-jar",
                         "software" + File.separator + "gatk"
                         + File.separator + "GenomeAnalysisTK.jar",
                         "-T", "SelectVariants",
