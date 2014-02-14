@@ -7,9 +7,8 @@
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?scenebuilder-preview-i18n-resource ../../DNAMain.properties?>
 
-<VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="266.0" spacing="3.0" xmlns:fx="http://javafx.com/fxml" fx:controller="dnanalytics.view.tools.CombineVariantsController">
+<VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="266.0" spacing="3.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="dnanalytics.view.tools.CombineVariantsController">
   <children>
     <HBox alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0">
       <children>
@@ -18,7 +17,11 @@
         <Separator prefWidth="-1.0" HBox.hgrow="SOMETIMES" />
       </children>
     </HBox>
-    <ListView fx:id="vcfList" minHeight="-Infinity" minWidth="-1.0" prefHeight="162.0" prefWidth="-1.0" />
+    <ScrollPane id="ScrollPane" fitToHeight="true" fitToWidth="true" minHeight="100.0" pannable="true" prefViewportHeight="50.0" prefViewportWidth="260.0" VBox.vgrow="ALWAYS">
+      <content>
+        <ListView fx:id="vcfList" minHeight="-1.0" minWidth="-1.0" prefHeight="50.0" prefWidth="-1.0" />
+      </content>
+    </ScrollPane>
     <HBox alignment="TOP_RIGHT" prefHeight="-1.0" prefWidth="-1.0" spacing="3.0">
       <children>
         <Button defaultButton="true" mnemonicParsing="false" onAction="#deleteVCF" text="%button.delete" />

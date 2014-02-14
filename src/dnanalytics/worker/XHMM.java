@@ -6,7 +6,7 @@ import java.io.File;
 
 /**
  *
- * @author uichuimi03
+ * @author Pascual Lorente Arencibia
  */
 public class XHMM extends Worker {
 

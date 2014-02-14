@@ -2,7 +2,7 @@ root {
     display: block;
 }
 
-#console{
+#consoleArea{
     -fx-background-image: url("img/background-DNA.jpg");
     -fx-background-position: center;
     -fx-background-repeat: no-repeat;
@@ -21,8 +21,8 @@ root {
     -fx-graphic: url("img/tools.png");
 }
 
-#settingsTab{
-    -fx-graphic: url("img/sort.png");
+#settingsButton{
+    -fx-graphic: url("img/ico/settings.png");
 }
 
 .list-cell:empty{
@@ -61,5 +61,5 @@ root {
 }
 
 #cnv{
-    -fx-graphic: url("img/ico/call.png");
+    -fx-graphic: url("img/ico/cnv.png");
 }
