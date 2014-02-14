@@ -59,3 +59,7 @@ root {
 #lowFrequency{
     -fx-graphic: url("img/ico/filter.png");
 }
+
+#cnv{
+    -fx-graphic: url("img/ico/call.png");
+}

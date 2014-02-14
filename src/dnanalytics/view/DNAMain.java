@@ -3,6 +3,7 @@ package dnanalytics.view;
 import dnanalytics.DNAnalytics;
 import dnanalytics.tools.AlignTool;
 import dnanalytics.tools.AnnotationTool;
+import dnanalytics.tools.CNVTool;
 import dnanalytics.tools.CallVariantsTool;
 import dnanalytics.tools.CombineVariantsTool;
 import dnanalytics.tools.DindelTool;
@@ -106,6 +107,7 @@ public class DNAMain implements Initializable {
         addTool(new AnnotationTool());
         addTool(new DindelTool());
         addTool(new LowFrequencyTool());
+        addTool(new CNVTool());
 //        addTool(new TestTool());
 
         // Prepare tools pane
@@ -219,6 +221,11 @@ public class DNAMain implements Initializable {
                 controller.getCancelButton().setDisable(true);
             });
             workers.add(worker);
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(DNAMain.class.getName()).log(Level.SEVERE, null, ex);
+            }
             // Everything is ready, let's go.
             new Thread(worker).start();
         }

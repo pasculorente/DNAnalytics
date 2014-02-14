@@ -57,7 +57,7 @@ public class SelectVariantsTool implements Tool {
                 // -V input.vcf - o output.vcf
                 // -restrictAllelesTo BIALLELIC
                 // -select "expression"
-                new Command(outStream, java7, "-jar",
+                new Command(java7, "-jar",
                         "software" + File.separator + "gatk"
                         + File.separator + "GenomeAnalysisTK.jar",
                         "-T", "SelectVariants",
@@ -65,7 +65,7 @@ public class SelectVariantsTool implements Tool {
                         "-V", controller.getInput(),
                         "-restrictAllelesTo", "BIALLELIC",
                         "-o", controller.getOutput(),
-                        "-select", controller.getExpression()).execute();
+                        "-select", controller.getExpression()).execute(outStream);
                 return 0;
             }
 

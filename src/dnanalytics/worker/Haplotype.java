@@ -55,17 +55,17 @@ public class Haplotype extends Worker {
 
         updateProgress(resources.getString("call.call"), 1, (recalibrate ? 3 : 2));
         System.out.println("First command");
-        new Command(outStream, java7, "-jar", gatk,
+        new Command(java7, "-jar", gatk,
                 "-T", "HaplotypeCaller", "-R", genome,
                 "-I", input, "-o", output,
-                "--dbsnp", dbsnp).execute();
+                "--dbsnp", dbsnp).execute(outStream);
         // Recalibrate
         if (recalibrate) {
             String tranches = new File(temp, timestamp + "tranches").getAbsolutePath();
             String recal = new File(temp, timestamp + "recal").getAbsolutePath();
             String outputRecalibrated = output.replace(".vcf", "_recalibrated.vcf");
             updateProgress(resources.getString("call.prerecal"), 1.5, 3);
-            new Command(outStream, java7, "-jar", gatk,
+            new Command( java7, "-jar", gatk,
                     "-T", "VariantRecalibrator",
                     "-R", genome, "-input", output,
                     "-tranchesFile", tranches,
@@ -79,15 +79,15 @@ public class Haplotype extends Worker {
                     "-resource:dbsnp,known=true,training=false,truth=false,prior=6.0",
                     dbsnp,
                     "-an", "QD", "-an", "MQRankSum", "-an", "ReadPosRankSum",
-                    "-an", "FS", "-an", "MQ", "-an", "DP", "-mode BOTH").execute();
+                    "-an", "FS", "-an", "MQ", "-an", "DP", "-mode BOTH").execute(outStream);
             updateProgress(resources.getString("call.recal"), 2.5, 3);
-            new Command(outStream, java7, "-jar", gatk,
+            new Command( java7, "-jar", gatk,
                     "-T", "ApplyRecalibration",
                     "-R", genome, "-input", output,
                     "-tranchesFile", tranches,
                     "-recalFile", recal,
                     "-o", outputRecalibrated,
-                    "--ts_filter_level", "97.0", "-mode", "BOTH").execute();
+                    "--ts_filter_level", "97.0", "-mode", "BOTH").execute(outStream);
             new File(tranches).delete();
             new File(recal).delete();
             updateProgress(resources.getString("call.completed"), 1, 1);

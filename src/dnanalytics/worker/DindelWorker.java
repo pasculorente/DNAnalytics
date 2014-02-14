@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package dnanalytics.worker;
 
 import dnanalytics.DNAnalytics;
@@ -14,6 +9,8 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.concurrent.Task;
@@ -78,11 +75,11 @@ public class DindelWorker extends Worker {
         //  --bamFile input.bam \
         //  --ref reference.fasta \
         //  --outputFile temp/name
-        new Command(outStream, new File(dindel, "dindel").getAbsolutePath(),
+        new Command(new File(dindel, "dindel").getAbsolutePath(),
                 "--analysis", "getCIGARindels",
                 "--bamFile", input,
                 "--ref", genome,
-                "--outputFile", new File(temp, name).getAbsolutePath()).execute();
+                "--outputFile", new File(temp, name).getAbsolutePath()).execute(outStream);
         // This will generate two files
         // temp/name/name.libraries.txt
         // temp/name/name.variants.txt
@@ -104,11 +101,10 @@ public class DindelWorker extends Worker {
         //    --inputFile temp/name/name.variants.txt \
         //    --windowFilePrefix windows/name_window \
         //    --numWindowsPerFile 1000
-        new Command(outStream, "python",
-                new File(dindel, "makeWindows.py").getAbsolutePath(),
+        new Command("python", new File(dindel, "makeWindows.py").getAbsolutePath(),
                 "--inputVarFile", new File(temp, name + ".variants.txt").getAbsolutePath(),
                 "--windowFilePrefix", new File(windows, name + "_window").getAbsolutePath(),
-                "--numWindowsPerFile", "1000").execute();
+                "--numWindowsPerFile", "1000").execute(outStream);
         // So:
         // temp/name/windows/name_window001.txt
         // temp/name/windows/name_window002.txt
@@ -127,7 +123,7 @@ public class DindelWorker extends Worker {
     private void realignHaplotypes() {
         final File[] files = windows.listFiles();
         final Turnomatic turnomatic = new Turnomatic(files);
-        final int cores = 6;
+        final int cores = 4;
         Thread[] threads = new Thread[cores];
         for (int i = 0; i < cores; i++) {
             threads[i] = new Thread(new FileProcessor(turnomatic, files, i + ""));
@@ -143,6 +139,7 @@ public class DindelWorker extends Worker {
     }
 
     private void printStatus(boolean header, int index, int total) {
+        DateFormat df = new SimpleDateFormat("HH:mm:ss (dd)");
         if (header) {
             startTime = System.currentTimeMillis();
             lastChk = startTime;
@@ -155,9 +152,9 @@ public class DindelWorker extends Worker {
                 : (totalTime / index) * (total - index);
         outStream.println(
                 index + "/" + total
-                + "\t" + dateFormat.format(chkTime)
-                + "\t" + dateFormat.format(totalTime)
-                + "\t" + dateFormat.format(remaining));
+                + "\t" + df.format(chkTime)
+                + "\t" + df.format(totalTime)
+                + "\t" + df.format(remaining));
         updateProgress("Realigning " + index + " out of " + total + " windows",
                 20 + 70 * index / total, 100);
         lastChk = timestamp;
@@ -190,11 +187,11 @@ public class DindelWorker extends Worker {
             Logger.getLogger(DindelTool.class.getName()).log(Level.SEVERE, null, ex);
         }
         try (PrintStream devnull = new PrintStream("/dev/null")) {
-            new Command(devnull, "python",
+            new Command("python",
                     new File(dindel, "mergeOutputDiploid.py").getAbsolutePath(),
                     "--ref", genome,
                     "--inputFiles", fileList.getAbsolutePath(),
-                    "--outputFile", output).execute();
+                    "--outputFile", output).execute(null);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(DindelWorker.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -203,7 +200,7 @@ public class DindelWorker extends Worker {
     @Override
     protected int start() {
 
-        updateTitle("Calling indels for " + input);
+        updateTitle("Calling indels for " + new File(input).getName());
 
         updateProgress("Extracting candidate indels from BAM", 0, 100);
         extractCandidatesFromBAM();
@@ -286,31 +283,27 @@ public class DindelWorker extends Worker {
         public synchronized Void call() {
             int next;
             while ((next = turnomatic.nextFile()) != -1) {
-                try (PrintStream devnull = new PrintStream("/dev/null")) {
-                    final String inputF = files[next].getAbsolutePath();
-                    final String output = new File(windows2, files[next].getName()).getAbsolutePath();
+                final String inputF = files[next].getAbsolutePath();
+                final String output = new File(windows2, files[next].getName()).getAbsolutePath();
                     // Command appearance (we must do this for every window):
-                    // /home/uai/dindel/dindel
-                    //   --analysis indels \
-                    //   --doDiploid \
-                    //   --bamFile input.bam \
-                    //   --ref reference.fasta \
-                    //   --varFile temp/name/windows/name_window001.txt \
-                    //   --libFile temp/name/name.libraries.txt \
-                    //   --outputFile temp/name/windows2/name_windows001.txt \
-                    //   &>/dev/null
-                    new Command(devnull, d, "--analysis", "indels",
-                            "--doDiploid",
-                            "--bamFile", input,
-                            "--ref", genome,
-                            "--varFile", inputF,
-                            "--libFile", lib,
-                            "--outputFile", output).execute();
+                // /home/uai/dindel/dindel
+                //   --analysis indels \
+                //   --doDiploid \
+                //   --bamFile input.bam \
+                //   --ref reference.fasta \
+                //   --varFile temp/name/windows/name_window001.txt \
+                //   --libFile temp/name/name.libraries.txt \
+                //   --outputFile temp/name/windows2/name_windows001.txt \
+                //   &>/dev/null
+                new Command(d, "--analysis", "indels",
+                        "--doDiploid",
+                        "--bamFile", input,
+                        "--ref", genome,
+                        "--varFile", inputF,
+                        "--libFile", lib,
+                        "--outputFile", output).execute(null);
 //                    outStream.println(this + ":" + next);
 //                    Thread.sleep(new Random().nextInt(1000));
-                } catch (FileNotFoundException ex) {
-                    Logger.getLogger(DindelTool.class.getName()).log(Level.SEVERE, null, ex);
-                }
             }
             return null;
         }

@@ -24,7 +24,7 @@ public class Aligner extends Worker {
     // GATK does NOT work with Java 8, so I installed back java7.
     private final static String java7 = "/usr/local/jdk1.7.0_45/bin/java";
     private final static String gatk = "software" + File.separator + "gatk"
-                + File.separator + "GenomeAnalysisTK.jar";;
+            + File.separator + "GenomeAnalysisTK.jar";
 
     public Aligner(String temp, String forward, String reverse, String genome, String dbsnp,
             String mills, String phase1, String output, boolean illumina, boolean reduceReads) {
@@ -58,15 +58,17 @@ public class Aligner extends Worker {
      * Phase A: Align/Map sequences. Burrows-Wheeler Aligner. As this project
      * works with paired end sequences, we use simple, basic-parameters
      * workflow.
-     * <p> 1 and 2: Align both sequences.</p>
-     * <p>bwa aln -t 4 genome.fasta sequence1.fq.gz -I > seq1.sai</p>
-     * <p>bwa aln -t 4 genome.fasta sequence2.fq.gz -I > seq2.sai</p>
-     * <p>-I : if the sequence is Illumina 1.3+ encoding</p>
-     * -t 4 : number of threads
-     * The reference genome must be indexed
-     * 3: Generate alignments.
-     * bwa sampe genome.fasta seq1.sai seq2.sai sequence1.fq.gz sequence2.fq.gz
-     * > bwa.sam
+     * <p>
+     * 1 and 2: Align both sequences.</p>
+     * <p>
+     * bwa aln -t 4 genome.fasta sequence1.fq.gz -I > seq1.sai</p>
+     * <p>
+     * bwa aln -t 4 genome.fasta sequence2.fq.gz -I > seq2.sai</p>
+     * <p>
+     * -I : if the sequence is Illumina 1.3+ encoding</p>
+     * -t 4 : number of threads The reference genome must be indexed 3: Generate
+     * alignments. bwa sampe genome.fasta seq1.sai seq2.sai sequence1.fq.gz
+     * sequence2.fq.gz > bwa.sam
      */
     private int firstAlignment() {
         String seq1 = new File(temp, name + "_seq1.sai").getAbsolutePath();
@@ -76,21 +78,21 @@ public class Aligner extends Worker {
         int ret;
         updateProgress(resources.getString("align.forward"), counter++, total);
         if ((ret = new Command(
-                outStream, "bwa", "aln", "-t", String.valueOf(cores),
+                "bwa", "aln", "-t", String.valueOf(cores),
                 (illumina ? "-I" : ""), genome, reverse, ">", seq1)
-                .execute(true)) != 0) {
+                .execute(outStream, true)) != 0) {
             return ret;
         }
         updateProgress(resources.getString("align.reverse"), counter++, total);
         if ((ret = new Command(
-                outStream, "bwa", "aln", "-t", String.valueOf(cores),
+                "bwa", "aln", "-t", String.valueOf(cores),
                 (illumina ? "-I" : ""), genome, reverse, ">", seq2)
-                .execute(true)) != 0) {
+                .execute(outStream, true)) != 0) {
             return ret;
         }
         updateProgress(resources.getString("align.sampe"), counter++, total);
-        ret = new Command(outStream, "bwa", "sampe", "-P", genome, seq1, seq2,
-                forward, reverse, ">", bwa).execute(true);
+        ret = new Command("bwa", "sampe", "-P", genome, seq1, seq2,
+                forward, reverse, ">", bwa).execute(outStream, true);
         if (ret != 0) {
             return ret;
         }
@@ -132,30 +134,30 @@ public class Aligner extends Worker {
         String metrics = new File(temp, name + "_dedup.metrics").getAbsolutePath();
 
         updateProgress(resources.getString("align.clean"), counter++, total);
-        int ret = new Command(outStream, "java", "-jar", picard + "CleanSam.jar",
+        int ret = new Command("java", "-jar", picard + "CleanSam.jar",
                 "INPUT=" + bwa,
-                "OUTPUT=" + picard1).execute(true);
+                "OUTPUT=" + picard1).execute(outStream, true);
         if (ret != 0) {
             return ret;
         }
         new File(bwa).delete();
 
         updateProgress(resources.getString("align.sort"), counter++, total);
-        ret = new Command(outStream, "java", "-jar", picard + "SortSam.jar",
+        ret = new Command("java", "-jar", picard + "SortSam.jar",
                 "INPUT=" + picard1,
                 "OUTPUT=" + picard2,
-                "SORT_ORDER=coordinate").execute(true);
+                "SORT_ORDER=coordinate").execute(outStream, true);
         if (ret != 0) {
             return ret;
         }
 
         new File(picard1).delete();
         updateProgress(resources.getString("align.dedup"), counter++, total);
-        ret = new Command(outStream, "java", "-jar", picard + "MarkDuplicates.jar",
+        ret = new Command("java", "-jar", picard + "MarkDuplicates.jar",
                 "INPUT=" + picard2,
                 "OUTPUT=" + picard3,
                 "REMOVE_DUPLICATES=true",
-                "METRICS_FILE=" + metrics).execute(true);
+                "METRICS_FILE=" + metrics).execute(outStream, true);
         if (ret != 0) {
             return ret;
         }
@@ -163,21 +165,21 @@ public class Aligner extends Worker {
         new File(metrics).delete();
 
         updateProgress(resources.getString("align.addheader"), counter++, total);
-        ret = new Command(outStream, "java", "-jar", picard + "AddOrReplaceReadGroups.jar",
+        ret = new Command("java", "-jar", picard + "AddOrReplaceReadGroups.jar",
                 "INPUT=" + picard3,
                 "OUTPUT=" + picard4,
                 "RGPL=ILLUMINA",
                 "RGSM=" + name,
                 "RGPU=flowcell-barcode.lane",
-                "RGLB=BAITS").execute(true);
+                "RGLB=BAITS").execute(outStream, true);
         if (ret != 0) {
             return ret;
         }
         new File(picard3).delete();
 
         updateProgress(resources.getString("align.index"), counter++, total);
-        ret = new Command(outStream, "java", "-jar", picard + "BuildBamIndex.jar",
-                "INPUT=" + picard4).execute(true);
+        ret = new Command("java", "-jar", picard + "BuildBamIndex.jar",
+                "INPUT=" + picard4).execute(outStream, true);
         if (ret != 0) {
             return ret;
         }
@@ -204,21 +206,21 @@ public class Aligner extends Worker {
         String gatk1 = new File(temp, name + "_gatk1.bam").getAbsolutePath();
 
         updateProgress(resources.getString("align.prealign"), counter++, total);
-        int ret = new Command(outStream, java7, "-jar", gatk,
+        int ret = new Command(java7, "-jar", gatk,
                 "-T", "RealignerTargetCreator",
                 "-R", genome, "-I", picard4,
                 "-known", mills, "-known", phase1,
-                "-o", intervals).execute();
+                "-o", intervals).execute(outStream);
         if (ret != 0) {
             return ret;
         }
         updateProgress(resources.getString("align.align"), counter++, total);
-        ret = new Command(outStream, java7, "-jar", gatk,
+        ret = new Command(java7, "-jar", gatk,
                 "-T", "IndelRealigner",
                 "-R", genome, "-I", picard4,
                 "-known", mills, "-known", phase1,
                 "-targetIntervals", intervals,
-                "-o", gatk1).execute();
+                "-o", gatk1).execute(outStream);
         if (ret != 0) {
             return ret;
         }
@@ -247,25 +249,25 @@ public class Aligner extends Worker {
         String recal = new File(temp, name + "_recal.grp").getAbsolutePath();
 
         updateProgress(resources.getString("align.prerecal"), counter++, total);
-        int ret = new Command(outStream, java7, "-jar", gatk,
+        int ret = new Command(java7, "-jar", gatk,
                 "-T", "BaseRecalibrator",
                 "-I", gatk1,
                 "-R", genome,
                 "--knownSites", dbsnp,
                 "--knownSites", mills,
                 "--knownSites", phase1,
-                "-o", recal).execute(true);
+                "-o", recal).execute(outStream, true);
         if (ret != 0) {
             return ret;
         }
 
         updateProgress(resources.getString("align.recal"), counter++, total);
-        ret = new Command(outStream, java7, "-jar", gatk,
+        ret = new Command(java7, "-jar", gatk,
                 "-T", "PrintReads",
                 "-R", genome,
                 "-I", gatk1,
                 "-BQSR", recal,
-                "-o", output).execute();
+                "-o", output).execute(outStream);
         if (ret != 0) {
             return ret;
         }
@@ -285,11 +287,11 @@ public class Aligner extends Worker {
     private int reduceReads() {
         String reduced = output.replace(".bam", "_reduced.bam");
         updateProgress(resources.getString("align.reducereads"), counter++, total);
-        int ret = new Command(outStream, java7, "-jar", gatk,
+        int ret = new Command(java7, "-jar", gatk,
                 "-T", "ReduceReads",
                 "-R", genome,
                 "-I", output,
-                "-o", reduced).execute();
+                "-o", reduced).execute(outStream);
         if (ret != 0) {
             return ret;
         }

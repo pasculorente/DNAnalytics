@@ -27,7 +27,7 @@
             </children>
         </HBox>
         <HBox spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" />
-        <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancel" text="%button.cancel" />
+        <Button fx:id="cancelButton" mnemonicParsing="false" text="%button.cancel" />
         <TextArea id="console" fx:id="textArea" editable="false" wrapText="true" VBox.vgrow="SOMETIMES" />
     </children>
 <padding>

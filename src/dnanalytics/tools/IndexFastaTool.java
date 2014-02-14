@@ -66,13 +66,13 @@ public class IndexFastaTool implements Tool {
                 genome = controller.getGenome();
                 updateTitle(resources.getString("index.index") + " " + new File(genome).getName());
                 updateProgress(resources.getString("index.bwa"), 0.5, 3);
-                new Command(outStream, "bwa", "index", "-a", "bwtsw", genome).execute();
+                new Command("bwa", "index", "-a", "bwtsw", genome).execute(outStream);
                 updateProgress(resources.getString("index.samtools"), 1.5, 3);
-                new Command(outStream, "samtools", "faidx", genome).execute();
+                new Command("samtools", "faidx", genome).execute(outStream);
                 updateProgress(resources.getString("index.picard"), 2.5, 3);
-                new Command(outStream, "java", "-jar", "software" + File.separator
+                new Command("java", "-jar", "software" + File.separator
                         + "picard" + File.separator + "CreateSequenceDictionary.jar",
-                        "R=" + genome, "O=" + genome.replace(".fasta", ".dict")).execute(true);
+                        "R=" + genome, "O=" + genome.replace(".fasta", ".dict")).execute(outStream, true);
                 updateProgress(resources.getString("index.end"), 1, 1);
                 return 0;
             }

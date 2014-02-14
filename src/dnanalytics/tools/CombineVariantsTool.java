@@ -108,7 +108,7 @@ public class CombineVariantsTool implements Tool {
                 for (int i = 0; i < command.size(); i++) {
                     args[i] = command.get(i);
                 }
-                return new Command(outStream, args).execute();
+                return new Command(args).execute(outStream);
             }
 
             @Override

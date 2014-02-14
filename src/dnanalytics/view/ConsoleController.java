@@ -25,10 +25,6 @@ public class ConsoleController  {
     @FXML
     private TextArea textArea;
 
-    @FXML
-    private void cancel() {
-    }
-
     /**
      * @return the message
      */
