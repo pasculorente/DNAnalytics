@@ -55,4 +55,9 @@ public class CallVariantsTool implements Tool {
     public String getStyleID() {
         return "callVariants";
     }
+
+    @Override
+    public String getDescription() {
+        return resources.getString("call.description");
+    }
 }

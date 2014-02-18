@@ -6,9 +6,8 @@
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?scenebuilder-preview-i18n-resource ../../DNAMain.properties?>
 
-<VBox alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0" xmlns:fx="http://javafx.com/fxml" fx:controller="dnanalytics.view.tools.FilterFrequenciesController">
+<VBox alignment="TOP_CENTER" prefHeight="-1.0" prefWidth="-1.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="dnanalytics.view.tools.FilterFrequenciesController">
   <children>
     <HBox alignment="CENTER">
       <children>

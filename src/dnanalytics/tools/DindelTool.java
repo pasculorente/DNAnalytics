@@ -46,12 +46,18 @@ public class DindelTool implements Tool {
 
     @Override
     public String getTitle() {
-        return "Dindel (Indels call)";
+        return resources.getString("dindel.title");
+//        return "Dindel (Indels call)";
     }
 
     @Override
     public String getStyleID() {
         return "dindel";
+    }
+
+    @Override
+    public String getDescription() {
+        return resources.getString("dindel.description");
     }
 
 }

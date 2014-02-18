@@ -140,4 +140,9 @@ public class CombineVariantsTool implements Tool {
     public String getStyleID() {
         return "combineVariants";
     }
+
+    @Override
+    public String getDescription() {
+        return resources.getString("combine.description");
+    }
 }

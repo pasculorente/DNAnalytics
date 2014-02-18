@@ -46,12 +46,17 @@ public class CNVTool implements Tool {
 
     @Override
     public String getTitle() {
-        return "Call Copy Number Variants";
+        return resources.getString("cnv.title");
     }
 
     @Override
     public String getStyleID() {
         return "cnv";
+    }
+
+    @Override
+    public String getDescription() {
+        return resources.getString("cnv.description");
     }
 
 }

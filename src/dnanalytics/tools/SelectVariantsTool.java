@@ -102,4 +102,9 @@ public class SelectVariantsTool implements Tool {
     public String getStyleID() {
         return "selectVariants";
     }
+
+    @Override
+    public String getDescription() {
+        return resources.getString("select.description");
+    }
 }

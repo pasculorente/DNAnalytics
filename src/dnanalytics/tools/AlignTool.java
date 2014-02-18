@@ -54,4 +54,9 @@ public class AlignTool implements Tool {
     public String getStyleID() {
         return "alignb";
     }
+
+    @Override
+    public String getDescription() {
+        return resources.getString("align.description");
+    }
 }

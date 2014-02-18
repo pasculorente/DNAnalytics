@@ -50,4 +50,9 @@ public class AnnotationTool implements Tool{
         return "siftAnnotation";
     }
 
+    @Override
+    public String getDescription() {
+        return resources.getString("annotate.description");
+    }
+
 }

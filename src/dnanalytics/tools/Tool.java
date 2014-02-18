@@ -51,4 +51,11 @@ public interface Tool {
      * @return an String with the css Style String.
      */
     public String getStyleID();
+
+    /**
+     * A paragraph describing the tool. How it works, what is it for and so.
+     * 
+     * @return a string with a paragraph description.
+     */
+    public String getDescription();
 }

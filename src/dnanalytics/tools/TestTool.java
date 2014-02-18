@@ -95,6 +95,11 @@ public class TestTool implements Tool {
         return "illumina";
     }
 
+    @Override
+    public String getDescription() {
+        return "Test tool";
+    }
+
     public class TestParser implements LineParser {
 
         String line;

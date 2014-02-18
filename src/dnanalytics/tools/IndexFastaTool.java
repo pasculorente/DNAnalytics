@@ -100,4 +100,9 @@ public class IndexFastaTool implements Tool {
         return "indexFasta";
     }
 
+    @Override
+    public String getDescription() {
+        return resources.getString("index.description");
+    }
+
 }

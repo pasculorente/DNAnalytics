@@ -151,4 +151,9 @@ public class FilterFrequenciesTool implements Tool {
     public String getStyleID() {
         return "filterFrequencies";
     }
+
+    @Override
+    public String getDescription() {
+        return resources.getString("filter.description");
+    }
 }

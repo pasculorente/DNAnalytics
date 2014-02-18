@@ -8,7 +8,6 @@ import dnanalytics.tools.CombineVariantsTool;
 import dnanalytics.tools.DindelTool;
 import dnanalytics.tools.FilterFrequenciesTool;
 import dnanalytics.tools.IndexFastaTool;
-import dnanalytics.tools.LowFrequencyTool;
 import dnanalytics.tools.SelectVariantsTool;
 import dnanalytics.tools.Tool;
 import dnanalytics.utils.TextAreaWriter;
@@ -32,14 +31,15 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.TitledPane;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
 
 /**
  * DNAnalytics Controller for the FXML View. It controls the main view of the
@@ -56,13 +56,18 @@ public class DNAMain implements Initializable {
     private static ResourceBundle resources;
 
     @FXML
-    private TilePane console;
+    private Label toolDescription;
     @FXML
-    private TilePane buttonsPane;
-    @FXML
-    private TitledPane currentTool;
+    private VBox buttonsPane;
+//    @FXML
+//    private TitledPane currentTool;
     @FXML
     private TabPane consoleTabPane;
+    @FXML
+    private ScrollPane toolPane;
+    @FXML
+    private Label toolTitle;
+
     // Local variables
     private final ToggleGroup toolButtons = new ToggleGroup();
     private final ArrayList<Tool> tools = new ArrayList<>();
@@ -88,33 +93,38 @@ public class DNAMain implements Initializable {
         addTool(new FilterFrequenciesTool());
         addTool(new AnnotationTool());
         addTool(new DindelTool());
-        addTool(new LowFrequencyTool());
+//        addTool(new LowFrequencyTool());
         addTool(new CNVTool());
 //        addTool(new TestTool());
 
         // Prepare tools pane
-        currentTool.setCollapsible(false);
-        currentTool.setText(resources.getString("label.selecttool"));
-        /* Do the magic, when the user selects a tool, make it visible in the currentTool pane */
+        toolTitle.setText(resources.getString("label.selecttool"));
 
+        // Do the magic,
+        // when the user selects a tool, make it visible in the currentTool pane 
         toolButtons.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> ov, Toggle t, Toggle t1) -> {
             ToggleButton button = (ToggleButton) t1;
             if (t1 != null) {
                 if (t1.equals(settingsButton)) {
                     try {
                         Node node = FXMLLoader.load(SettingsController.class.getResource("Settings.fxml"), resources);
-                        currentTool.setContent(node);
                         startButton.setVisible(false);
-                        currentTool.setText("Settings");
+                        toolTitle.setText(resources.getString("label.settings"));
+                        toolTitle.setGraphic(new ImageView(new Image(DNAMain.class.getResourceAsStream("img/ico/settings.png"))));
+                        toolPane.setContent(node);
+                        toolDescription.setText("");
                     } catch (IOException ex) {
                         Logger.getLogger(DNAMain.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 } else {
                     Tool tool = tools.get(buttonsPane.getChildren().indexOf(t1));
-                    currentTool.setContent(tool.getView());
+                    toolPane.setContent(tool.getView());
                     ImageView a = (ImageView) button.getGraphic();
-                    currentTool.setGraphic(new ImageView(a.getImage()));
-                    currentTool.setText(tool.getTitle());
+                    toolTitle.setGraphic(new ImageView(a.getImage()));
+                    toolTitle.setText(tool.getTitle());
+                    if (tool.getDescription() != null && !tool.getDescription().isEmpty()) {
+                        toolDescription.setText(tool.getDescription());
+                    }
                     startButton.setVisible(true);
                 }
             }
