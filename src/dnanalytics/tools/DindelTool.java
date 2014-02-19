@@ -51,8 +51,8 @@ public class DindelTool implements Tool {
     }
 
     @Override
-    public String getStyleID() {
-        return "dindel";
+    public String getIco() {
+        return "dindel32.png";
     }
 
     @Override

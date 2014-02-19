@@ -99,8 +99,8 @@ public class SelectVariantsTool implements Tool {
     }
 
     @Override
-    public String getStyleID() {
-        return "selectVariants";
+    public String getIco() {
+        return "select32.png";
     }
 
     @Override

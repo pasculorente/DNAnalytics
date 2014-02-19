@@ -51,8 +51,8 @@ public class AlignTool implements Tool {
     }
 
     @Override
-    public String getStyleID() {
-        return "alignb";
+    public String getIco() {
+        return "align32.png";
     }
 
     @Override

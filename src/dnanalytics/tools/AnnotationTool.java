@@ -46,8 +46,8 @@ public class AnnotationTool implements Tool{
     }
 
     @Override
-    public String getStyleID() {
-        return "siftAnnotation";
+    public String getIco() {
+        return "annotate32.png";
     }
 
     @Override

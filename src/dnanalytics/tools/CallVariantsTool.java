@@ -52,8 +52,8 @@ public class CallVariantsTool implements Tool {
     }
 
     @Override
-    public String getStyleID() {
-        return "callVariants";
+    public String getIco() {
+        return "call32.png";
     }
 
     @Override

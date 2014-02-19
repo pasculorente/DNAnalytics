@@ -50,7 +50,7 @@ public interface Tool {
      *
      * @return an String with the css Style String.
      */
-    public String getStyleID();
+    public String getIco();
 
     /**
      * A paragraph describing the tool. How it works, what is it for and so.

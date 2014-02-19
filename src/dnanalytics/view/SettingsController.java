@@ -10,7 +10,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 /**
@@ -29,8 +28,6 @@ public class SettingsController {
     private TextField tempDir;
     @FXML
     private ChoiceBox<String> languagesBox;
-    @FXML
-    private Label alreadyIndexed;
 
     /**
      * Initializes the controller class.
@@ -38,9 +35,6 @@ public class SettingsController {
     public void initialize() {
         genome.setText(properties.getProperty("genome", ""));
         tempDir.setText(properties.getProperty("tempDir", ""));
-        if (isIndexed()) {
-            alreadyIndexed.setText(resources.getString("label.indexed"));
-        }
         // Load languages from settings.
         final Locale currentLocale = resources.getLocale();
         DNAnalytics.getAppLocales().stream().forEach((locale) -> {
@@ -64,15 +58,12 @@ public class SettingsController {
     @FXML
     private void selectGenome(ActionEvent event) {
         // Get the file.
-        File f = OS.setOpenFile(OS.FASTA_DESCRIPTION, OS.FASTA_DESCRIPTION,
+        File f = OS.openFile(OS.FASTA_DESCRIPTION, OS.FASTA_DESCRIPTION,
                 OS.FASTA_FILTERS, genome);
         // Save it on settings.
         if (f != null) {
             properties.setProperty("genome", f.getAbsolutePath());
         }
-        // Check if indexed.
-        alreadyIndexed.setText(
-                isIndexed() ? resources.getString("label.indexed") : "");
     }
 
     @FXML
@@ -84,20 +75,4 @@ public class SettingsController {
         }
     }
 
-    /**
-     * Check if a genome is indexed.
-     * <p/>
-     * @return true if all the index files are created, but does not check their
-     * integrity.
-     */
-    private boolean isIndexed() {
-        String g = genome.getText();
-        String[] ends = {".sa", ".bwt", ".amb", ".ann", ".pac"};
-        for (String end : ends) {
-            if (!new File(g + end).exists()) {
-                return false;
-            }
-        }
-        return true;
-    }
 }

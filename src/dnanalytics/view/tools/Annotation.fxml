@@ -8,7 +8,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox id="VBox" alignment="CENTER" disable="false" fillWidth="true" prefHeight="-1.0" prefWidth="-1.0" snapToPixel="false" spacing="3.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="dnanalytics.view.tools.AnnotationController">
+<VBox id="VBox" alignment="TOP_CENTER" disable="false" fillWidth="true" prefHeight="-1.0" prefWidth="-1.0" snapToPixel="false" spacing="3.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="dnanalytics.view.tools.AnnotationController">
   <children>
     <Label text="Copy each link and paste in your browser" />
     <HBox alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="NEVER">

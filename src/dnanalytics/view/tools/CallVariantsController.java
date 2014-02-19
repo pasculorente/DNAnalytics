@@ -56,7 +56,7 @@ public class CallVariantsController {
 
     @FXML
     void selectInput(ActionEvent event) {
-        OS.setOpenFile(OS.SAM_BAM_DESCRIPTION,
+        OS.openFile(OS.SAM_BAM_DESCRIPTION,
                 OS.SAM_BAM_DESCRIPTION, OS.SAM_BAM_FILTERS, input);
     }
 

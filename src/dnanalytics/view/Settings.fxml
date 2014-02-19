@@ -23,7 +23,6 @@
             <Button defaultButton="true" mnemonicParsing="false" onAction="#selectGenome" text="%button.browse" />
           </children>
         </HBox>
-        <Label fx:id="alreadyIndexed" alignment="TOP_LEFT" maxWidth="1.7976931348623157E308" text="" wrapText="true" />
       </children>
     </VBox>
     <HBox alignment="CENTER" fillHeight="true" prefHeight="-1.0" prefWidth="-1.0">
@@ -35,7 +34,7 @@
     </HBox>
     <HBox prefHeight="-1.0" prefWidth="-1.0" spacing="3.0">
       <children>
-        <TextField fx:id="tempDir" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
+        <TextField fx:id="tempDir" editable="false" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
         <Button defaultButton="true" mnemonicParsing="false" onAction="#selectTempDir" text="%button.browse" />
       </children>
     </HBox>

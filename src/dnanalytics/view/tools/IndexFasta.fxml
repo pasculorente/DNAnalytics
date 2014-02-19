@@ -5,9 +5,9 @@
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?scenebuilder-preview-i18n-resource ../../DNAMain.properties?>
+<?scenebuilder-preview-i18n-resource ../dnanalytics.properties?>
 
-<VBox id="VBox" alignment="CENTER" spacing="5.0" xmlns:fx="http://javafx.com/fxml" fx:controller="dnanalytics.view.tools.IndexFastaController">
+<VBox id="VBox" alignment="TOP_CENTER" spacing="5.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="dnanalytics.view.tools.IndexFastaController">
   <children>
     <HBox alignment="CENTER">
       <children>
@@ -18,9 +18,10 @@
     </HBox>
     <HBox spacing="2.0">
       <children>
-        <TextField fx:id="genome" editable="false" HBox.hgrow="ALWAYS" promptText="%file.fasta"/>
+        <TextField fx:id="genome" editable="false" promptText="%file.fasta" HBox.hgrow="ALWAYS" />
         <Button defaultButton="true" mnemonicParsing="false" onAction="#selectFASTA" text="%button.browse" />
       </children>
     </HBox>
+    <Label fx:id="indexed" text="%index.waiting" />
   </children>
 </VBox>

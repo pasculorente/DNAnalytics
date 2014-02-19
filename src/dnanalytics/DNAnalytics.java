@@ -63,7 +63,7 @@ public class DNAnalytics extends Application {
         scene.getStylesheets().add("dnanalytics/view/DNAnalytics.css");
         stage.setTitle("DNAnalytics");
         stage.setScene(scene);
-        stage.getIcons().add(new Image(DNAMain.class.getResourceAsStream("img/ico/align.png")));
+        stage.getIcons().add(new Image(DNAMain.class.getResourceAsStream("img/ico/icon.png")));
         stage.show();
     }
 

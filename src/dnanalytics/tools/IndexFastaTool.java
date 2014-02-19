@@ -96,8 +96,8 @@ public class IndexFastaTool implements Tool {
     }
 
     @Override
-    public String getStyleID() {
-        return "indexFasta";
+    public String getIco() {
+        return "index32.png";
     }
 
     @Override

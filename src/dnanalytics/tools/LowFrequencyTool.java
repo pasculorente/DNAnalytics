@@ -47,7 +47,7 @@ public class LowFrequencyTool implements Tool {
     }
 
     @Override
-    public String getStyleID() {
+    public String getIco() {
         return "lowFrequency";
     }
 

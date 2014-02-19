@@ -17,7 +17,7 @@
     </HBox>
     <HBox alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0">
       <children>
-        <TextField fx:id="input" prefWidth="-1.0" HBox.hgrow="SOMETIMES" />
+        <TextField fx:id="input" editable="false" prefWidth="-1.0" HBox.hgrow="SOMETIMES" />
         <Button mnemonicParsing="false" onAction="#selectInput" text="%button.browse" />
       </children>
     </HBox>
@@ -30,7 +30,7 @@
     </HBox>
     <HBox alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0">
       <children>
-        <TextField id="input" fx:id="output" prefWidth="-1.0" HBox.hgrow="SOMETIMES" />
+        <TextField id="input" fx:id="output" editable="false" prefWidth="-1.0" HBox.hgrow="SOMETIMES" />
         <Button mnemonicParsing="false" onAction="#selectOutput" text="%button.browse" />
       </children>
     </HBox>

@@ -1,65 +1,49 @@
 root { 
     display: block;
+    font-family: serif;
 }
 
-#consoleArea{
+#toolArea{
     -fx-background-image: url("img/background-DNA.jpg");
     -fx-background-position: center;
     -fx-background-repeat: no-repeat;
     -fx-background-size: cover;
-    -fx-font-family: monospace;
     -fx-background-color: transparent;
 }
-.tab-content-area {
-    -fx-background-image: url("img/tabground.jpg");
-    -fx-background-position: center;
+
+#toolPane{
+    -fx-background-color: transparent;
+}
+
+#buttonsPane {
+    -fx-background-size: auto;
+    -fx-background-image: url("img/dna_low.png");
+    -fx-background-position: bottom;
     -fx-background-repeat: no-repeat;
-    -fx-background-size: cover;
 }
 
-#toolsTab{
-    -fx-graphic: url("img/tools.png");
-}
-
-#settingsButton{
-    -fx-graphic: url("img/ico/settings.png");
+#consoleArea {
+    font-family: monospace;
 }
 
 .list-cell:empty{
     -fx-background-color: transparent;
 }
-#selectVariants{
-    -fx-graphic: url("img/ico/select.png");
-}
-#combineVariants{
-    -fx-graphic: url("img/ico/combine.png");
-}
-#filterFrequencies{
-    -fx-graphic: url("img/ico/filter.png");
-}
-#siftAnnotation{
-    -fx-graphic: url("img/ico/tag.png");
-}
-#illumina{
-    -fx-graphic: url("img/ico/illumina.png");
-}
-#alignb{
-    -fx-graphic: url("img/ico/align.png");
-}
-#callVariants{
-    -fx-graphic: url("img/ico/call.png");
-}
-#indexFasta{
-    -fx-graphic: url("img/ico/index.png");
-}
-#dindel{
-    -fx-graphic: url("img/ico/index.png");
+
+#toolButton {
+    -fx-background-color: lightcyan;
+    -fx-background-insets: 1;
+    -fx-background-radius: 0;
 }
 
-#lowFrequency{
-    -fx-graphic: url("img/ico/filter.png");
+#toolButton:selected {
+    -fx-background-color: cyan;
+    -fx-background-insets: 1;
+    -fx-background-radius: 0;
 }
 
-#cnv{
-    -fx-graphic: url("img/ico/cnv.png");
+#toolButton:hover {
+    -fx-background-color: lightgreen;
+    -fx-background-insets: 1;
+    -fx-background-radius: 0;
 }

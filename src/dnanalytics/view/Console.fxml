@@ -1,36 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
+<?import java.net.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
 <VBox alignment="TOP_CENTER" spacing="5.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="dnanalytics.view.ConsoleController">
-  <children>
-    <Label fx:id="message" text="message" />
-    <HBox alignment="TOP_LEFT" spacing="5.0">
-      <children>
-        <Label text="Started at:" />
-        <Label fx:id="started" text="not implemented yet" />
-      </children>
-    </HBox>
-    <HBox spacing="5.0">
-      <children>
-        <Label text="Total time:" />
-        <Label fx:id="totalTime" text="not implemented yet" />
-      </children>
-    </HBox>
-    <HBox spacing="5.0">
-      <children>
-        <Label text="Progress" />
-        <ProgressBar fx:id="progress" maxWidth="1.7976931348623157E308" progress="0.0" HBox.hgrow="ALWAYS" />
-      </children>
-    </HBox>
-    <HBox spacing="5.0" />
-    <Button fx:id="cancelButton" mnemonicParsing="false" text="%button.cancel" />
-    <TextArea id="consoleArea" fx:id="textArea" editable="false" wrapText="true" VBox.vgrow="SOMETIMES" />
-  </children>
-  <padding>
-    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-  </padding>
+    <children>
+        <Label fx:id="message" text="message" />
+        <HBox alignment="TOP_LEFT" spacing="5.0">
+            <children>
+                <Label text="Started at:" />
+                <Label fx:id="started" />
+            </children>
+        </HBox>
+        <HBox spacing="5.0">
+            <children>
+                <Label text="Total time:" />
+                <Label fx:id="totalTime" />
+            </children>
+        </HBox>
+        <HBox spacing="5.0">
+            <children>
+                <Label text="Progress" />
+                <ProgressBar fx:id="progress" maxWidth="1.7976931348623157E308" progress="0.0" HBox.hgrow="ALWAYS" />
+            </children>
+        </HBox>
+        <HBox spacing="5.0" />
+        <Button fx:id="cancelButton" mnemonicParsing="false" text="%button.cancel" />
+        <TextArea id="consoleArea" fx:id="textArea" editable="false" text="Hello" wrapText="true" VBox.vgrow="SOMETIMES" />
+    </children>
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+    </padding>
+    <stylesheets>
+        <URL value="@DNAnalytics.css" />
+    </stylesheets>
 </VBox>

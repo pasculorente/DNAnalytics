@@ -25,7 +25,7 @@ public class CombineVariantsController {
 
     @FXML
     private void addVCF(ActionEvent event) {
-        File file = OS.selectFile("Select VCF file",
+        File file = OS.openFile("Select VCF file",
                 OS.VCF_DESCRIPTION, OS.VCF_FILTERS);
         if (file != null) {
             vcfList.getItems().add(file.getAbsolutePath());

@@ -91,7 +91,7 @@ public class TestTool implements Tool {
     }
 
     @Override
-    public String getStyleID() {
+    public String getIco() {
         return "illumina";
     }
 

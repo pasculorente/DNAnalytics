@@ -32,21 +32,8 @@ public class OS {
 
     private static File lastPath;
     private static final ResourceBundle resources = DNAMain.getResources();
-    /**
-     * FASTQ Description (FASTQ file)
-     */
+
     public static final String FASTQ_DESCRIPTION = resources.getString("file.fastq");
-    /**
-     * Standard extension for VCF Files (.vcf).
-     */
-    public static final String VCF_EXTENSION = ".vcf";
-    /**
-     * TSV Description (Tabular separated file)
-     */
-    public static final String TSV_DESCRIPTION = resources.getString("file.tsv");
-    /**
-     * Filters for FASTQ format (.fastq | .fq | .fastq.gz | .fq.gz)
-     */
     public static final List<String> FASTQ_FILTERS = new ArrayList<String>() {
         {
             add("*.fq");
@@ -55,61 +42,42 @@ public class OS {
             add("*.fastq.gz");
         }
     };
-    /**
-     * VCF Description (Variant Call File)
-     */
-    public static final String VCF_DESCRIPTION = resources.getString("file.vcf");
-    /**
-     * Filters for Binary/Sequence Alignment/Map (.bam | .sam)
-     */
-    public static final List<String> SAM_BAM_FILTERS = new ArrayList<String>() {
-        {
-            add("*.bam");
-            add("*.sam");
-        }
-    };
-    /**
-     * SAM/BAM Description (Binary/Sequence Alignment/Map File)
-     */
-    public static final String SAM_BAM_DESCRIPTION = resources.getString("file.sambam");
-    /**
-     * Filters for Tabular Separated Format (.tsv)
-     */
-    public static final List<String> TSV_FILTERS = new ArrayList<String>() {
-        {
-            add("*.tsv");
-        }
-    };
-    /**
-     * Filters for FASTA format (.fasta | .fa)
-     */
+
+    public static final String FASTA_EXTENSION = ".fasta";
+    public static final String FASTA_DESCRIPTION = resources.getString(
+            "file.fasta");
     public static final List<String> FASTA_FILTERS = new ArrayList<String>() {
         {
             add("*.fasta");
             add("*.fa");
         }
     };
-    /**
-     * Filters for Variant Call Format (.vcf)
-     */
+
+    public static final String VCF_EXTENSION = ".vcf";
+    public static final String VCF_DESCRIPTION = resources.getString("file.vcf");
     public static final List<String> VCF_FILTERS = new ArrayList<String>() {
         {
             add("*.vcf");
         }
     };
-    /**
-     * Standard extension for SAM Files (.sam).
-     */
+
     public static final String SAM_EXTENSION = ".sam";
-    /**
-     * FASTA Description (FASTA File)
-     */
-    public static final String FASTA_DESCRIPTION = resources.getString(
-            "file.fasta");
-    /**
-     * Standard extension for BAM Files (.bam).
-     */
     public static final String BAM_EXTENSION = ".bam";
+    public static final String SAM_BAM_DESCRIPTION = resources.getString("file.sambam");
+    public static final List<String> SAM_BAM_FILTERS = new ArrayList<String>() {
+        {
+            add("*.bam");
+            add("*.sam");
+        }
+    };
+
+    public static final String TSV_DESCRIPTION = resources.getString("file.tsv");
+    public static final String TSV_EXTENSION = ".tsv";
+    public static final List<String> TSV_FILTERS = new ArrayList<String>() {
+        {
+            add("*.tsv");
+        }
+    };
 
     public OS() {
         switch (System.getProperty("os.name")) {
@@ -201,20 +169,20 @@ public class OS {
      * Opens a dialog for the users to select a File from local directory.
      *
      * @param title Dialog title.
-     * @param filterDesc Description of file type.
+     * @param description Description of file type.
      * @param filters Regular expressions to filter file types (*.extension).
      * @return A File with user selected file, or null if user canceled.
      */
-    public static File selectFile(String title, String filterDesc,
+    public static File openFile(String title, String description,
             List<String> filters) {
         FileChooser fileChooser = new FileChooser();
         if (title != null) {
             fileChooser.setTitle(title);
         }
         fileChooser.setInitialDirectory(lastPath);
-        if (filterDesc != null && filters != null) {
+        if (description != null && filters != null) {
             fileChooser.getExtensionFilters().add(
-                    new FileChooser.ExtensionFilter(filterDesc, filters));
+                    new FileChooser.ExtensionFilter(description, filters));
         }
         File file = fileChooser.showOpenDialog(null);
         if (file != null) {
@@ -235,9 +203,9 @@ public class OS {
      * @param textField The textField to modify.
      * @return The chosen file or null if the operation was canceled.
      */
-    public static File setOpenFile(String title, String filterDesc,
+    public static File openFile(String title, String filterDesc,
             List<String> filters, TextField textField) {
-        File file = selectFile(title, filterDesc, filters);
+        File file = openFile(title, filterDesc, filters);
         if (file != null) {
             textField.setText(file.getAbsolutePath());
         }
@@ -252,11 +220,29 @@ public class OS {
      * @return The file selected or null if user canceled.
      */
     public static File openVCF(TextField textField) {
-        return setOpenFile(VCF_DESCRIPTION, VCF_DESCRIPTION, VCF_FILTERS, textField);
+        return openFile(VCF_DESCRIPTION, VCF_DESCRIPTION, VCF_FILTERS, textField);
     }
 
+    /**
+     * Shows a dialog to the user to select a Binary SAM file (.bam). Sets the
+     * text of the TextField to the name of the file.
+     *
+     * @param textField A TextField to contain the file name.
+     * @return The file selected or null if user canceled.
+     */
     public static File openBAM(TextField textField) {
-        return setOpenFile(SAM_BAM_DESCRIPTION, BAM_EXTENSION, SAM_BAM_FILTERS, textField);
+        return openFile(SAM_BAM_DESCRIPTION, BAM_EXTENSION, SAM_BAM_FILTERS, textField);
+    }
+
+    /**
+     * Shows a dialog to the user to select a FASTA file (.fa or .fasta). Sets
+     * the text of the TextField to the name of the file.
+     *
+     * @param textField A TextField to contain the file name.
+     * @return The file selected or null if user canceled.
+     */
+    public static File openFASTA(TextField textField) {
+        return openFile(FASTA_DESCRIPTION, FASTA_EXTENSION, FASTA_FILTERS, textField);
     }
 
     /**
@@ -270,7 +256,7 @@ public class OS {
      * @param extension default extension
      * @return A File with the user selected file, or null if not file selected
      */
-    public static File createFile(String title, String filterDesc,
+    public static File saveFile(String title, String filterDesc,
             List<String> filters, String extension) {
         FileChooser fileChooser = new FileChooser();
         if (title != null) {
@@ -303,9 +289,9 @@ public class OS {
      * @param extension Default extension
      * @param textField textField associated to the file
      */
-    public static void setSaveFile(String title, String filterDesc,
+    public static void saveFile(String title, String filterDesc,
             List<String> filters, String extension, TextField textField) {
-        File file = createFile(title, filterDesc, filters, extension);
+        File file = saveFile(title, filterDesc, filters, extension);
         if (file != null) {
             textField.setText(file.getAbsolutePath());
         }
@@ -318,7 +304,27 @@ public class OS {
      * @param textField textField containig VCF file name.
      */
     public static void saveVCF(TextField textField) {
-        setSaveFile(VCF_DESCRIPTION, VCF_DESCRIPTION, VCF_FILTERS, ".vcf", textField);
+        saveFile(VCF_DESCRIPTION, VCF_DESCRIPTION, VCF_FILTERS, VCF_EXTENSION, textField);
+    }
+
+    /**
+     * Opens a dialog for the user to create a Tabular Separated Vaules file
+     * (.tsv). The file is not created immediately, just stored as text.
+     *
+     * @param textField textField containig TSV file name.
+     */
+    public static void saveTSV(TextField textField) {
+        saveFile(TSV_DESCRIPTION, TSV_DESCRIPTION, TSV_FILTERS, TSV_EXTENSION, textField);
+    }
+
+    /**
+     * Opens a dialog for the user to create a Binary SAM file (.bam). The file
+     * is not created immediately, just stored as text.
+     *
+     * @param textField textField containig BAM file name.
+     */
+    public static void saveBAM(TextField textField) {
+        saveFile(SAM_BAM_DESCRIPTION, SAM_BAM_DESCRIPTION, SAM_BAM_FILTERS, BAM_EXTENSION, textField);
     }
 
     /**

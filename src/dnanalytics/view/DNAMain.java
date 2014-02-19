@@ -83,19 +83,17 @@ public class DNAMain implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         resources = rb;
         settingsButton.setToggleGroup(toolButtons);
-
-        // Add Tools
+        settingsButton.setGraphic(new ImageView(new Image(DNAMain.class.getResourceAsStream("img/ico/settings32.png"))));
+        // Add Tools, last is the first
         addTool(new IndexFastaTool());
-        addTool(new AlignTool());
-        addTool(new CallVariantsTool());
-        addTool(new CombineVariantsTool());
-        addTool(new SelectVariantsTool());
-        addTool(new FilterFrequenciesTool());
-        addTool(new AnnotationTool());
-        addTool(new DindelTool());
-//        addTool(new LowFrequencyTool());
         addTool(new CNVTool());
-//        addTool(new TestTool());
+        addTool(new DindelTool());
+        addTool(new AnnotationTool());
+        addTool(new FilterFrequenciesTool());
+        addTool(new SelectVariantsTool());
+        addTool(new CombineVariantsTool());
+        addTool(new CallVariantsTool());
+        addTool(new AlignTool());
 
         // Prepare tools pane
         toolTitle.setText(resources.getString("label.selecttool"));
@@ -110,7 +108,8 @@ public class DNAMain implements Initializable {
                         Node node = FXMLLoader.load(SettingsController.class.getResource("Settings.fxml"), resources);
                         startButton.setVisible(false);
                         toolTitle.setText(resources.getString("label.settings"));
-                        toolTitle.setGraphic(new ImageView(new Image(DNAMain.class.getResourceAsStream("img/ico/settings.png"))));
+                        ImageView a = (ImageView) button.getGraphic();
+                        toolTitle.setGraphic(new ImageView(a.getImage()));
                         toolPane.setContent(node);
                         toolDescription.setText("");
                     } catch (IOException ex) {
@@ -125,7 +124,7 @@ public class DNAMain implements Initializable {
                     if (tool.getDescription() != null && !tool.getDescription().isEmpty()) {
                         toolDescription.setText(tool.getDescription());
                     }
-                    startButton.setVisible(true);
+                    startButton.setVisible(tool.getWorker() != null);
                 }
             }
         });
@@ -149,7 +148,9 @@ public class DNAMain implements Initializable {
         ToggleButton button = new ToggleButton(tool.getTitle());
         button.setMaxWidth(Double.MAX_VALUE);
         button.setToggleGroup(toolButtons);
-        button.setId(tool.getStyleID());
+        ImageView ico = new ImageView(new Image(DNAMain.class.getResourceAsStream("img/ico/" + tool.getIco())));
+        button.setGraphic(ico);
+        button.setId("toolButton");
         button.setAlignment(Pos.TOP_LEFT);
         buttonsPane.getChildren().add(0, button);
     }
@@ -166,6 +167,9 @@ public class DNAMain implements Initializable {
             Tool tool = tools.get(buttonsPane.getChildren().indexOf(toolButtons.getSelectedToggle()));
 
             final Worker worker = tool.getWorker();
+            if (worker == null) {
+                return;
+            }
             if (!worker.importParameters()) {
                 System.err.println("Error en los parámetros.");
                 return;

@@ -47,13 +47,13 @@ public class AlignViewController {
 
     @FXML
     void selectForward(ActionEvent event) {
-        OS.setOpenFile(OS.FASTQ_DESCRIPTION,
+        OS.openFile(OS.FASTQ_DESCRIPTION,
                 OS.FASTQ_DESCRIPTION, OS.FASTQ_FILTERS, forward);
     }
 
     @FXML
     void selectReverse(ActionEvent event) {
-        OS.setOpenFile(OS.FASTQ_DESCRIPTION,
+        OS.openFile(OS.FASTQ_DESCRIPTION,
                 OS.FASTQ_DESCRIPTION, OS.FASTQ_FILTERS, reverse);
     }
 
@@ -83,7 +83,7 @@ public class AlignViewController {
 
     @FXML
     void selectOutput(ActionEvent event) {
-        OS.setSaveFile(OS.SAM_BAM_DESCRIPTION,
+        OS.saveFile(OS.SAM_BAM_DESCRIPTION,
                 OS.SAM_BAM_DESCRIPTION, OS.SAM_BAM_FILTERS,
                 OS.BAM_EXTENSION, output);
     }

@@ -148,8 +148,8 @@ public class FilterFrequenciesTool implements Tool {
     }
 
     @Override
-    public String getStyleID() {
-        return "filterFrequencies";
+    public String getIco() {
+        return "filter32.png";
     }
 
     @Override

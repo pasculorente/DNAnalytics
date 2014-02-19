@@ -62,7 +62,7 @@ public class FilterFrequenciesController {
 
     @FXML
     void selectFrequencyFile(ActionEvent event) {
-        OS.setOpenFile(OS.TSV_DESCRIPTION, OS.TSV_DESCRIPTION,
+        OS.openFile(OS.TSV_DESCRIPTION, OS.TSV_DESCRIPTION,
                 OS.TSV_FILTERS, frequencyFile);
     }
 

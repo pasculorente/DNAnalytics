@@ -50,8 +50,8 @@ public class CNVTool implements Tool {
     }
 
     @Override
-    public String getStyleID() {
-        return "cnv";
+    public String getIco() {
+        return "cnv32.png";
     }
 
     @Override

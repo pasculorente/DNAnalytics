@@ -137,8 +137,8 @@ public class CombineVariantsTool implements Tool {
     }
 
     @Override
-    public String getStyleID() {
-        return "combineVariants";
+    public String getIco() {
+        return "combine32.png";
     }
 
     @Override

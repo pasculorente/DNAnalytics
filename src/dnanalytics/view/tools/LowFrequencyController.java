@@ -27,7 +27,7 @@ public class LowFrequencyController {
 
     @FXML
     private void setOutput(ActionEvent event) {
-        OS.setSaveFile("TSV", "Tabulated", null, ".tsv", output);
+        OS.saveFile("TSV", "Tabulated", null, ".tsv", output);
     }
 
     public String getInput() {
