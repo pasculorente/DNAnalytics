@@ -1,7 +1,6 @@
 package dnanalytics.view.tools;
 
 import dnanalytics.utils.OS;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 
@@ -20,12 +19,12 @@ public class SelectVariantsController {
 
 
     @FXML
-    void selectVariantsInput(ActionEvent event) {
+    void selectVariantsInput( ) {
         OS.openVCF(input);
     }
 
     @FXML
-    void selectVariantsOutput(ActionEvent event) {
+    void selectVariantsOutput( ) {
         OS.saveVCF(output);
     }
 

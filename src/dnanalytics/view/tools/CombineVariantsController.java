@@ -24,7 +24,7 @@ public class CombineVariantsController {
     private ToggleGroup combineGroup;
 
     @FXML
-    private void addVCF(ActionEvent event) {
+    private void addVCF() {
         File file = OS.openFile("Select VCF file",
                 OS.VCF_DESCRIPTION, OS.VCF_FILTERS);
         if (file != null) {

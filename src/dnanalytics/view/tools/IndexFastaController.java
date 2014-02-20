@@ -21,10 +21,9 @@ public class IndexFastaController {
 
     @FXML
     void selectFASTA() {
-        OS.openFile(OS.FASTA_DESCRIPTION,
-                OS.FASTA_DESCRIPTION, OS.FASTA_FILTERS, genome);
-        indexed.setText(isIndexed()
-                ? DNAMain.getResources().getString("label.indexed") : "");
+        OS.openFASTA(genome);
+        indexed.setText(isIndexed() ? DNAMain.getResources().getString("label.indexed") : DNAMain.
+                getResources().getString("no.indexed"));
     }
 
     public String getGenome() {
@@ -34,8 +33,7 @@ public class IndexFastaController {
     /**
      * Check if a genome is indexed.
      * <p/>
-     * @return true if all the index files are created, but does not check their
-     * integrity.
+     * @return true if all the index files are created, but does not check their integrity.
      */
     private boolean isIndexed() {
         String g = genome.getText();

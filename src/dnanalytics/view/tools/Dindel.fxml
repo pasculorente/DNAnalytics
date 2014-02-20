@@ -1,39 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox prefHeight="-1.0" prefWidth="-1.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="dnanalytics.view.tools.DindelController">
+<VBox alignment="TOP_CENTER" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dnanalytics.view.tools.DindelController">
   <children>
-    <HBox alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0">
-      <children>
-        <Separator prefWidth="-1.0" HBox.hgrow="SOMETIMES" />
-        <Label text="Entrada" />
-        <Separator prefWidth="-1.0" HBox.hgrow="SOMETIMES" />
-      </children>
-    </HBox>
-    <HBox alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0">
-      <children>
-        <TextField fx:id="input" editable="false" prefWidth="-1.0" HBox.hgrow="SOMETIMES" />
-        <Button mnemonicParsing="false" onAction="#selectInput" text="%button.browse" />
-      </children>
-    </HBox>
-    <HBox alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0">
-      <children>
-        <Separator prefWidth="-1.0" HBox.hgrow="SOMETIMES" />
-        <Label text="Salida" />
-        <Separator prefWidth="-1.0" HBox.hgrow="SOMETIMES" />
-      </children>
-    </HBox>
-    <HBox alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0">
-      <children>
-        <TextField id="input" fx:id="output" editable="false" prefWidth="-1.0" HBox.hgrow="SOMETIMES" />
-        <Button mnemonicParsing="false" onAction="#selectOutput" text="%button.browse" />
-      </children>
-    </HBox>
     <HBox alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0" />
+        <Label id="paramName" text="%label.input" />
+        <TextField id="fileTextField" fx:id="input" editable="false" onAction="#selectInput" onMouseClicked="#selectInput" prefWidth="-1.0" promptText="%file.bam" HBox.hgrow="SOMETIMES" />
+        <Label id="paramName" text="%label.output" />
+        <TextField id="fileTextField" fx:id="output" editable="false" onAction="#selectOutput" onMouseClicked="#selectOutput" prefWidth="-1.0" promptText="%file.vcf" HBox.hgrow="SOMETIMES" />
   </children>
 </VBox>

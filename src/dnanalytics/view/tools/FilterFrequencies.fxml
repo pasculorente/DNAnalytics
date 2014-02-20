@@ -1,34 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
-<?import java.net.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox alignment="TOP_CENTER" prefHeight="-1.0" prefWidth="-1.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="dnanalytics.view.tools.FilterFrequenciesController">
+<VBox alignment="TOP_CENTER" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dnanalytics.view.tools.FilterFrequenciesController">
   <children>
-    <HBox alignment="CENTER">
-      <children>
-        <Separator prefWidth="-1.0" HBox.hgrow="ALWAYS" />
-        <Label text="%label.input" />
-        <Separator prefWidth="-1.0" HBox.hgrow="ALWAYS" />
-      </children>
-    </HBox>
-    <HBox prefHeight="-1.0" prefWidth="-1.0" spacing="3.0">
-      <children>
-        <TextField fx:id="frequencyFile" editable="false" promptText="%file.tsv" HBox.hgrow="ALWAYS" />
-        <Button defaultButton="true" mnemonicParsing="false" onAction="#selectFrequencyFile" text="%button.browse" />
-      </children>
-    </HBox>
-    <HBox alignment="CENTER">
-      <children>
-        <Separator prefWidth="-1.0" HBox.hgrow="ALWAYS" />
-        <Label text="%label.options" />
-        <Separator prefWidth="-1.0" HBox.hgrow="ALWAYS" />
-      </children>
-    </HBox>
+        <Label id="paramName" text="%label.input" />
+        <TextField id="fileTextField" fx:id="frequencyFile" editable="false" onAction="#selectFrequencyFile" onMouseClicked="#selectFrequencyFile" promptText="%file.tsv" HBox.hgrow="ALWAYS" />
+        <Label id="paramName" text="%label.options" />
     <HBox prefHeight="-1.0" prefWidth="-1.0" spacing="3.0">
       <children>
         <TextField id="columnPosition" fx:id="columnField" promptText="Column position" text="" HBox.hgrow="ALWAYS" />

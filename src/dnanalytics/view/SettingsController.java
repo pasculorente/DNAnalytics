@@ -7,7 +7,6 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
@@ -56,7 +55,7 @@ public class SettingsController {
     }
 
     @FXML
-    private void selectGenome(ActionEvent event) {
+    private void selectGenome() {
         // Get the file.
         File f = OS.openFile(OS.FASTA_DESCRIPTION, OS.FASTA_DESCRIPTION,
                 OS.FASTA_FILTERS, genome);
@@ -67,7 +66,7 @@ public class SettingsController {
     }
 
     @FXML
-    private void selectTempDir(ActionEvent event) {
+    private void selectTempDir() {
         File file = OS.selectFolder("Temporary directory");
         if (file != null) {
             tempDir.setText(file.getAbsolutePath());

@@ -4,7 +4,6 @@ import dnanalytics.DNAnalytics;
 import dnanalytics.utils.OS;
 import java.io.File;
 import java.util.Properties;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
@@ -46,19 +45,19 @@ public class AlignViewController {
     }
 
     @FXML
-    void selectForward(ActionEvent event) {
+    void selectForward() {
         OS.openFile(OS.FASTQ_DESCRIPTION,
                 OS.FASTQ_DESCRIPTION, OS.FASTQ_FILTERS, forward);
     }
 
     @FXML
-    void selectReverse(ActionEvent event) {
+    void selectReverse( ) {
         OS.openFile(OS.FASTQ_DESCRIPTION,
                 OS.FASTQ_DESCRIPTION, OS.FASTQ_FILTERS, reverse);
     }
 
     @FXML
-    void selectDbsnp(ActionEvent event) {
+    void selectDbsnp( ) {
         File f = OS.openVCF(dbsnp);
         if (f != null) {
             properties.setProperty("align.dbsnp", f.getAbsolutePath());
@@ -66,7 +65,7 @@ public class AlignViewController {
     }
 
     @FXML
-    void selectMills(ActionEvent event) {
+    void selectMills( ) {
         File f = OS.openVCF(mills);
         if (f != null) {
             properties.setProperty("align.mills", f.getAbsolutePath());
@@ -74,7 +73,7 @@ public class AlignViewController {
     }
 
     @FXML
-    void selectPhase1(ActionEvent event) {
+    void selectPhase1( ) {
         File f = OS.openVCF(phase1);
         if (f != null) {
             properties.setProperty("align.phase1", f.getAbsolutePath());
@@ -82,7 +81,7 @@ public class AlignViewController {
     }
 
     @FXML
-    void selectOutput(ActionEvent event) {
+    void selectOutput( ) {
         OS.saveFile(OS.SAM_BAM_DESCRIPTION,
                 OS.SAM_BAM_DESCRIPTION, OS.SAM_BAM_FILTERS,
                 OS.BAM_EXTENSION, output);

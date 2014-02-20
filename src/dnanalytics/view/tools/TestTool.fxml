@@ -4,14 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dnanalytics.view.tools.TestToolController">
-<children><HBox alignment="CENTER">
-<children><Separator HBox.hgrow="SOMETIMES" /><Label text="Number of lines" /><Separator HBox.hgrow="SOMETIMES" />
-</children></HBox><TextField fx:id="lines" /><HBox alignment="CENTER" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-<children>
-<Separator HBox.hgrow="SOMETIMES" />
-<Label text="Time (in miliseconds)" />
-<Separator HBox.hgrow="SOMETIMES" />
-</children>
-</HBox><TextField fx:id="milliseconds" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" />
+<VBox alignment="TOP_CENTER" spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dnanalytics.view.tools.TestToolController">
+<children><Label id="paramName" text="Number of lines" /><TextField fx:id="lines" />
+<Label id="paramName" text="Time (in miliseconds)" /><TextField fx:id="milliseconds" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" />
 </children></VBox>

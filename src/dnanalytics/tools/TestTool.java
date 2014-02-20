@@ -7,6 +7,7 @@ import dnanalytics.worker.LineParser;
 import dnanalytics.worker.Worker;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.fxml.FXMLLoader;
@@ -63,11 +64,29 @@ public class TestTool implements Tool {
                 long cp = 0;
                 updateProgress("Empezamos", c, lines);
                 //executeCommand("pwd");
+                testOne();
+                return 0;
+            }
 
+            void testOne() {
+                updateTitle("Testing things");
+                updateProgress("Waiting for lines", 0, lines);
+                for (int i = 1; i <= lines; i++) {
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(millis);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(TestTool.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    outStream.println("This is line number " + i + "/" + lines);
+                    updateProgress("Lines processed: " + i, i, lines);
+                }
+                updateProgress("Completed", lines, lines);
+            }
+
+            void testTwo() {
                 String picard = "software" + File.separator + "picard" + File.separator;
                 String gatk = "software" + File.separator + "gatk"
                         + File.separator + "GenomeAnalysisTK.jar";
-
                 updateProgress("Testing picard...", 0, 4);
                 new Command("java", "-jar", picard + "CleanSam.jar").execute(outStream);
                 updateProgress("Testing GATK...", 1, 4);
@@ -80,7 +99,6 @@ public class TestTool implements Tool {
                         String.valueOf(controller.getLines()),
                         String.valueOf(controller.getMilliseconds() / 1000)).execute(outStream);
                 updateProgress("Test tool completed", 1, 1);
-                return 0;
             }
         };
     }
@@ -92,7 +110,7 @@ public class TestTool implements Tool {
 
     @Override
     public String getIco() {
-        return "illumina";
+        return "test.png";
     }
 
     @Override

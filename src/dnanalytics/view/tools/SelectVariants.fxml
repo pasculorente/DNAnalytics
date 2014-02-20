@@ -1,47 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
-<?import java.net.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox id="VBox" alignment="TOP_CENTER" prefHeight="-1.0" prefWidth="-1.0" spacing="3.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="dnanalytics.view.tools.SelectVariantsController">
+<VBox id="VBox" alignment="TOP_CENTER" prefHeight="-1.0" prefWidth="-1.0" spacing="3.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dnanalytics.view.tools.SelectVariantsController">
   <children>
-    <HBox alignment="CENTER" fillHeight="true">
-      <children>
-        <Separator prefWidth="-1.0" HBox.hgrow="ALWAYS" />
-        <Label text="%label.input" />
-        <Separator prefWidth="-1.0" HBox.hgrow="ALWAYS" />
-      </children>
-    </HBox>
-    <HBox id="HBox" alignment="CENTER" spacing="3.0">
-      <children>
-        <TextField id="vcf2select" fx:id="input" editable="false" promptText="%file.vcf" HBox.hgrow="ALWAYS" />
-        <Button defaultButton="true" mnemonicParsing="false" onAction="#selectVariantsInput" text="%button.browse" />
-      </children>
-    </HBox>
-    <HBox alignment="CENTER" fillHeight="true">
-      <children>
-        <Separator prefWidth="-1.0" HBox.hgrow="ALWAYS" />
-        <Label text="%label.output" />
-        <Separator prefWidth="-1.0" HBox.hgrow="ALWAYS" />
-      </children>
-    </HBox>
-    <HBox id="HBox" alignment="CENTER" spacing="3.0">
-      <children>
-        <TextField id="vcfSelectOutput" fx:id="output" editable="false" promptText="%file.vcf" HBox.hgrow="ALWAYS" />
-        <Button defaultButton="true" mnemonicParsing="false" onAction="#selectVariantsOutput" text="%button.browse" />
-      </children>
-    </HBox>
-    <HBox alignment="CENTER" fillHeight="true">
-      <children>
-        <Separator prefWidth="-1.0" HBox.hgrow="ALWAYS" />
-        <Label text="%select.expression" />
-        <Separator prefWidth="-1.0" HBox.hgrow="ALWAYS" />
-      </children>
-    </HBox>
-    <TextField id="selectExpression" fx:id="expression" promptText="%select.expression" />
+        <Label id="paramName" text="%label.input" />
+        <TextField id="fileTextField" fx:id="input" editable="false" onAction="#selectVariantsInput" onMouseClicked="#selectVariantsInput" promptText="%file.vcf" HBox.hgrow="ALWAYS" />
+        <Label id="paramName" text="%label.output" />
+        <TextField id="fileTextField" fx:id="output" editable="false" onAction="#selectVariantsOutput" onMouseClicked="#selectVariantsOutput" promptText="%file.vcf" HBox.hgrow="ALWAYS" />
+        <Label id="paramName" text="%select.expression" />
+    <TextField id="textParam" fx:id="expression" promptText="%select.expression" />
   </children>
 </VBox>

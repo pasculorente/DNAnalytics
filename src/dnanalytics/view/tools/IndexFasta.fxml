@@ -1,27 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?scenebuilder-preview-i18n-resource ../dnanalytics.properties?>
 
-<VBox id="VBox" alignment="TOP_CENTER" spacing="5.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="dnanalytics.view.tools.IndexFastaController">
+<VBox id="VBox" alignment="TOP_CENTER" spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dnanalytics.view.tools.IndexFastaController">
   <children>
-    <HBox alignment="CENTER">
-      <children>
-        <Separator HBox.hgrow="ALWAYS" />
-        <Label text="%label.input" />
-        <Separator HBox.hgrow="ALWAYS" />
-      </children>
-    </HBox>
-    <HBox spacing="2.0">
-      <children>
-        <TextField fx:id="genome" editable="false" promptText="%file.fasta" HBox.hgrow="ALWAYS" />
-        <Button defaultButton="true" mnemonicParsing="false" onAction="#selectFASTA" text="%button.browse" />
-      </children>
-    </HBox>
+        <Label id="paramName" text="%label.input" />
+        <TextField id="fileTextField" fx:id="genome" editable="false" onAction="#selectFASTA" onMouseClicked="#selectFASTA" promptText="%file.fasta" HBox.hgrow="ALWAYS" />
     <Label fx:id="indexed" text="%index.waiting" />
   </children>
 </VBox>

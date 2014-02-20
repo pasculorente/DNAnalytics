@@ -2,7 +2,6 @@
 package dnanalytics.view.tools;
 
 import dnanalytics.utils.OS;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 
@@ -18,12 +17,12 @@ public class CNVController {
     private TextField output;
 
     @FXML
-    private void selectInput(ActionEvent event) {
+    private void selectInput( ) {
         OS.openBAM(input);
     }
 
     @FXML
-    private void selectOutput(ActionEvent event) {
+    private void selectOutput( ) {
         OS.saveVCF(output);
     }
 

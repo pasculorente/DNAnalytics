@@ -4,13 +4,10 @@ import dnanalytics.DNAnalytics;
 import dnanalytics.utils.OS;
 import java.io.File;
 import java.util.Properties;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
 
 /**
  * FXML Controller class
@@ -33,40 +30,38 @@ public class CallVariantsController {
     private TextField output;
     @FXML
     private CheckBox recalibrate;
-    @FXML
-    private VBox trainingDatasets;
 
     private final Properties properties = DNAnalytics.getProperties();
 
     @FXML
     void initialize() {
-        recalibrate.selectedProperty().addListener(new ChangeListener<Boolean>() {
-
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
-                trainingDatasets.setDisable(!t1);
-            }
-
+        recalibrate.selectedProperty().addListener((ObservableValue<? extends Boolean> ov,
+                Boolean t, Boolean t1) -> {
+            omni.setDisable(!t1);
+            hapmap.setDisable(!t1);
+            mills.setDisable(!t1);
         });
         dbsnp.setText(properties.getProperty("call.dbsnp"));
         mills.setText(properties.getProperty("call.mills"));
         omni.setText(properties.getProperty("call.omni"));
         hapmap.setText(properties.getProperty("call.hapmap"));
+        omni.setDisable(true);
+        hapmap.setDisable(true);
+        mills.setDisable(true);
     }
 
     @FXML
-    void selectInput(ActionEvent event) {
-        OS.openFile(OS.SAM_BAM_DESCRIPTION,
-                OS.SAM_BAM_DESCRIPTION, OS.SAM_BAM_FILTERS, input);
+    void selectInput() {
+        OS.openBAM(input);
     }
 
     @FXML
-    void selectOutput(ActionEvent event) {
+    void selectOutput() {
         OS.saveVCF(output);
     }
 
     @FXML
-    void selectDbsnp(ActionEvent event) {
+    void selectDbsnp() {
         File f = OS.openVCF(dbsnp);
         if (f != null) {
             properties.setProperty("call.dbsnp", f.getAbsolutePath());
@@ -74,7 +69,7 @@ public class CallVariantsController {
     }
 
     @FXML
-    void selectHapmap(ActionEvent event) {
+    void selectHapmap() {
         File f = OS.openVCF(hapmap);
         if (f != null) {
             properties.setProperty("call.hapmap", f.getAbsolutePath());
@@ -82,7 +77,7 @@ public class CallVariantsController {
     }
 
     @FXML
-    void selectMills(ActionEvent event) {
+    void selectMills() {
         File f = OS.openVCF(mills);
         if (f != null) {
             properties.setProperty("call.mills", f.getAbsolutePath());
@@ -90,7 +85,7 @@ public class CallVariantsController {
     }
 
     @FXML
-    void selectOmni(ActionEvent event) {
+    void selectOmni() {
         File f = OS.openVCF(omni);
         if (f != null) {
             properties.setProperty("call.omni", f.getAbsolutePath());

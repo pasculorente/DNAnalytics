@@ -1,82 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
-<?import java.util.*?>
 <?import javafx.geometry.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox id="VBox" alignment="TOP_CENTER" fillWidth="true" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0" styleClass="tabPanel" xmlns:fx="http://javafx.com/fxml" fx:controller="dnanalytics.view.tools.AlignViewController">
+<VBox id="VBox" alignment="TOP_CENTER" fillWidth="true" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0" styleClass="tabPanel" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dnanalytics.view.tools.AlignViewController">
   <children>
-    <HBox alignment="CENTER">
-      <children>
-        <Separator prefWidth="-1.0" HBox.hgrow="SOMETIMES" />
-        <Label text="%label.sequences" underline="false">
+        <Label id="paramName" alignment="CENTER" text="%label.sequences" underline="false">
         </Label>
-        <Separator prefWidth="-1.0" HBox.hgrow="SOMETIMES" />
-      </children>
-    </HBox>
-    <HBox prefHeight="-1.0" prefWidth="-1.0" spacing="3.0">
-      <children>
-        <TextField fx:id="forward" editable="false" prefWidth="-1.0" promptText="%file.forward" HBox.hgrow="ALWAYS" />  
-        <Button defaultButton="true" mnemonicParsing="false" onAction="#selectForward" text="%button.browse" />
-      </children>
-    </HBox>
-    <HBox prefHeight="-1.0" prefWidth="-1.0" spacing="3.0">
-      <children>
-        <TextField id="" fx:id="reverse" editable="false" prefWidth="-1.0" promptText="%file.reverse" HBox.hgrow="ALWAYS" />
-        <Button defaultButton="true" mnemonicParsing="false" onAction="#selectReverse" text="%button.browse" />
-      </children>
-    </HBox>
-    <HBox alignment="CENTER">
-      <children>
-        <Separator prefWidth="-1.0" HBox.hgrow="SOMETIMES" />
-        <Label text="%label.training" />
-        <Separator prefWidth="-1.0" HBox.hgrow="SOMETIMES" />
-      </children>
-    </HBox>
-    <HBox id="HBox" alignment="CENTER" spacing="5.0">
-      <children>
-        <TextField id="" fx:id="dbsnp" editable="false" prefWidth="-1.0" promptText="%file.dbsnp" HBox.hgrow="ALWAYS" />
-        <Button defaultButton="true" maxWidth="-1.0" mnemonicParsing="false" onAction="#selectDbsnp" text="%button.browse" />
-      </children>
-    </HBox>
-    <HBox id="HBox" alignment="CENTER" spacing="5.0">
-      <children>
-        <TextField id="mills2Align" fx:id="mills" editable="false" prefWidth="-1.0" promptText="%file.mills" HBox.hgrow="ALWAYS" />
-        <Button defaultButton="true" maxWidth="-1.0" mnemonicParsing="false" onAction="#selectMills" text="%button.browse" />
-      </children>
-    </HBox>
-    <HBox id="HBox" alignment="CENTER" spacing="5.0">
-      <children>
-        <TextField id="phase12Align" fx:id="phase1" editable="false" prefWidth="-1.0" promptText="%file.phase1" HBox.hgrow="ALWAYS" />
-        <Button defaultButton="true" maxWidth="-1.0" mnemonicParsing="false" onAction="#selectPhase1" text="%button.browse" />
-      </children>
-    </HBox>
-    <HBox alignment="CENTER">
-      <children>
-        <Separator prefWidth="-1.0" HBox.hgrow="SOMETIMES" />
-        <Label text="%label.output" />
-        <Separator prefWidth="-1.0" HBox.hgrow="SOMETIMES" />
-      </children>
-    </HBox>
-    <HBox prefHeight="-1.0" prefWidth="-1.0" spacing="3.0">
-      <children>
-        <TextField id="forwardFile" fx:id="output" editable="false" prefWidth="-1.0" promptText="Output file (.bam)" HBox.hgrow="ALWAYS" />
-        <Button id="selectFirstAlleleButton" defaultButton="true" maxWidth="-1.0" mnemonicParsing="false" onAction="#selectOutput" text="%button.browse" />
-      </children>
-    </HBox>
-    <HBox alignment="CENTER">
-      <children>
-        <Separator prefWidth="-1.0" HBox.hgrow="SOMETIMES" />
-        <Label text="%label.options" />
-        <Separator prefWidth="-1.0" HBox.hgrow="SOMETIMES" />
-      </children>
-    </HBox>
-    <VBox id="VBox" alignment="TOP_LEFT" spacing="5.0">
-      <children>
-        <HBox id="HBox" alignment="TOP_LEFT" spacing="5.0">
+        <TextField id="fileTextField" fx:id="forward" editable="false" onMouseClicked="#selectForward" prefWidth="-1.0" promptText="%file.forward" HBox.hgrow="ALWAYS" />
+        <TextField id="fileTextField" fx:id="reverse" editable="false" onMouseClicked="#selectReverse" prefWidth="-1.0" promptText="%file.reverse" HBox.hgrow="ALWAYS" />
+        <Label id="paramName" text="%label.training" />
+        <TextField id="fileTextField" fx:id="dbsnp" editable="false" onMouseClicked="#selectDbsnp" prefWidth="-1.0" promptText="%file.dbsnp" HBox.hgrow="ALWAYS" />
+        <TextField id="fileTextField" fx:id="mills" editable="false" onMouseClicked="#selectMills" prefWidth="-1.0" promptText="%file.mills" HBox.hgrow="ALWAYS" />
+        <TextField id="fileTextField" fx:id="phase1" editable="false" onMouseClicked="#selectPhase1" prefWidth="-1.0" promptText="%file.phase1" HBox.hgrow="ALWAYS" />
+        <Label id="paramName" text="%label.output" />
+        <TextField id="fileTextField" fx:id="output" editable="false" onMouseClicked="#selectOutput" prefWidth="-1.0" promptText="Output file (.bam)" HBox.hgrow="ALWAYS" />
+        <Label id="paramName" text="%label.options" />
+        <HBox id="param" alignment="TOP_LEFT" spacing="5.0">
           <children>
             <Label text="%label.encoding" wrapText="true" />
             <RadioButton id="isIllumina" mnemonicParsing="false" selected="true" text="Illumina 1.3+">
@@ -87,9 +29,7 @@
             <RadioButton id="isSanger" mnemonicParsing="false" selected="false" text="Sanger" toggleGroup="$x1" />
           </children>
         </HBox>
-        <CheckBox id="reduceReads" fx:id="reduce" disable="false" mnemonicParsing="false" text="%checkbox.reducereads" />
-      </children>
-    </VBox>
+        <CheckBox id="param" fx:id="reduce" alignment="TOP_LEFT" disable="false" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="%checkbox.reducereads" />
   </children>
   <padding>
     <Insets bottom="15.0" left="10.0" right="10.0" top="15.0" />

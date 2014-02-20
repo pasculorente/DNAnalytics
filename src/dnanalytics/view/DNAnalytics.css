@@ -1,18 +1,23 @@
-root { 
+.root { 
     display: block;
-    font-family: serif;
+    /*font-family: serif;*/
+    -fx-background-color: white;
+}
+
+.VBox, .scroll-pane {
+    -fx-background-color: white;
 }
 
 #toolArea{
-    -fx-background-image: url("img/background-DNA.jpg");
+    /*-fx-background-image: url("img/background-DNA.jpg");*/
     -fx-background-position: center;
     -fx-background-repeat: no-repeat;
     -fx-background-size: cover;
-    -fx-background-color: transparent;
+    -fx-background-color: white;
 }
 
 #toolPane{
-    -fx-background-color: transparent;
+    -fx-background-color: white;
 }
 
 #buttonsPane {
@@ -23,27 +28,69 @@ root {
 }
 
 #consoleArea {
-    font-family: monospace;
+    -fx-font-family: monospace;
 }
 
 .list-cell:empty{
     -fx-background-color: transparent;
 }
 
-#toolButton {
+.list-cell:selected {
+    -fx-background-color: lightsteelblue;
+}
+
+#toolButton:hover, #fileTextField:hover, #param:hover, .text-field:focused {
+    -fx-prompt-text-fill: darkgrey;
     -fx-background-color: lightcyan;
-    -fx-background-insets: 1;
+    -fx-background-insets: -1;
     -fx-background-radius: 0;
 }
 
-#toolButton:selected {
-    -fx-background-color: cyan;
-    -fx-background-insets: 1;
+#toolButton:selected, #toolTitle {
+    -fx-background-color: lightsalmon;
+    -fx-background-insets: -1;
     -fx-background-radius: 0;
 }
 
-#toolButton:hover {
+#toolButton, #fileTextField, #param, .text-field {
+    -fx-prompt-text-fill: grey;
+    -fx-background-color: lightsteelblue;
+    -fx-background-insets: -1;
+    -fx-background-radius: 0;
+}
+
+#paramName {
+    -fx-underline: true;
+}
+
+#startButton:hover {
     -fx-background-color: lightgreen;
-    -fx-background-insets: 1;
+    -fx-background-insets: -1;
     -fx-background-radius: 0;
+}
+
+#startButton {
+    -fx-background-color: limegreen;
+    -fx-background-insets: -1;
+    -fx-background-radius: 0;
+}
+
+#addButton {
+    -fx-background-color: limegreen;
+    -fx-background-radius: 0;
+    -fx-graphic: url("img/ico/add24.png");
+}
+
+#addButton:hover {
+    -fx-background-color: lightgreen;
+}
+
+#deleteButton {
+    -fx-background-color: salmon;
+    -fx-background-radius: 0;
+    -fx-graphic: url("img/ico/delete24.png");    
+}
+
+#deleteButton:hover {
+    -fx-background-color: lightsalmon;
 }
