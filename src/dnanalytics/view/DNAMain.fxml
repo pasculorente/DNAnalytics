@@ -15,12 +15,12 @@
           <children>
             <Label id="toolTitle" fx:id="toolTitle" alignment="CENTER" maxWidth="1.7976931348623157E308" text="Label" textAlignment="CENTER" />
             <Label fx:id="toolDescription" text="Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." textAlignment="JUSTIFY" textOverrun="CLIP" wrapText="true" VBox.vgrow="SOMETIMES" />
-            <ScrollPane fx:id="toolPane" fitToHeight="true" fitToWidth="true" opacity="1.0" pannable="false" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="SOMETIMES">
+            <ScrollPane id="scrollToolPane" fx:id="toolPane" fitToHeight="true" fitToWidth="true" opacity="1.0" pannable="false" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="SOMETIMES">
               <VBox.margin>
                 <Insets />
               </VBox.margin>
             </ScrollPane>
-            <Button id="startButton" fx:id="startButton" defaultButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#start" text="%button.start">
+            <Button id="startButton" fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#start" text="%button.start">
               <VBox.margin>
                 <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
               </VBox.margin>

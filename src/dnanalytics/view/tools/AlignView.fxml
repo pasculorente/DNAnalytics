@@ -7,17 +7,17 @@
 
 <VBox id="VBox" alignment="TOP_CENTER" fillWidth="true" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0" styleClass="tabPanel" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dnanalytics.view.tools.AlignViewController">
   <children>
-        <Label id="paramName" alignment="CENTER" text="%label.sequences" underline="false">
+        <Label id="paramName" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%label.sequences" underline="false">
         </Label>
         <TextField id="fileTextField" fx:id="forward" editable="false" onMouseClicked="#selectForward" prefWidth="-1.0" promptText="%file.forward" HBox.hgrow="ALWAYS" />
         <TextField id="fileTextField" fx:id="reverse" editable="false" onMouseClicked="#selectReverse" prefWidth="-1.0" promptText="%file.reverse" HBox.hgrow="ALWAYS" />
-        <Label id="paramName" text="%label.training" />
+        <Label id="paramName" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%label.training" textAlignment="CENTER" />
         <TextField id="fileTextField" fx:id="dbsnp" editable="false" onMouseClicked="#selectDbsnp" prefWidth="-1.0" promptText="%file.dbsnp" HBox.hgrow="ALWAYS" />
         <TextField id="fileTextField" fx:id="mills" editable="false" onMouseClicked="#selectMills" prefWidth="-1.0" promptText="%file.mills" HBox.hgrow="ALWAYS" />
         <TextField id="fileTextField" fx:id="phase1" editable="false" onMouseClicked="#selectPhase1" prefWidth="-1.0" promptText="%file.phase1" HBox.hgrow="ALWAYS" />
-        <Label id="paramName" text="%label.output" />
+        <Label id="paramName" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%label.output" />
         <TextField id="fileTextField" fx:id="output" editable="false" onMouseClicked="#selectOutput" prefWidth="-1.0" promptText="Output file (.bam)" HBox.hgrow="ALWAYS" />
-        <Label id="paramName" text="%label.options" />
+        <Label id="paramName" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%label.options" />
         <HBox id="param" alignment="TOP_LEFT" spacing="5.0">
           <children>
             <Label text="%label.encoding" wrapText="true" />

@@ -7,9 +7,9 @@
 <VBox alignment="TOP_CENTER" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dnanalytics.view.tools.DindelController">
   <children>
     <HBox alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0" />
-        <Label id="paramName" text="%label.input" />
+        <Label id="paramName" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%label.input" />
         <TextField id="fileTextField" fx:id="input" editable="false" onAction="#selectInput" onMouseClicked="#selectInput" prefWidth="-1.0" promptText="%file.bam" HBox.hgrow="SOMETIMES" />
-        <Label id="paramName" text="%label.output" />
+        <Label id="paramName" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%label.output" />
         <TextField id="fileTextField" fx:id="output" editable="false" onAction="#selectOutput" onMouseClicked="#selectOutput" prefWidth="-1.0" promptText="%file.vcf" HBox.hgrow="SOMETIMES" />
   </children>
 </VBox>

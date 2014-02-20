@@ -6,11 +6,11 @@
 
 <VBox id="VBox" alignment="TOP_CENTER" fillWidth="true" spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dnanalytics.view.tools.AnnotationController">
     <children>
-        <Label id="paramName" text="SIFT" /><Label text="%sift.restrict" />
+        <Label id="paramName" alignment="CENTER" maxWidth="1.7976931348623157E308" text="SIFT" /><Label text="%sift.restrict" />
                         <TextField fx:id="sift1" editable="false" text="http://sift.bii.a-star.edu.sg/www/SIFT_indels2.html" /><Label text="%sift.snp" />
                         <TextField fx:id="sift2" editable="false" text="http://sift.bii.a-star.edu.sg/www/SIFT_intersect_coding_submit.html" /><Label text="%sift.indel" />
                         <TextField fx:id="sift3" editable="false" text="http://siftdna.org/www/Extended_SIFT_chr_coords_submit.html" />
-        <Label id="paramName" text="ANNOVAR" /><Label text="%sift.annovar" />
+        <Label id="paramName" alignment="CENTER" maxWidth="1.7976931348623157E308" text="ANNOVAR" /><Label text="%sift.annovar" />
                 <TextField fx:id="annovar" editable="false" text="http://wannovar.usc.edu/" />
     </children>
 </VBox>

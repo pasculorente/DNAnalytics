@@ -7,11 +7,11 @@
 
 <VBox id="VBox" alignment="TOP_CENTER" fillWidth="true" prefHeight="-1.0" prefWidth="-1.0" snapToPixel="false" spacing="5.0" styleClass="tabPanel" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dnanalytics.view.tools.CallVariantsController">
   <children>
-        <Label id="paramName" text="%label.alignments" />
+        <Label id="paramName" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%label.alignments" />
         <TextField id="fileTextField" fx:id="input" editable="false" onAction="#selectInput" onMouseClicked="#selectInput" prefWidth="-1.0" promptText="%file.bam" HBox.hgrow="ALWAYS" />
-        <Label id="paramName" text="%label.training" />
+        <Label id="paramName" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%label.training" />
         <TextField id="fileTextField" fx:id="dbsnp" editable="false" maxWidth="-1.0" onAction="#selectDbsnp" onMouseClicked="#selectDbsnp" prefWidth="-1.0" promptText="%file.dbsnp" HBox.hgrow="ALWAYS" />
-        <Label id="paramName" text="%label.output" />
+        <Label id="paramName" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%label.output" />
         <TextField id="fileTextField" fx:id="output" editable="false" onAction="#selectOutput" onMouseClicked="#selectOutput" prefWidth="-1.0" promptText="Variant Call File (.vcf)" HBox.hgrow="ALWAYS" />
     <CheckBox id="param" fx:id="recalibrate" alignment="TOP_LEFT" contentDisplay="LEFT" disable="false" graphicTextGap="6.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="%checkbox.recalibrate" visible="false" />
         <Label id="paramName" text="%label.training.recal" visible="false" />

@@ -7,7 +7,7 @@
 
 <VBox alignment="TOP_CENTER" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dnanalytics.view.tools.CombineVariantsController">
   <children>
-        <Label id="paramName" text="%label.input" />
+        <Label id="paramName" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%label.input" />
     <ScrollPane id="ScrollPane" fitToHeight="true" fitToWidth="true" minHeight="100.0" pannable="true" prefViewportHeight="50.0" prefViewportWidth="260.0" VBox.vgrow="ALWAYS">
       <content>
         <ListView fx:id="vcfList" minHeight="-1.0" minWidth="-1.0" prefHeight="50.0" prefWidth="-1.0" />
@@ -19,9 +19,9 @@
         <Button id="addButton" defaultButton="true" mnemonicParsing="false" onAction="#addVCF" text="%button.add" />
       </children>
     </HBox>
-        <Label id="paramName" text="%label.output" />
+        <Label id="paramName" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%label.output" />
         <TextField id="fileTextField" fx:id="combinedVCF" editable="false" onAction="#selectOutput" onMouseClicked="#selectOutput" prefWidth="-1.0" promptText="Output VCF" HBox.hgrow="ALWAYS" />
-        <Label id="paramName" text="%label.options" />
+        <Label id="paramName" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%label.options" />
     <RadioButton id="param" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" selected="true" text="%combine.intersect" textAlignment="CENTER">
       <toggleGroup>
         <ToggleGroup fx:id="combineGroup" />

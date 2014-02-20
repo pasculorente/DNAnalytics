@@ -5,6 +5,6 @@
 <?import javafx.scene.layout.*?>
 
 <VBox alignment="TOP_CENTER" spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dnanalytics.view.tools.TestToolController">
-<children><Label id="paramName" text="Number of lines" /><TextField fx:id="lines" />
-<Label id="paramName" text="Time (in miliseconds)" /><TextField fx:id="milliseconds" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" />
+<children><Label id="paramName" alignment="CENTER" maxWidth="1.7976931348623157E308" text="Number of lines" /><TextField fx:id="lines" />
+<Label id="paramName" alignment="CENTER" maxWidth="1.7976931348623157E308" text="Time (in miliseconds)" /><TextField fx:id="milliseconds" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" />
 </children></VBox>

@@ -7,7 +7,7 @@
 
 <VBox id="VBox" alignment="TOP_CENTER" spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dnanalytics.view.tools.IndexFastaController">
   <children>
-        <Label id="paramName" text="%label.input" />
+        <Label id="paramName" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%label.input" />
         <TextField id="fileTextField" fx:id="genome" editable="false" onAction="#selectFASTA" onMouseClicked="#selectFASTA" promptText="%file.fasta" HBox.hgrow="ALWAYS" />
     <Label fx:id="indexed" text="%index.waiting" />
   </children>

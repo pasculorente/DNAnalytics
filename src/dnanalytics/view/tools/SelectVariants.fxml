@@ -6,11 +6,11 @@
 
 <VBox id="VBox" alignment="TOP_CENTER" prefHeight="-1.0" prefWidth="-1.0" spacing="3.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dnanalytics.view.tools.SelectVariantsController">
   <children>
-        <Label id="paramName" text="%label.input" />
+        <Label id="paramName" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%label.input" />
         <TextField id="fileTextField" fx:id="input" editable="false" onAction="#selectVariantsInput" onMouseClicked="#selectVariantsInput" promptText="%file.vcf" HBox.hgrow="ALWAYS" />
-        <Label id="paramName" text="%label.output" />
+        <Label id="paramName" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%label.output" />
         <TextField id="fileTextField" fx:id="output" editable="false" onAction="#selectVariantsOutput" onMouseClicked="#selectVariantsOutput" promptText="%file.vcf" HBox.hgrow="ALWAYS" />
-        <Label id="paramName" text="%select.expression" />
+        <Label id="paramName" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%select.expression" />
     <TextField id="textParam" fx:id="expression" promptText="%select.expression" />
   </children>
 </VBox>

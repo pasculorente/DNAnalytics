@@ -6,9 +6,9 @@
 
 <VBox alignment="TOP_CENTER" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dnanalytics.view.tools.FilterFrequenciesController">
   <children>
-        <Label id="paramName" text="%label.input" />
+        <Label id="paramName" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%label.input" />
         <TextField id="fileTextField" fx:id="frequencyFile" editable="false" onAction="#selectFrequencyFile" onMouseClicked="#selectFrequencyFile" promptText="%file.tsv" HBox.hgrow="ALWAYS" />
-        <Label id="paramName" text="%label.options" />
+        <Label id="paramName" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%label.options" />
     <HBox prefHeight="-1.0" prefWidth="-1.0" spacing="3.0">
       <children>
         <TextField id="columnPosition" fx:id="columnField" promptText="Column position" text="" HBox.hgrow="ALWAYS" />
