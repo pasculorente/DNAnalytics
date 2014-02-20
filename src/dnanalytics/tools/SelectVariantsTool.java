@@ -73,19 +73,19 @@ public class SelectVariantsTool implements Tool {
             public boolean importParameters() {
                 // Check the params in the main thread, to avoid launching a dummy Worker.
                 if (!new File(properties.getProperty("genome")).exists()) {
-                    System.err.println(resources.getString("no.genome"));
+                    DNAMain.printMessage(resources.getString("no.genome"));
                     return false;
                 }
                 if (!new File(controller.getInput()).exists()) {
-                    System.err.println(resources.getString("no.input"));
+                    DNAMain.printMessage(resources.getString("no.input"));
                     return false;
                 }
                 if (controller.getOutput().isEmpty()) {
-                    System.err.println(resources.getString("no.output"));
+                    DNAMain.printMessage(resources.getString("no.output"));
                     return false;
                 }
                 if (controller.getExpression().isEmpty()) {
-                    System.err.println(resources.getString("no.expression"));
+                    DNAMain.printMessage(resources.getString("no.expression"));
                     return false;
                 }
                 return true;

@@ -11,21 +11,18 @@ import javafx.beans.property.StringProperty;
 import javafx.concurrent.Task;
 
 /**
- * A Worker is an abstract class used to package all single tasks DNAnalytics
- * does. Every Worker runs in background. They are similar to Linux scripts. As
- * it is an extension of the Task class, it is started as a Task, being
- * recommended Thread encapsulated method:
+ * A Worker is an abstract class used to package all single tasks DNAnalytics does. Every Worker
+ * runs in background. They are similar to Linux scripts. As it is an extension of the Task class,
+ * it is started as a Task, being recommended Thread encapsulated method:
  * <p>
  * new <b>Thread</b>(new <b>Worker</b>()).start().
  * <p>
- * Into DNAnalytics, a Worker is required into a Tool, and it is not needed to
- * launch it manually, the DNAMain will do it. When implementing a Worker,
- * outStream and errStream can be used to have messages printed in a separated
- * console.
+ * Into DNAnalytics, a Worker is required into a Tool, and it is not needed to launch it manually,
+ * the DNAMain will do it. When implementing a Worker, outStream and errStream can be used to have
+ * messages printed in a separated console.
  *
- * Every Worker just needs to implement start(). It provides
- * executeCommand(String string) to launch system commands to a /bin/bash
- * console.
+ * Every Worker just needs to implement start(). It provides executeCommand(String string) to launch
+ * system commands to a /bin/bash console.
  *
  * @author Pascual Lorente Arencibia
  */
@@ -39,16 +36,15 @@ public abstract class Worker extends Task<Integer> {
     protected final static SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
     private Timer timer;
 
-    {
+    static {
         // It was giving problems with the hours. This line fixes it,
         // but I'm not happy at all, because I'm not sure if this is portable.
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
     }
 
     /**
-     * Redirect outputs of the Worker. By default, the streams are redirected to
-     * the System streams (System.out and System.err). Use this method if you
-     * want to print the output elsewhere.
+     * Redirect outputs of the Worker. By default, the streams are redirected to the System streams
+     * (System.out and System.err). Use this method if you want to print the output elsewhere.
      *
      * @param output The new standard output stream.
      * @param error The new error output stream.
@@ -101,17 +97,17 @@ public abstract class Worker extends Task<Integer> {
     }
 
     /**
-     * Write the translation of your script here. Use the class Command to
-     * execute external commands.
+     * Write the translation of your script here. Use the class Command to execute external
+     * commands.
      *
      * @return process return value.
      */
     protected abstract int start();
 
     /**
-     * Override this method to ensure all parameters are OK. Check here if files
-     * exist and parameters are logic. If this method returns false, no new tab
-     * will be added to DNAnalytics, and Worker won't be launched.
+     * Override this method to ensure all parameters are OK. Check here if files exist and
+     * parameters are logic. If this method returns false, no new tab will be added to DNAnalytics,
+     * and Worker won't be launched.
      *
      * @return true if parameters are OK. false if Worker shouldn't be run.
      */
@@ -127,7 +123,8 @@ public abstract class Worker extends Task<Integer> {
                 try {
                     Thread.sleep(1000);
                     Platform.runLater(() -> {
-                        elapsedTime.setValue(dateFormat.format(System.currentTimeMillis() - startTime));
+                        elapsedTime.setValue(dateFormat.format(System.currentTimeMillis()
+                                - startTime));
                     });
                 } catch (InterruptedException ex) {
                 }

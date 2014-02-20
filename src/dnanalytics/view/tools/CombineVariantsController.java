@@ -1,8 +1,8 @@
 package dnanalytics.view.tools;
 
 import dnanalytics.utils.OS;
+import dnanalytics.view.DNAMain;
 import java.io.File;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -37,12 +37,12 @@ public class CombineVariantsController {
         try {
             vcfList.getItems().remove(vcfList.getSelectionModel().getSelectedIndex());
         } catch (ArrayIndexOutOfBoundsException ex) {
-            System.err.println("Select a file in the list");
+            DNAMain.printMessage("Select a file in the list");
         }
     }
 
     @FXML
-    private void selectOutput(ActionEvent event) {
+    private void selectOutput() {
         OS.saveVCF(combinedVCF);
     }
 

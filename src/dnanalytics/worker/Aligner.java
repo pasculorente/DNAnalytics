@@ -1,13 +1,13 @@
 package dnanalytics.worker;
 
 import dnanalytics.utils.Command;
+import dnanalytics.view.DNAMain;
 import static dnanalytics.worker.Worker.resources;
 import java.io.File;
 
 /**
- * Script for the alignment of a sample sequences. (1) Initial alignment (2)
- * Refinement (3) Realignment and recalibration (4) Reduce Reads (experimental
- * and optional)
+ * Script for the alignment of a sample sequences. (1) Initial alignment (2) Refinement (3)
+ * Realignment and recalibration (4) Reduce Reads (experimental and optional)
  *
  * @author Pascual Lorente Arencibia
  */
@@ -55,9 +55,8 @@ public class Aligner extends Worker {
     }
 
     /**
-     * Phase A: Align/Map sequences. Burrows-Wheeler Aligner. As this project
-     * works with paired end sequences, we use simple, basic-parameters
-     * workflow.
+     * Phase A: Align/Map sequences. Burrows-Wheeler Aligner. As this project works with paired end
+     * sequences, we use simple, basic-parameters workflow.
      * <p>
      * 1 and 2: Align both sequences.</p>
      * <p>
@@ -66,9 +65,8 @@ public class Aligner extends Worker {
      * bwa aln -t 4 genome.fasta sequence2.fq.gz -I > seq2.sai</p>
      * <p>
      * -I : if the sequence is Illumina 1.3+ encoding</p>
-     * -t 4 : number of threads The reference genome must be indexed 3: Generate
-     * alignments. bwa sampe genome.fasta seq1.sai seq2.sai sequence1.fq.gz
-     * sequence2.fq.gz > bwa.sam
+     * -t 4 : number of threads The reference genome must be indexed 3: Generate alignments. bwa
+     * sampe genome.fasta seq1.sai seq2.sai sequence1.fq.gz sequence2.fq.gz > bwa.sam
      */
     private int firstAlignment() {
         String seq1 = new File(temp, name + "_seq1.sai").getAbsolutePath();
@@ -103,16 +101,16 @@ public class Aligner extends Worker {
 
     /*
      * Phase B: Prepare BAM for GATK
-     *   SAM file from BWA must pass several filters before entering GATK. 
-     * 
+     *   SAM file from BWA must pass several filters before entering GATK.
+     *
      * 4: Clean SAM
      * Perform two fix-ups
      *   Soft-clip an alignment that hangs off the end of its reference sequence
      *   Set MAPQ to 0 if a read is unmapped
-     *   
+     *
      * 5: Sort Sam
      *   SortOrder: coordinate
-     * 
+     *
      * 6: Remove Duplicated Reads
      *
      * 7: Fix RG Header
@@ -120,7 +118,7 @@ public class Aligner extends Worker {
      *  RGSM = "niv"
      *  RGPU = "flowcell-barcode.lane"
      *  RGLB = "BAITS"
-     * 
+     *
      * 8: BAM Index
      *   Generates an Index of the BAM file (.bai)
      */
@@ -187,16 +185,16 @@ public class Aligner extends Worker {
         return 0;
     }
 
-    /* 
+    /*
      * Phase C: Realign around Indels
      *   GATK has an algorithm to avoid false positives which consists in looking at high
      *   probably Indel areas and realigning them, so no false SNPs appear.
-     * 
+     *
      * 9: RealignerTargetCreator
      *   Generates the intervals to reealign at. Known indels are taken from two databases:
      *    Mills and 1000 Genome Gold standard Indels
      *    1000 Genomes Phase 1 Indels
-     * 
+     *
      * 10: IndelRealigner
      *    Makes the realigment
      */
@@ -231,16 +229,16 @@ public class Aligner extends Worker {
         return 0;
     }
 
-    /* 
+    /*
      * Phase D: Base Quality Score Recalibration
      *   GATK uses Quality Scores to generate a calibrated error model and apply it to alignments
-     * 
+     *
      * 11: BaseRecalibrator
      *   Builds the error model. As reference, these databases:
      *    Mills and 100 Genome Gold standard Indels
      *    1000 Genomes Phase 1 Indels
-     *    dbSNP 
-     * 
+     *    dbSNP
+     *
      * 12: PrintReads
      *   Applies the recalibration
      */
@@ -278,10 +276,10 @@ public class Aligner extends Worker {
         return 0;
     }
 
-    /* 
+    /*
      * Phase E: Reduce reads
      *  Expererimental Tool that reduces the size of BAM Files. Optional.
-     * 
+     *
      * 13: ReduceReads
      */
     private int reduceReads() {
@@ -329,35 +327,35 @@ public class Aligner extends Worker {
     @Override
     public boolean importParameters() {
         if (!new File(genome).exists()) {
-            errStream.println(resources.getString("no.genome"));
+            DNAMain.printMessage(resources.getString("no.genome"));
             return false;
         }
         if (!new File(forward).exists()) {
-            errStream.println(resources.getString("no.forward"));
+            DNAMain.printMessage(resources.getString("no.forward"));
             return false;
         }
         if (!new File(reverse).exists()) {
-            errStream.println(resources.getString("no.reverse"));
+            DNAMain.printMessage(resources.getString("no.reverse"));
             return false;
         }
         if (!new File(dbsnp).exists()) {
-            errStream.println(resources.getString("no.dbsnp"));
+            DNAMain.printMessage(resources.getString("no.dbsnp"));
             return false;
         }
         if (!new File(mills).exists()) {
-            errStream.println(resources.getString("no.mills"));
+            DNAMain.printMessage(resources.getString("no.mills"));
             return false;
         }
         if (!new File(phase1).exists()) {
-            errStream.println(resources.getString("no.phase1"));
+            DNAMain.printMessage(resources.getString("no.phase1"));
             return false;
         }
         if (!new File(temp).exists()) {
-            errStream.println(resources.getString("no.temp"));
+            DNAMain.printMessage(resources.getString("no.temp"));
             return false;
         }
         if (output.isEmpty()) {
-            errStream.println(resources.getString("no.output"));
+            DNAMain.printMessage(resources.getString("no.output"));
             return false;
         }
         return true;

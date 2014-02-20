@@ -1,9 +1,8 @@
 package dnanalytics.utils;
 
+import dnanalytics.view.DNAMain;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -16,9 +15,8 @@ public class Command {
     private Process process = null;
 
     /**
-     * Creates a new command. errOut and stdOut cannot be null. It is not
-     * recommended to put equal errOut and stdOut. Use another constructor if
-     * you want to merge both outputs.
+     * Creates a new command. errOut and stdOut cannot be null. It is not recommended to put equal
+     * errOut and stdOut. Use another constructor if you want to merge both outputs.
      *
      * @param errOut Where to flush the error output.
      * @param stdOut Where to flush the standard output.
@@ -42,8 +40,7 @@ public class Command {
 //        this.stdOut = output;
 //    }
     /**
-     * Creates a new command. Standard and error outputs will be flushed to
-     * System.out.
+     * Creates a new command. Standard and error outputs will be flushed to System.out.
      *
      * @param args The command and its arguments
      */
@@ -54,14 +51,13 @@ public class Command {
     }
 
     /**
-     * Executes command. Command must be created with constructor. Cannot be
-     * modified afterwards. If useBash is true, command will be encapsulated in
-     * a /bin/bash call. Use this if you are able to execute your command in a
-     * shell but not with execute() or if your command has shell pipes (> |).
+     * Executes command. Command must be created with constructor. Cannot be modified afterwards. If
+     * useBash is true, command will be encapsulated in a /bin/bash call. Use this if you are able
+     * to execute your command in a shell but not with execute() or if your command has shell pipes
+     * (> |).
      *
      * @param output
-     * @param useBash If you want to encapsulate your command in a /bin/bash -c
-     * shell.
+     * @param useBash If you want to encapsulate your command in a /bin/bash -c shell.
      * @return The return value of the system call.
      */
     public int execute(PrintStream output, boolean useBash) {
@@ -86,7 +82,7 @@ public class Command {
             }
             return process.waitFor();
         } catch (InterruptedException | IOException ex) {
-            Logger.getLogger(Command.class.getName()).log(Level.SEVERE, null, ex);
+            DNAMain.printMessage(DNAMain.getResources().getString("no.program"));
             return -1;
         }
     }
@@ -99,7 +95,7 @@ public class Command {
     public int execute() {
         return execute(System.out, false);
     }
-    
+
     public int execute(PrintStream output) {
         return execute(output, false);
     }

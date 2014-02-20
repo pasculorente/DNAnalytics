@@ -115,25 +115,25 @@ public class FilterFrequenciesTool implements Tool {
                         }
                     }
                 } catch (FileNotFoundException ex) {
-                    errStream.println("File " + input + " not found");
+                    DNAMain.printMessage("File " + input + " not found");
                 } catch (IOException ex) {
-                    errStream.println("Error reading file");
-                } 
+                    DNAMain.printMessage("Error reading file");
+                }
                 return 0;
             }
 
             @Override
             public boolean importParameters() {
                 if (input.isEmpty() || !new File(input).exists()) {
-                    System.err.println(resources.getString("no.output"));
+                    DNAMain.printMessage(resources.getString("no.output"));
                     return false;
                 }
                 if (column == -1) {
-                    errStream.println("Negative column");
+                    DNAMain.printMessage("Negative column");
                     return false;
                 }
                 if (freq < 0) {
-                    errStream.println("Frequency under 0");
+                    DNAMain.printMessage("Frequency under 0");
                     return false;
                 }
                 return true;

@@ -1,5 +1,6 @@
 package dnanalytics.worker;
 
+import dnanalytics.view.DNAMain;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -67,7 +68,8 @@ public class BAMAnalyzer extends Worker {
             } else if (i < 23) {
                 return "chromosome" + i + ".txt";
             } else {
-                errStream.println("Really? Chromosome " + chromosome + " is not a standard chromosome");
+                DNAMain.printMessage("Really? Chromosome " + chromosome
+                        + " is not a standard chromosome");
                 return null;
             }
         } catch (NumberFormatException ex) {
@@ -113,14 +115,14 @@ public class BAMAnalyzer extends Worker {
      * @return A ProcessBuilder created with the correct String.
      */
     private ProcessBuilder comandoSAMTools(String filename) {
-        
+
         switch (System.getProperty("os.name")) {
         case "Windows 7":
             return new ProcessBuilder("cmd", "/C", "D:\\samtools.exe view " + filename);
         case "Linux":
             return new ProcessBuilder("/bin/bash", "-c", "samtools view " + filename);
         default:
-            errStream.println("No OS detected");
+            DNAMain.printMessage("No OS detected");
             return null;
         }
     }
@@ -314,12 +316,10 @@ public class BAMAnalyzer extends Worker {
 //            exons.add(findPoorExons(f));
 //        }
 //    }
-
 //    private List<PrimateExon> findPoorExons(String input) {
 //        List<PrimateExon> exons = new ArrayList<>();
 //        return exons;
 //    }
-
     @Override
     protected int start() {
         // In general, the algorithm is:

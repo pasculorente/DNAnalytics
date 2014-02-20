@@ -47,7 +47,6 @@ public class DindelTool implements Tool {
     @Override
     public String getTitle() {
         return resources.getString("dindel.title");
-//        return "Dindel (Indels call)";
     }
 
     @Override

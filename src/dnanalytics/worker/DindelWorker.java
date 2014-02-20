@@ -3,6 +3,7 @@ package dnanalytics.worker;
 import dnanalytics.DNAnalytics;
 import dnanalytics.tools.DindelTool;
 import dnanalytics.utils.Command;
+import dnanalytics.view.DNAMain;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -37,15 +38,15 @@ public class DindelWorker extends Worker {
     public boolean importParameters() {
         // Checking parameters
         if (!new File(input).exists()) {
-            System.err.println(resources.getString("no.input"));
+            DNAMain.printMessage(resources.getString("no.input"));
             return false;
         }
         if (output.isEmpty()) {
-            System.err.println(resources.getString("no.output"));
+            DNAMain.printMessage(resources.getString("no.output"));
             return false;
         }
         if (!new File(genome).exists()) {
-            System.err.println(resources.getString("no.genome"));
+            DNAMain.printMessage(resources.getString("no.genome"));
             return false;
         }
         // + tempDir
@@ -64,9 +65,9 @@ public class DindelWorker extends Worker {
     }
 
     /**
-     * First step for standard dindel workflow: extraction of potential indels
-     * from the input BAM file. The output are 2 files, named after sample name
-     * (name.libraries.txt and name.variants.txt)
+     * First step for standard dindel workflow: extraction of potential indels from the input BAM
+     * file. The output are 2 files, named after sample name (name.libraries.txt and
+     * name.variants.txt)
      */
     private void extractCandidatesFromBAM() {
         // Command appearance:
@@ -87,12 +88,11 @@ public class DindelWorker extends Worker {
     }
 
     /**
-     * Second step for standard dindel workflow: the indels obtained in stage 1
-     * from the BAM file are the candidate indels; they must be grouped into
-     * windows of ∼ 120 basepairs, into a realign-window-file. The included
-     * Python script makeWindows.py will generate such a file from the file with
-     * candidate indels inferred in the first stage. The output are hundreds of
-     * files (temp/name/windows/window001.txt, /temp/name/windows/window002.txt,
+     * Second step for standard dindel workflow: the indels obtained in stage 1 from the BAM file
+     * are the candidate indels; they must be grouped into windows of ∼ 120 basepairs, into a
+     * realign-window-file. The included Python script makeWindows.py will generate such a file from
+     * the file with candidate indels inferred in the first stage. The output are hundreds of files
+     * (temp/name/windows/window001.txt, /temp/name/windows/window002.txt,
      * /temp/name/windows/windowXXX.txt)
      */
     private void createRealignWindows() {
@@ -114,11 +114,10 @@ public class DindelWorker extends Worker {
     }
 
     /**
-     * Third step for dindel standard workflow: for every window, DindelTool
-     * will generate candidate haplotypes from the candidate indels and SNPs it
-     * detects in the BAM file, and realign the reads to these candidate
-     * haplotypes. The realignment step is the computationally most intensive
-     * step.
+     * Third step for dindel standard workflow: for every window, DindelTool will generate candidate
+     * haplotypes from the candidate indels and SNPs it detects in the BAM file, and realign the
+     * reads to these candidate haplotypes. The realignment step is the computationally most
+     * intensive step.
      */
     private void realignHaplotypes() {
         final File[] files = windows.listFiles();
@@ -166,8 +165,8 @@ public class DindelWorker extends Worker {
     }
 
     /**
-     * Last step for dindel standard workflow: interpreting the output from
-     * DindelTool and produce indel calls and qualities in the VCF4 format.
+     * Last step for dindel standard workflow: interpreting the output from DindelTool and produce
+     * indel calls and qualities in the VCF4 format.
      */
     private void mergeIndelsInVcf() {
         // Command appearance:
@@ -248,8 +247,8 @@ public class DindelWorker extends Worker {
     }
 
     /**
-     * This class will process files until the turnomatic returns -1. In that
-     * moment, this thread stops.
+     * This class will process files until the turnomatic returns -1. In that moment, this thread
+     * stops.
      */
     class FileProcessor extends Task<Void> {
 
@@ -260,8 +259,7 @@ public class DindelWorker extends Worker {
         private final String id;
 
         /**
-         * Creates a new FileProcessor assigning it a turnomatic and a list of
-         * files.
+         * Creates a new FileProcessor assigning it a turnomatic and a list of files.
          *
          * @param turnomatic A machine that gives sorted next file index.
          * @param files A list of files to process.
@@ -274,8 +272,8 @@ public class DindelWorker extends Worker {
         }
 
         /**
-         * Start taking numbers from its Turn-o-matic n processing files, until
-         * the turn-o-matic returns -1.
+         * Start taking numbers from its Turn-o-matic n processing files, until the turn-o-matic
+         * returns -1.
          *
          * @return nothing at all.
          */
@@ -285,7 +283,7 @@ public class DindelWorker extends Worker {
             while ((next = turnomatic.nextFile()) != -1) {
                 final String inputF = files[next].getAbsolutePath();
                 final String output = new File(windows2, files[next].getName()).getAbsolutePath();
-                    // Command appearance (we must do this for every window):
+                // Command appearance (we must do this for every window):
                 // /home/uai/dindel/dindel
                 //   --analysis indels \
                 //   --doDiploid \

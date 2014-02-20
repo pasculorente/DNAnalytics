@@ -2,6 +2,7 @@ package dnanalytics.worker;
 
 import dnanalytics.DNAnalytics;
 import dnanalytics.utils.Command;
+import dnanalytics.view.DNAMain;
 import java.io.File;
 
 /**
@@ -53,12 +54,15 @@ public class XHMM extends Worker {
     @Override
     public boolean importParameters() {
         if (!new File(input).exists()) {
+            DNAMain.printMessage(resources.getString("no.input"));
             return false;
         }
         if (!new File(genome).exists()) {
+            DNAMain.printMessage(resources.getString("no.genome"));
             return false;
         }
         if (!new File(temp).exists()) {
+            DNAMain.printMessage(resources.getString("no.temp"));
             return false;
         }
         return !output.isEmpty();
@@ -128,8 +132,8 @@ public class XHMM extends Worker {
     }
 
     /**
-     * Combines GATK Depth-of-Coverage outputs for multiple samples (at same
-     * loci). Converts GATK format to xhmm format.
+     * Combines GATK Depth-of-Coverage outputs for multiple samples (at same loci). Converts GATK
+     * format to xhmm format.
      *
      * @return XHMM command return value. 0 if everything goes fine.
      */
@@ -139,8 +143,8 @@ public class XHMM extends Worker {
     }
 
     /**
-     * Runs GATK to calculate the per-target GC content and create a list of the
-     * targets with extreme GC content.
+     * Runs GATK to calculate the per-target GC content and create a list of the targets with
+     * extreme GC content.
      *
      * @return 0 if everything OK.
      */
@@ -167,7 +171,7 @@ public class XHMM extends Worker {
      * @return 0 if OK.
      */
     private int filterAndCenter() {
-        return new Command( XHMM, "--matrix", "-r", step2,
+        return new Command(XHMM, "--matrix", "-r", step2,
                 "--centerData", "--centerType", "sample", "-o", step4,
                 "--outputExcludedTargets", step41,
                 "--outputExcludedSamples", step42,
@@ -199,8 +203,7 @@ public class XHMM extends Worker {
     }
 
     /**
-     * Filters original read-depth data to be the same as filtered, normalized
-     * data.
+     * Filters original read-depth data to be the same as filtered, normalized data.
      *
      * @return 0 if OK.
      */
@@ -214,13 +217,12 @@ public class XHMM extends Worker {
     }
 
     /**
-     * Filters original read-depth data to be the same as filtered, normalized
-     * data.
+     * Filters original read-depth data to be the same as filtered, normalized data.
      *
      * @return 0 if OK.
      */
     private int discoverCNV() {
-        return new Command( XHMM, "--discover", "-p", PARAMS_FILE,
+        return new Command(XHMM, "--discover", "-p", PARAMS_FILE,
                 "-r", step6, "-R", step7,
                 "-c", step8, "-a", step81, "-s", step82).execute(null);
     }
@@ -241,7 +243,7 @@ public class XHMM extends Worker {
         File[] files = new File(temp).listFiles((File pathname) -> {
             return pathname.getName().startsWith(name);
         });
-        for (File f : files){
+        for (File f : files) {
             f.delete();
         }
         return 0;

@@ -51,7 +51,7 @@ public class TestTool implements Tool {
                     lines = controller.getLines();
                     millis = controller.getMilliseconds();
                 } catch (NumberFormatException ex) {
-                    System.err.println("Error en alguno de los numberos");
+                    DNAMain.printMessage("Bad number format");
                     return false;
                 }
                 return true;

@@ -174,13 +174,11 @@ public class DNAMain implements Initializable {
             // And if the tool has a worker
             Tool tool = tools.
                     get(buttonsPane.getChildren().indexOf(toolButtons.getSelectedToggle()));
-
             final Worker worker = tool.getWorker();
             if (worker == null) {
                 return;
             }
             if (!worker.importParameters()) {
-                printMessage(resources.getString("label.paramerror"));
                 return;
             }
             FXMLLoader loader = new FXMLLoader(getClass().getResource("Console.fxml"), resources);
@@ -237,10 +235,9 @@ public class DNAMain implements Initializable {
     /**
      * Properly stops all running Workers before closing the app. Nop, do nothing.
      *
-     * @param event ?
      * @return always false
      */
-    public boolean closeApp(ActionEvent event) {
+    public boolean closeApp() {
         workers.stream().filter((worker) -> (worker != null)).forEach((worker) -> {
             worker.cancel(true);
         });

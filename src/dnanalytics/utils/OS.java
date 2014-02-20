@@ -81,7 +81,7 @@ public class OS {
                 out.write(buf, 0, len);
             }
         } catch (IOException ex) {
-            Logger.getLogger(DNAMain.class.getName()).log(Level.SEVERE, null, ex);
+            DNAMain.printMessage("Error uncompressing");
         }
         return output;
     }
@@ -103,7 +103,7 @@ public class OS {
                 gZIPOutputStream.write(buf, 0, len);
             }
         } catch (IOException ex) {
-            Logger.getLogger(DNAMain.class.getName()).log(Level.SEVERE, null, ex);
+            DNAMain.printMessage("Error compressing");
         }
         return output;
     }
@@ -184,6 +184,17 @@ public class OS {
      */
     public static File openFASTA(TextField textField) {
         return openFile(FASTA_DESCRIPTION, FASTA_EXTENSION, FASTA_FILTERS, textField);
+    }
+
+    /**
+     * Shows a dialog to the user to select a FASTA file (.fa or .fasta). Sets the text of the
+     * TextField to the name of the file.
+     *
+     * @param textField A TextField to contain the file name.
+     * @return The file selected or null if user canceled.
+     */
+    public static File openTSV(TextField textField) {
+        return openFile(TSV_DESCRIPTION, TSV_EXTENSION, TSV_FILTERS, textField);
     }
 
     /**
@@ -293,8 +304,10 @@ public class OS {
                 Desktop.getDesktop().browse(new URI(url));
             }
         } catch (URISyntaxException ex) {
+            DNAMain.printMessage("Bad URL");
             Logger.getLogger(OS.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
+            DNAMain.printMessage("URN not found");
             Logger.getLogger(OS.class.getName()).log(Level.SEVERE, null, ex);
         }
 

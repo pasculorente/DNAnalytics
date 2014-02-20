@@ -1,14 +1,14 @@
 package dnanalytics.worker;
 
 import dnanalytics.utils.Command;
+import dnanalytics.view.DNAMain;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Script for calling variants using HaplotypeCaller from GATK. If
- * 'recalibrate', output file will pass a Variant Quality Score Recalibration
- * (VQSR). See Worker to know how to launch it.
+ * Script for calling variants using HaplotypeCaller from GATK. If 'recalibrate', output file will
+ * pass a Variant Quality Score Recalibration (VQSR). See Worker to know how to launch it.
  *
  * @author Pascual Lorente Arencibia
  */
@@ -46,7 +46,7 @@ public class Haplotype extends Worker {
     @Override
     protected int start() {
         updateTitle("Calling " + new File(output).getName());
-        System.out.println("Starting call");
+        //System.out.println("Starting call");
         String gatk = "software" + File.separator + "gatk"
                 + File.separator + "GenomeAnalysisTK.jar";
 
@@ -65,7 +65,7 @@ public class Haplotype extends Worker {
             String recal = new File(temp, timestamp + "recal").getAbsolutePath();
             String outputRecalibrated = output.replace(".vcf", "_recalibrated.vcf");
             updateProgress(resources.getString("call.prerecal"), 1.5, 3);
-            new Command( java7, "-jar", gatk,
+            new Command(java7, "-jar", gatk,
                     "-T", "VariantRecalibrator",
                     "-R", genome, "-input", output,
                     "-tranchesFile", tranches,
@@ -81,7 +81,7 @@ public class Haplotype extends Worker {
                     "-an", "QD", "-an", "MQRankSum", "-an", "ReadPosRankSum",
                     "-an", "FS", "-an", "MQ", "-an", "DP", "-mode BOTH").execute(outStream);
             updateProgress(resources.getString("call.recal"), 2.5, 3);
-            new Command( java7, "-jar", gatk,
+            new Command(java7, "-jar", gatk,
                     "-T", "ApplyRecalibration",
                     "-R", genome, "-input", output,
                     "-tranchesFile", tranches,
@@ -100,11 +100,11 @@ public class Haplotype extends Worker {
 
         // Check if all parameters are OK.
         if (!new File(genome).exists()) {
-            System.err.println(resources.getString("no.genome"));
+            DNAMain.printMessage(resources.getString("no.genome"));
             return false;
         }
         if (!new File(dbsnp).exists()) {
-            System.err.println(resources.getString("no.dbsnp"));
+            DNAMain.printMessage(resources.getString("no.dbsnp"));
             return false;
         }
         /*if (!new File(temp).exists()) {
@@ -113,25 +113,25 @@ public class Haplotype extends Worker {
          return noFileErr;
          }*/
         if (output.isEmpty()) {
-            System.err.println(resources.getString("no.output"));
+            DNAMain.printMessage(resources.getString("no.output"));
             return false;
         }
         if (!new File(input).exists()) {
-            System.err.println(resources.getString("no.input"));
+            DNAMain.printMessage(resources.getString("no.input"));
             return false;
         }
         if (recalibrate) {
             // Check for database
             if (!new File(mills).exists()) {
-                System.err.println(resources.getString("no.mills"));
+                DNAMain.printMessage(resources.getString("no.mills"));
                 return false;
             }
             if (!new File(hapmap).exists()) {
-                System.err.println(resources.getString("no.hapmap"));
+                DNAMain.printMessage(resources.getString("no.hapmap"));
                 return false;
             }
             if (!new File(omni).exists()) {
-                System.err.println(resources.getString("no.omni"));
+                DNAMain.printMessage(resources.getString("no.omni"));
                 return false;
             }
         }

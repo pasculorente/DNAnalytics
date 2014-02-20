@@ -72,7 +72,8 @@ public class IndexFastaTool implements Tool {
                 updateProgress(resources.getString("index.picard"), 2.5, 3);
                 new Command("java", "-jar", "software" + File.separator
                         + "picard" + File.separator + "CreateSequenceDictionary.jar",
-                        "R=" + genome, "O=" + genome.replace(".fasta", ".dict")).execute(outStream, true);
+                        "R=" + genome, "O=" + genome.replace(".fasta", ".dict")).execute(outStream,
+                                true);
                 updateProgress(resources.getString("index.end"), 1, 1);
                 return 0;
             }
@@ -80,13 +81,13 @@ public class IndexFastaTool implements Tool {
             @Override
             public boolean importParameters() {
                 if (!new File(controller.getGenome()).exists()) {
-                    System.err.println(resources.getString("no.genome"));
+                    DNAMain.printMessage(resources.getString("no.genome"));
                     return false;
                 }
 
                 return true;
             }
-            
+
         };
     }
 

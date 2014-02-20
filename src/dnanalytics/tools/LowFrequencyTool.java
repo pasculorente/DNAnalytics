@@ -25,7 +25,8 @@ public class LowFrequencyTool implements Tool {
     @Override
     public Node getView() {
         if (loader == null) {
-            loader = new FXMLLoader(LowFrequencyController.class.getResource("LowFrequency.fxml"), resources);
+            loader = new FXMLLoader(LowFrequencyController.class.getResource("LowFrequency.fxml"),
+                    resources);
             try {
                 view = (Node) loader.load();
             } catch (IOException ex) {
@@ -38,7 +39,8 @@ public class LowFrequencyTool implements Tool {
 
     @Override
     public Worker getWorker() {
-        return new BAMAnalyzer(controller.getInput(), controller.getOutput(), controller.getThreshold());
+        return new BAMAnalyzer(controller.getInput(), controller.getOutput(), controller.
+                getThreshold());
     }
 
     @Override
@@ -53,7 +55,7 @@ public class LowFrequencyTool implements Tool {
 
     @Override
     public String getDescription() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return "Tool not implemented yet. ";
     }
 
 }

@@ -45,9 +45,11 @@ public class FilterFrequenciesController {
                         }
                     }
                 } catch (NumberFormatException ex) {
+                    DNAMain.printMessage("Bad number format.");
                 } catch (FileNotFoundException ex) {
-                    Logger.getLogger(DNAMain.class.getName()).log(Level.SEVERE, null, ex);
+                    DNAMain.printMessage("File not found.");
                 } catch (IOException ex) {
+                    DNAMain.printMessage("Error reading file.");
                     Logger.getLogger(DNAMain.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
@@ -56,9 +58,8 @@ public class FilterFrequenciesController {
     }
 
     @FXML
-    void selectFrequencyFile( ) {
-        OS.openFile(OS.TSV_DESCRIPTION, OS.TSV_DESCRIPTION,
-                OS.TSV_FILTERS, frequencyFile);
+    void selectFrequencyFile() {
+        OS.openTSV(frequencyFile);
     }
 
     public int getColumn() {

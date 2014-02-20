@@ -31,12 +31,18 @@
     -fx-font-family: monospace;
 }
 
+.list-cell {
+    -fx-background-color: lightsteelblue;
+     -fx-background-insets: 1;
+    -fx-background-radius: 0;
+}
+
 .list-cell:empty{
     -fx-background-color: transparent;
 }
 
 .list-cell:selected {
-    -fx-background-color: lightsteelblue;
+    -fx-background-color: lightsalmon;
 }
 
 #toolButton:hover, #fileTextField:hover, #param:hover, .text-field:focused {
