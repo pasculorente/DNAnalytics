@@ -123,7 +123,7 @@ public class DindelWorker extends Worker {
     private void realignHaplotypes() {
         final File[] files = windows.listFiles();
         final Turnomatic turnomatic = new Turnomatic(files);
-        final int cores = 1;
+        final int cores = 6;
         threads = new Thread[cores];
         for (int i = 0; i < cores; i++) {
             threads[i] = new Thread(new FileProcessor(turnomatic, files, i + ""));
