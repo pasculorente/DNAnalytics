@@ -79,6 +79,10 @@ public class Command {
                 while ((c = process.getInputStream().read()) != -1) {
                     output.write(c);
                 }
+            } else {
+                // Consume pipe, otherwise, it will be blocked ad infinitum.
+                while (process.getInputStream().read() != -1) {
+                }
             }
             return process.waitFor();
         } catch (InterruptedException | IOException ex) {

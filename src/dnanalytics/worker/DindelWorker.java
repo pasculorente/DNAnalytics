@@ -28,6 +28,7 @@ public class DindelWorker extends Worker {
     String genome = DNAnalytics.getProperties().getProperty("genome");
     private String name;
     private long startTime, lastChk;
+    private Thread[] threads = null;
 
     public DindelWorker(String input, String output) {
         this.input = input;
@@ -122,8 +123,8 @@ public class DindelWorker extends Worker {
     private void realignHaplotypes() {
         final File[] files = windows.listFiles();
         final Turnomatic turnomatic = new Turnomatic(files);
-        final int cores = 4;
-        Thread[] threads = new Thread[cores];
+        final int cores = 1;
+        threads = new Thread[cores];
         for (int i = 0; i < cores; i++) {
             threads[i] = new Thread(new FileProcessor(turnomatic, files, i + ""));
             threads[i].start();
@@ -202,10 +203,10 @@ public class DindelWorker extends Worker {
         updateTitle("Calling indels for " + new File(input).getName());
 
         updateProgress("Extracting candidate indels from BAM", 0, 100);
-        extractCandidatesFromBAM();
+//        extractCandidatesFromBAM();
 
         updateProgress("Creating realignment windows", 10, 100);
-        createRealignWindows();
+//        createRealignWindows();
 
         updateProgress("Realigning", 20, 100);
         realignHaplotypes();
@@ -214,6 +215,18 @@ public class DindelWorker extends Worker {
         mergeIndelsInVcf();
         updateProgress("Done", 1, 1);
         return 0;
+    }
+
+    @Override
+    public boolean cancel(boolean bln) {
+        super.cancel(bln);
+        if (threads != null) {
+            for (Thread thread : threads) {
+                thread.interrupt();
+            }
+        }
+        return true;
+
     }
 
     /**
@@ -282,7 +295,8 @@ public class DindelWorker extends Worker {
             int next;
             while ((next = turnomatic.nextFile()) != -1) {
                 final String inputF = files[next].getAbsolutePath();
-                final String output = new File(windows2, files[next].getName()).getAbsolutePath();
+                final String output = new File(windows2, files[next].getName()).getAbsolutePath().
+                        replace(".txt", "");
                 // Command appearance (we must do this for every window):
                 // /home/uai/dindel/dindel
                 //   --analysis indels \
@@ -299,7 +313,7 @@ public class DindelWorker extends Worker {
                         "--ref", genome,
                         "--varFile", inputF,
                         "--libFile", lib,
-                        "--outputFile", output).execute(null);
+                        "--outputFile", output).execute(null, true);
 //                    outStream.println(this + ":" + next);
 //                    Thread.sleep(new Random().nextInt(1000));
             }

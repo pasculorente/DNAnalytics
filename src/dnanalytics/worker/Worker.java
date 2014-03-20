@@ -2,6 +2,7 @@ package dnanalytics.worker;
 
 import dnanalytics.view.DNAMain;
 import java.io.PrintStream;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
@@ -80,7 +81,6 @@ public abstract class Worker extends Task<Integer> {
     @Override
     public boolean cancel(boolean bln) {
         boolean ret = super.cancel(bln);
-        //errStream.println(resources.getString("worker.cancel"));
         timer.stop = true;
         updateProgress(1, 1);
         return ret;
@@ -116,6 +116,7 @@ public abstract class Worker extends Task<Integer> {
     class Timer extends Task<Void> {
 
         boolean stop = false;
+        DateFormat df = new SimpleDateFormat("HH:mm:ss (dd)");
 
         @Override
         protected Void call() throws Exception {
@@ -123,8 +124,7 @@ public abstract class Worker extends Task<Integer> {
                 try {
                     Thread.sleep(1000);
                     Platform.runLater(() -> {
-                        elapsedTime.setValue(dateFormat.format(System.currentTimeMillis()
-                                - startTime));
+                        elapsedTime.setValue(df.format(System.currentTimeMillis() - startTime));
                     });
                 } catch (InterruptedException ex) {
                 }
