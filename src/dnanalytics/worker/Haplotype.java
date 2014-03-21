@@ -55,41 +55,52 @@ public class Haplotype extends Worker {
 
         updateProgress(resources.getString("call.call"), 1, (recalibrate ? 3 : 2));
         System.out.println("First command");
-        new Command(java7, "-jar", gatk,
-                "-T", "HaplotypeCaller", "-R", genome,
-                "-I", input, "-o", output,
-                "--dbsnp", dbsnp).execute(outStream);
+//        new Command(java7, "-jar", gatk,
+//                "-T", "HaplotypeCaller", "-R", genome,
+//                "-I", input, "-o", output,
+//                "--dbsnp", dbsnp).execute(outStream);
         // Recalibrate
         if (recalibrate) {
+            String tempfile = new File(temp, timestamp + "snp_recal.vcf").getAbsolutePath();
             String tranches = new File(temp, timestamp + "tranches").getAbsolutePath();
             String recal = new File(temp, timestamp + "recal").getAbsolutePath();
             String outputRecalibrated = output.replace(".vcf", "_recalibrated.vcf");
             updateProgress(resources.getString("call.prerecal"), 1.5, 3);
+            // 1/4 snp model
             new Command(java7, "-jar", gatk,
                     "-T", "VariantRecalibrator",
                     "-R", genome, "-input", output,
                     "-tranchesFile", tranches,
-                    "-recalFile ", recal,
-                    "-resource:hapmap,known=false,training=true,truth=true,prior=15.0",
-                    hapmap,
-                    "-resource:omni,known=false,training=true,truth=false,prior=12.0",
-                    omni,
-                    "-resource:mills,known=true,training=true,truth=true,prior=12.0",
-                    mills,
-                    "-resource:dbsnp,known=true,training=false,truth=false,prior=6.0",
-                    dbsnp,
+                    "-recalFile", recal,
+                    "-resource:hapmap,known=false,training=true,truth=true,prior=15.0", hapmap,
+                    "-resource:omni,known=false,training=true,truth=false,prior=12.0", omni,
+                    "-resource:mills,known=true,training=true,truth=true,prior=12.0", dbsnp,
                     "-an", "QD", "-an", "MQRankSum", "-an", "ReadPosRankSum",
-                    "-an", "FS", "-an", "MQ", "-an", "DP", "-mode BOTH").execute(outStream);
+                    "-an", "FS", "-an", "DP", "-mode", "SNP",
+                    "-tranche", "100.0", "-tranche", "99.9",
+                    "-tranche", "99.0", "-tranche", "90.0").execute(outStream);
             updateProgress(resources.getString("call.recal"), 2.5, 3);
+            // 2/4 snp recalibration
             new Command(java7, "-jar", gatk,
                     "-T", "ApplyRecalibration",
                     "-R", genome, "-input", output,
                     "-tranchesFile", tranches,
                     "-recalFile", recal,
-                    "-o", outputRecalibrated,
-                    "--ts_filter_level", "97.0", "-mode", "BOTH").execute(outStream);
+                    "-o", tempfile,
+                    "--ts_filter_level", "90.0", "-mode", "SNP").execute(outStream);
             new File(tranches).delete();
             new File(recal).delete();
+            new Command(java7, "-jar", gatk,
+                    "-T", "VariantRecalibrator",
+                    "-R", genome, "-input", tempfile,
+                    "-tranchesFile", tranches,
+                    "-recalFile", recal,
+                    "-resource:mills,known=true,training=true,truth=true,prior=12.0", mills,
+                    "-an", "MQRankSum", "-an", "ReadPosRankSum",
+                    "-an", "FS", "-an", "MQ", "-an", "DP", "-mode", "INDEL",
+                    "-tranche", "100.0", "-tranche", "99.9",
+                    "-tranche", "99.0", "-tranche", "90.0").execute(outStream);
+
             updateProgress(resources.getString("call.completed"), 1, 1);
         }
         return 0;
@@ -107,11 +118,6 @@ public class Haplotype extends Worker {
             DNAMain.printMessage(resources.getString("no.dbsnp"));
             return false;
         }
-        /*if (!new File(temp).exists()) {
-         System.err.println(controller.getString(
-         "no.temp"));
-         return noFileErr;
-         }*/
         if (output.isEmpty()) {
             DNAMain.printMessage(resources.getString("no.output"));
             return false;
