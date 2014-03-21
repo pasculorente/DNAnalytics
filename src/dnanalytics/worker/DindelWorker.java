@@ -139,7 +139,7 @@ public class DindelWorker extends Worker {
     }
 
     private void printStatus(boolean header, int index, int total) {
-        DateFormat df = new SimpleDateFormat("HH:mm:ss (dd)");
+        DateFormat df = new SimpleDateFormat("HH:mm:ss");
         if (header) {
             startTime = System.currentTimeMillis();
             lastChk = startTime;
@@ -153,8 +153,8 @@ public class DindelWorker extends Worker {
         outStream.println(
                 index + "/" + total
                 + "\t" + df.format(chkTime)
-                + "\t" + df.format(totalTime)
-                + "\t" + df.format(remaining));
+                + "\t" + df.format(totalTime) + " (" + totalTime / 86400000 + ")"
+                + "\t" + df.format(remaining) + " (" + remaining / 86400000 + ")");
         updateProgress("Realigning " + index + " out of " + total + " windows",
                 20 + 70 * index / total, 100);
         lastChk = timestamp;

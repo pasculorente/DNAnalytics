@@ -25,8 +25,7 @@ public class CombineVariantsController {
 
     @FXML
     private void addVCF() {
-        File file = OS.openFile("Select VCF file",
-                OS.VCF_DESCRIPTION, OS.VCF_FILTERS);
+        File file = OS.openFile("Select VCF file", OS.VCF_DESCRIPTION, OS.VCF_FILTERS);
         if (file != null) {
             vcfList.getItems().add(file.getAbsolutePath());
         }
@@ -55,7 +54,7 @@ public class CombineVariantsController {
     }
 
     public String getOperation() {
-        return ((ToggleButton) combineGroup.getSelectedToggle()).getId();
+        return ((ToggleButton) combineGroup.getSelectedToggle()).getText();
     }
 
 }

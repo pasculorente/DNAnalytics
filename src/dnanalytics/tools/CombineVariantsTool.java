@@ -66,43 +66,41 @@ public class CombineVariantsTool implements Tool {
                     "-o", controller.getCombinedVCF()
                 };
                 command.addAll(Arrays.asList(common));
-                switch (controller.getOperation()) {
-                    case "intersection":
-                        // -minN 3
-                        // -T CombineVariants
-                        // -V variats1.vcf -V variants2.vcf -V variants3.vcf
-                        command.add("-minN");
-                        command.add(String.valueOf(items.size()));
-                        command.add("-T");
-                        command.add("CombineVariants");
-                        items.stream().forEach((s) -> {
-                            command.add("-V");
-                            command.add(s);
-                        });
-                        updateProgress(resources.getString("combine.intersect"), 1, 2);
-                        break;
-                    case "aggregation":
-                        // -T CombineVariants
-                        // -V variats1.vcf -V variants2.vcf -V variants3.vcf
-                        command.add("-T");
-                        command.add("CombineVariants");
-                        for (String s : items) {
-                            command.add("-V");
-                            command.add(s);
-                        }
-                        updateProgress(resources.getString("combine.aggregate"), 1, 2);
-                        break;
-                    case "difference":
-                        // -T SelectVariants
-                        // -V variants1.vcf
-                        // --discordance variants2.vcf
-                        command.add("-T");
-                        command.add("SelectVariants");
+                String op = controller.getOperation();
+                if (op.equals(DNAMain.getResources().getString("combine.intersect"))) {
+                    // -minN 3
+                    // -T CombineVariants
+                    // -V variats1.vcf -V variants2.vcf -V variants3.vcf
+                    command.add("-minN");
+                    command.add(String.valueOf(items.size()));
+                    command.add("-T");
+                    command.add("CombineVariants");
+                    items.stream().forEach((s) -> {
                         command.add("-V");
-                        command.add(items.get(0));
-                        command.add("--discordance");
-                        command.add(items.get(1));
-                        updateProgress(resources.getString("combine.difference"), 1, 2);
+                        command.add(s);
+                    });
+                    updateProgress(resources.getString("combine.intersect"), 1, 2);
+                } else if (op.equals(DNAMain.getResources().getString("combine.aggregate"))) {
+                    // -T CombineVariants
+                    // -V variats1.vcf -V variants2.vcf -V variants3.vcf
+                    command.add("-T");
+                    command.add("CombineVariants");
+                    for (String s : items) {
+                        command.add("-V");
+                        command.add(s);
+                    }
+                    updateProgress(resources.getString("combine.aggregate"), 1, 2);
+                } else if (op.equals(DNAMain.getResources().getString("combine.difference"))) {
+                    // -T SelectVariants
+                    // -V variants1.vcf
+                    // --discordance variants2.vcf
+                    command.add("-T");
+                    command.add("SelectVariants");
+                    command.add("-V");
+                    command.add(items.get(0));
+                    command.add("--discordance");
+                    command.add(items.get(1));
+                    updateProgress(resources.getString("combine.difference"), 1, 2);
                 }
                 String[] args = new String[command.size()];
                 for (int i = 0; i < command.size(); i++) {
