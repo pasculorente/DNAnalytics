@@ -13,11 +13,6 @@
     <TextField id="fileTextField" fx:id="dbsnp" editable="false" maxWidth="-1.0" onAction="#selectDbsnp" onMouseClicked="#selectDbsnp" prefWidth="-1.0" promptText="%file.dbsnp" />
     <Label id="paramName" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%label.output" />
     <TextField id="fileTextField" fx:id="output" editable="false" onAction="#selectOutput" onMouseClicked="#selectOutput" prefWidth="-1.0" promptText="Variant Call File (.vcf)" />
-    <CheckBox id="param" fx:id="recalibrate" alignment="TOP_LEFT" contentDisplay="LEFT" disable="false" graphicTextGap="6.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="%checkbox.recalibrate" visible="true" />
-    <Label id="paramName" text="%label.training.recal" visible="true" />
-    <TextField id="fileTextField" fx:id="mills" editable="false" maxWidth="-1.0" onAction="#selectMills" onMouseClicked="#selectMills" prefWidth="-1.0" promptText="%file.mills" visible="true" />
-    <TextField id="fileTextField" fx:id="hapmap" editable="false" maxWidth="-1.0" onAction="#selectHapmap" onMouseClicked="#selectHapmap" prefWidth="-1.0" promptText="%file.hapmap" visible="true" />
-    <TextField id="fileTextField" fx:id="omni" editable="false" maxWidth="-1.0" onAction="#selectOmni" onMouseClicked="#selectOmni" prefWidth="-1.0" promptText="%file.omni" visible="true" />
   </children>
   <padding>
     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

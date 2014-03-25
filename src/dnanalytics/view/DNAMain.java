@@ -8,8 +8,8 @@ import dnanalytics.tools.CombineVariantsTool;
 import dnanalytics.tools.DindelTool;
 import dnanalytics.tools.FilterFrequenciesTool;
 import dnanalytics.tools.IndexFastaTool;
+import dnanalytics.tools.RecalibrateTool;
 import dnanalytics.tools.SelectVariantsTool;
-import dnanalytics.tools.TestTool;
 import dnanalytics.tools.Tool;
 import dnanalytics.utils.TextAreaWriter;
 import dnanalytics.worker.Worker;
@@ -88,7 +88,7 @@ public class DNAMain implements Initializable {
         settingsButton.setGraphic(new ImageView(new Image(DNAMain.class.getResourceAsStream(
                 "img/ico/settings32.png"))));
         // Add Tools, last is the first
-        addTool(new TestTool());
+//        addTool(new TestTool());
         addTool(new IndexFastaTool());
         addTool(new CNVTool());
         addTool(new DindelTool());
@@ -96,6 +96,7 @@ public class DNAMain implements Initializable {
         addTool(new FilterFrequenciesTool());
         addTool(new SelectVariantsTool());
         addTool(new CombineVariantsTool());
+        addTool(new RecalibrateTool());
         addTool(new CallVariantsTool());
         addTool(new AlignTool());
 

@@ -3,7 +3,6 @@ package dnanalytics.tools;
 import dnanalytics.utils.Command;
 import dnanalytics.view.DNAMain;
 import dnanalytics.view.tools.TestToolController;
-import dnanalytics.worker.LineParser;
 import dnanalytics.worker.Worker;
 import java.io.File;
 import java.io.IOException;
@@ -116,27 +115,6 @@ public class TestTool implements Tool {
     @Override
     public String getDescription() {
         return "Test tool";
-    }
-
-    public class TestParser implements LineParser {
-
-        String line;
-
-        @Override
-        public void updateLine(String line) {
-            this.line = line;
-        }
-
-        @Override
-        public String getMessage() {
-            return line.substring(4);
-        }
-
-        @Override
-        public double getProgress() {
-            return line.charAt(0);
-        }
-
     }
 
 }

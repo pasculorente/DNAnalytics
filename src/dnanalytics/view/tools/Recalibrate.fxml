@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="5.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="dnanalytics.view.tools.RecalibrateController">
+  <Label id="paramName" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%label.input" />
+  <TextField id="fileTextField" fx:id="input" editable="false" onAction="#selectInput" onMouseClicked="#selectInput" prefWidth="-1.0" promptText="Variant Call File (.vcf)" />
+  <Label id="paramName" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%label.output" />
+  <TextField id="fileTextField" fx:id="output" editable="false" onAction="#selectOutput" onMouseClicked="#selectOutput" prefWidth="-1.0" promptText="Variant Call File (.vcf)" />
+  <Label id="paramName" alignment="TOP_CENTER" maxWidth="1.7976931348623157E308" text="%label.training.recal" textAlignment="LEFT" visible="true" />
+  <TextField id="fileTextField" fx:id="mills" editable="false" maxWidth="-1.0" onAction="#selectMills" onMouseClicked="#selectMills" prefWidth="-1.0" promptText="%file.mills" visible="true" />
+  <TextField id="fileTextField" fx:id="hapmap" editable="false" maxWidth="-1.0" onAction="#selectHapmap" onMouseClicked="#selectHapmap" prefWidth="-1.0" promptText="%file.hapmap" visible="true" />
+  <TextField id="fileTextField" fx:id="omni" editable="false" maxWidth="-1.0" onAction="#selectOmni" onMouseClicked="#selectOmni" prefWidth="-1.0" promptText="%file.omni" visible="true" />
+  <TextField id="fileTextField" fx:id="dbsnp" editable="false" maxWidth="-1.0" onAction="#selectDbsnp" onMouseClicked="#selectDbsnp" prefWidth="-1.0" promptText="%file.dbsnp" />
+</VBox>

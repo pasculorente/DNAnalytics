@@ -203,10 +203,10 @@ public class DindelWorker extends Worker {
         updateTitle("Calling indels for " + new File(input).getName());
 
         updateProgress("Extracting candidate indels from BAM", 0, 100);
-//        extractCandidatesFromBAM();
+        extractCandidatesFromBAM();
 
         updateProgress("Creating realignment windows", 10, 100);
-//        createRealignWindows();
+        createRealignWindows();
 
         updateProgress("Realigning", 20, 100);
         realignHaplotypes();

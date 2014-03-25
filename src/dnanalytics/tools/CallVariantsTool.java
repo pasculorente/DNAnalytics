@@ -39,11 +39,8 @@ public class CallVariantsTool implements Tool {
 
     @Override
     public Worker getWorker() {
-        return new Haplotype(
-                DNAnalytics.getProperties().getProperty("genome"), controller.getDbsnp(),
-                controller.getOmni(), controller.getHapmap(), controller.getMills(),
-                controller.getOutput(), controller.getInput(), controller.isRecalibrate(),
-                DNAnalytics.getProperties().getProperty("tempDir"));
+        return new Haplotype(DNAnalytics.getProperties().getProperty("genome"), controller.
+                getDbsnp(), controller.getOutput(), controller.getInput());
     }
 
     @Override
